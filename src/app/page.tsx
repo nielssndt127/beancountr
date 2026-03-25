@@ -41,7 +41,7 @@ export default function HomePage() {
             </div>
             <h1 className="text-5xl sm:text-6xl font-bold leading-[1.1] mb-6 text-stone-900">
               Know what you earned.<br />
-              <span style={{ color: ORANGE }}>Know what to save.</span>
+              <span style={{ color: PURPLE }}>Know what to save.</span>
             </h1>
             <p className="text-xl text-stone-500 max-w-xl mb-10 leading-relaxed">
               Track your hours, send invoices, and always know how much to set aside for tax and pension — all in one clean dashboard.

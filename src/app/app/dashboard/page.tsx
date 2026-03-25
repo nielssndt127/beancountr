@@ -69,12 +69,12 @@ export default async function DashboardPage() {
       {unpaidInvoices > 0 && (
         <div className="flex items-center justify-between rounded-2xl px-5 py-4" style={{ background: "oklch(0.97 0.05 195)" }}>
           <div className="flex items-center gap-3">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" style={{ color: "oklch(0.62 0.22 195)" }} />
+            <AlertCircle className="w-4 h-4 flex-shrink-0" style={{ color: "oklch(0.72 0.22 48)" }} />
             <p className="text-sm font-medium text-stone-800">
               {formatCurrency(unpaidInvoices)} in unpaid invoices
             </p>
           </div>
-          <Link href="/app/invoices" className="flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: "oklch(0.62 0.22 195)" }}>
+          <Link href="/app/invoices" className="flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: "oklch(0.72 0.22 48)" }}>
             View all <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
@@ -152,12 +152,12 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-2xl card-shadow overflow-hidden">
           <div className="px-6 py-4 border-b border-stone-50 flex items-center justify-between">
             <h2 className="font-semibold text-stone-800 text-sm">Recent invoices</h2>
-            <Link href="/app/invoices" className="text-xs font-medium transition-colors" style={{ color: "oklch(0.62 0.22 195)" }}>View all</Link>
+            <Link href="/app/invoices" className="text-xs font-medium transition-colors" style={{ color: "oklch(0.72 0.22 48)" }}>View all</Link>
           </div>
           {recentInvoices.length === 0 ? (
             <div className="px-6 py-8 text-center">
               <p className="text-sm text-stone-400">No invoices yet</p>
-              <Link href="/app/invoices" className="text-xs font-medium mt-1 block" style={{ color: "oklch(0.62 0.22 195)" }}>Create one →</Link>
+              <Link href="/app/invoices" className="text-xs font-medium mt-1 block" style={{ color: "oklch(0.72 0.22 48)" }}>Create one →</Link>
             </div>
           ) : (
             <div className="divide-y divide-stone-50">
@@ -183,12 +183,12 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-2xl card-shadow overflow-hidden">
           <div className="px-6 py-4 border-b border-stone-50 flex items-center justify-between">
             <h2 className="font-semibold text-stone-800 text-sm">Recent time entries</h2>
-            <Link href="/app/time" className="text-xs font-medium transition-colors" style={{ color: "oklch(0.62 0.22 195)" }}>View all</Link>
+            <Link href="/app/time" className="text-xs font-medium transition-colors" style={{ color: "oklch(0.72 0.22 48)" }}>View all</Link>
           </div>
           {recentTimeEntries.length === 0 ? (
             <div className="px-6 py-8 text-center">
               <p className="text-sm text-stone-400">No time logged yet</p>
-              <Link href="/app/time" className="text-xs font-medium mt-1 block" style={{ color: "oklch(0.62 0.22 195)" }}>Log time →</Link>
+              <Link href="/app/time" className="text-xs font-medium mt-1 block" style={{ color: "oklch(0.72 0.22 48)" }}>Log time →</Link>
             </div>
           ) : (
             <div className="divide-y divide-stone-50">
