@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Beancountr
 
-## Getting Started
+Money clarity for UK freelancers. Track hours, manage expenses, send invoices, and always know what to set aside for tax and pension.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Database**: PostgreSQL via Supabase
+- **ORM**: Prisma
+- **Auth**: Supabase Auth
+- **Deployment**: Vercel
+
+## Environment variables
+
+Copy `.env.local` and fill in your values:
+
+```env
+DATABASE_URL=                          # Supabase connection string (with pgbouncer)
+DIRECT_URL=                            # Supabase direct connection string
+NEXT_PUBLIC_SUPABASE_URL=              # Your Supabase project URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=         # Your Supabase anon key
+SUPABASE_SERVICE_ROLE_KEY=             # Your Supabase service role key
+RESEND_API_KEY=                        # Resend for email (optional in MVP)
+STRIPE_SECRET_KEY=                     # Stripe (optional in MVP)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=    # Stripe (optional in MVP)
+STRIPE_WEBHOOK_SECRET=                 # Stripe (optional in MVP)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Supabase setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to Project Settings > Database to get your connection strings
+3. Enable Email auth under Authentication > Providers
+4. Copy your project URL and anon key from Settings > API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local development
 
-## Learn More
+```bash
+# Install dependencies
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# Generate Prisma client
+npx prisma generate
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Push schema to database
+npx prisma db push
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Seed demo data
+npx prisma db seed
 
-## Deploy on Vercel
+# Start dev server
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Prisma commands
+
+```bash
+npx prisma generate        # Regenerate client after schema changes
+npx prisma db push         # Push schema changes to database
+npx prisma db seed         # Run seed file
+npx prisma studio          # Open Prisma Studio GUI
+npx prisma migrate reset   # Reset database and re-seed
+```
+
+## Vercel deployment
+
+1. Push to GitHub
+2. Import the repository in Vercel
+3. Add all environment variables in Vercel dashboard
+4. Deploy
+
+## Known limitations (MVP)
+
+- No receipt uploads
+- No bank feed integration
+- No VAT return calculations
+- No recurring invoices
+- Basic tax estimates only — not formal tax advice
+- Single user per account (no team support)
