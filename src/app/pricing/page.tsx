@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, XCircle, ArrowRight } from "lucide-react";
+
+const ORANGE = "oklch(0.72 0.22 48)";
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-background" style={{ fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -12,7 +14,7 @@ export default function PricingPage() {
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-stone-700 font-medium hover:text-stone-900 transition-colors">Log in</Link>
-            <Link href="/signup" className="text-sm font-medium text-white px-4 py-2 rounded-lg transition-all hover:opacity-90" style={{ background: "oklch(0.72 0.22 48)" }}>
+            <Link href="/signup" className="text-sm font-bold text-white px-4 py-2 rounded-lg transition-all hover:opacity-90" style={{ background: ORANGE }}>
               Sign up free
             </Link>
           </div>
@@ -21,33 +23,44 @@ export default function PricingPage() {
 
       <section className="pt-32 pb-12 px-6 text-center">
         <h1 className="text-4xl font-bold text-stone-900 mb-3">Simple, honest pricing</h1>
-        <p className="text-stone-400 text-lg">Start free. Upgrade when you&apos;re ready.</p>
+        <p className="text-stone-400 text-lg">Everything you need to run your freelance finances.</p>
       </section>
 
       <section className="max-w-4xl mx-auto px-6 pb-24">
-        <div className="grid sm:grid-cols-3 gap-6">
-          {/* Free */}
-          <div className="bg-white rounded-2xl p-7 border border-stone-200">
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-4">Free</p>
+        <div className="grid sm:grid-cols-3 gap-6 items-start">
+
+          {/* Free — deliberately minimal */}
+          <div className="bg-white rounded-2xl p-6 border border-stone-200">
+            <p className="text-xs font-semibold text-stone-300 uppercase tracking-wide mb-4">Free</p>
             <div className="flex items-end gap-1 mb-1">
-              <span className="text-4xl font-bold text-stone-900">£0</span>
+              <span className="text-3xl font-bold text-stone-400">£0</span>
             </div>
-            <p className="text-stone-400 text-sm mb-6">Forever free</p>
-            <ul className="space-y-3 mb-8">
-              {["1 client", "3 invoices per month", "Dashboard basics"].map((f) => (
-                <li key={f} className="flex items-center gap-2.5 text-sm text-stone-600">
-                  <CheckCircle className="w-4 h-4 text-stone-300 flex-shrink-0" />{f}
-                </li>
-              ))}
+            <p className="text-stone-300 text-sm mb-6">Very limited</p>
+            <ul className="space-y-2.5 mb-6">
+              <li className="flex items-center gap-2.5 text-sm text-stone-400">
+                <CheckCircle className="w-4 h-4 text-stone-300 flex-shrink-0" />1 client only
+              </li>
+              <li className="flex items-center gap-2.5 text-sm text-stone-300 line-through">
+                <XCircle className="w-4 h-4 text-stone-200 flex-shrink-0" />Unlimited invoices
+              </li>
+              <li className="flex items-center gap-2.5 text-sm text-stone-300 line-through">
+                <XCircle className="w-4 h-4 text-stone-200 flex-shrink-0" />Tax reserve planning
+              </li>
+              <li className="flex items-center gap-2.5 text-sm text-stone-300 line-through">
+                <XCircle className="w-4 h-4 text-stone-200 flex-shrink-0" />PDF export
+              </li>
+              <li className="flex items-center gap-2.5 text-sm text-stone-300 line-through">
+                <XCircle className="w-4 h-4 text-stone-200 flex-shrink-0" />Expense tracking
+              </li>
             </ul>
-            <Link href="/signup" className="block w-full py-3 text-center rounded-xl text-sm font-semibold border border-stone-200 text-stone-700 hover:bg-stone-50 transition-all">
-              Get started
+            <Link href="/signup" className="block w-full py-2.5 text-center rounded-xl text-sm font-medium text-stone-400 border border-stone-200 hover:bg-stone-50 transition-all">
+              Start for free
             </Link>
           </div>
 
-          {/* Pro */}
-          <div className="rounded-2xl p-7 relative text-white" style={{ background: "oklch(0.72 0.22 48)" }}>
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-xs px-3 py-1 rounded-full font-medium">
+          {/* Pro — hero card */}
+          <div className="rounded-2xl p-7 relative text-white shadow-xl" style={{ background: ORANGE }}>
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap">
               Most popular
             </div>
             <p className="text-xs font-semibold text-white/70 uppercase tracking-wide mb-4">Pro</p>
@@ -55,7 +68,7 @@ export default function PricingPage() {
               <span className="text-4xl font-bold">£12</span>
               <span className="text-white/70 mb-1.5 text-sm">/month</span>
             </div>
-            <p className="text-white/70 text-sm mb-6">or £108/year (save 25%)</p>
+            <p className="text-white/70 text-sm mb-6">or £108/year — save 25%</p>
             <ul className="space-y-3 mb-8">
               {[
                 "Unlimited clients",
@@ -66,11 +79,11 @@ export default function PricingPage() {
                 "Pension reserve planning",
               ].map((f) => (
                 <li key={f} className="flex items-center gap-2.5 text-sm text-white">
-                  <CheckCircle className="w-4 h-4 text-white/70 flex-shrink-0" />{f}
+                  <CheckCircle className="w-4 h-4 text-white/80 flex-shrink-0" />{f}
                 </li>
               ))}
             </ul>
-            <Link href="/signup" className="flex items-center justify-center gap-2 w-full py-3 text-center rounded-xl text-sm font-semibold bg-white transition-all hover:bg-stone-50" style={{ color: "oklch(0.72 0.22 48)" }}>
+            <Link href="/signup" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold bg-white transition-all hover:bg-stone-50" style={{ color: ORANGE }}>
               Start free trial <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -100,8 +113,9 @@ export default function PricingPage() {
               Get started
             </Link>
           </div>
+
         </div>
-        <p className="text-center text-sm text-stone-400 mt-8">All plans include a 14-day free trial. No credit card required.</p>
+        <p className="text-center text-sm text-stone-400 mt-8">Pro and Plus include a 14-day free trial. No credit card required.</p>
       </section>
     </div>
   );
