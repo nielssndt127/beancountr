@@ -54,6 +54,14 @@ export default function HomePage() {
             </div>
             <p className="text-sm mt-4" style={{ color: MUTED }}>No credit card required · Free forever for 1 client</p>
           </div>
+          {/* Hero illustration */}
+          <div className="flex-1 flex items-center justify-center lg:justify-end">
+            <img
+              src="/hero-illustration.png"
+              alt="Beancountr ledger illustration"
+              style={{ width: "420px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.4))" }}
+            />
+          </div>
         </div>
       </section>
 
