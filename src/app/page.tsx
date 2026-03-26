@@ -202,7 +202,7 @@ export default function HomePage() {
       <footer className="py-8 px-6" style={{ background: CHARCOAL, borderTop: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <span style={{ fontFamily: "var(--font-display)", color: CREAM, fontSize: "1.25rem" }}>Beancountr</span>
+            <img src="/WordmarkAlt.png" alt="Beancountr" style={{ height: "60px", objectFit: "contain" }} />
           </Link>
           <p className="text-sm" style={{ color: MUTED }}>Built for UK freelancers. Planning estimates only, not tax advice.</p>
           <div className="flex items-center gap-6">
