@@ -8,6 +8,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Plan {
+  FREE
+  PRO
+}
+
 enum BusinessType {
   SOLE_TRADER
   LIMITED_COMPANY
@@ -31,8 +36,11 @@ model User {
   pensionRate    Float        @default(0.10)
   invoicePrefix  String       @default("INV")
   paymentTerms   Int          @default(30)
-  invoiceNotes   String?
-  createdAt      DateTime     @default(now())
+  invoiceNotes         String?
+  plan                 Plan         @default(FREE)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
   clients     Client[]

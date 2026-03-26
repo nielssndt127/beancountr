@@ -210,6 +210,7 @@ export default function HomePage() {
           <p className="text-sm text-stone-400">Built for UK freelancers. Planning estimates only, not tax advice.</p>
           <div className="flex items-center gap-6">
             <Link href="/pricing" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Pricing</Link>
+            <Link href="/privacy" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Privacy</Link>
             <Link href="/login" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Log in</Link>
           </div>
         </div>
