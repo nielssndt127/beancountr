@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { createTimeEntry, updateTimeEntry, deleteTimeEntry } from "@/server/actions/time-entries";
 import { createClientByName } from "@/server/actions/clients";
-import { Clock, Plus, Pencil, Trash2, Play, Pause, Square } from "lucide-react";
+import { Clock, Plus, Pencil, Trash2, Play, Pause, Square, AlertCircle } from "lucide-react";
 
 type Client = { id: string; name: string };
 type TimeEntry = {
@@ -24,7 +25,6 @@ function toNum(v: number | { toNumber: () => number }): number {
   if (typeof v === "object" && "toNumber" in v) return v.toNumber();
   return v as number;
 }
-
 function fmt(amount: number) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(amount);
 }
@@ -48,7 +48,6 @@ function fmtSeconds(secs: number): string {
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent";
 const ringStyle = { "--tw-ring-color": "oklch(0.62 0.22 195)" } as React.CSSProperties;
 
-// ---- Toggl Timer ----
 type TimerState = "idle" | "running" | "paused";
 
 function LiveTimer({
@@ -66,31 +65,18 @@ function LiveTimer({
 
   useEffect(() => {
     if (timerState === "running") {
-      intervalRef.current = setInterval(() => {
-        setElapsed((e) => e + 1);
-      }, 1000);
+      intervalRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [timerState]);
 
-  function handleStart() {
-    setTimerState("running");
-  }
-  function handlePause() {
-    setTimerState("paused");
-  }
-  function handleResume() {
-    setTimerState("running");
-  }
   function handleStop() {
-    setTimerState("idle");
     const secs = elapsed;
     const desc = description;
     const name = clientName;
+    setTimerState("idle");
     setElapsed(0);
     setDescription("");
     setClientName("");
@@ -131,50 +117,29 @@ function LiveTimer({
           >
             {fmtSeconds(elapsed)}
           </span>
-
           <div className="flex items-center gap-2">
             {timerState === "idle" && (
-              <button
-                onClick={handleStart}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                style={{ background: "oklch(0.55 0.18 145)" }}
-              >
+              <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.55 0.18 145)" }}>
                 <Play className="w-4 h-4" /> Start
               </button>
             )}
             {timerState === "running" && (
               <>
-                <button
-                  onClick={handlePause}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: "oklch(0.75 0.18 85)" }}
-                >
+                <button onClick={() => setTimerState("paused")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.75 0.18 85)" }}>
                   <Pause className="w-4 h-4" /> Pause
                 </button>
-                <button
-                  onClick={handleStop}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: "oklch(0.60 0.22 25)" }}
-                >
-                  <Square className="w-4 h-4" /> Stop
+                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.60 0.22 25)" }}>
+                  <Square className="w-4 h-4" /> Stop & Log
                 </button>
               </>
             )}
             {timerState === "paused" && (
               <>
-                <button
-                  onClick={handleResume}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: "oklch(0.55 0.18 145)" }}
-                >
+                <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.55 0.18 145)" }}>
                   <Play className="w-4 h-4" /> Resume
                 </button>
-                <button
-                  onClick={handleStop}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: "oklch(0.60 0.22 25)" }}
-                >
-                  <Square className="w-4 h-4" /> Stop
+                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.60 0.22 25)" }}>
+                  <Square className="w-4 h-4" /> Stop & Log
                 </button>
               </>
             )}
@@ -185,29 +150,30 @@ function LiveTimer({
   );
 }
 
-// ---- Main Component ----
 export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[]; clients: Client[] }) {
+  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Pre-fill state for timer stop
   const [prefill, setPrefill] = useState<{
     description: string;
-    clientId: string;
+    clientName: string;
     hours: string;
     date: string;
   } | null>(null);
 
-  // Entry type toggle in modal
   const [entryType, setEntryType] = useState<"HOURLY" | "DAILY">("HOURLY");
 
   const totalValue = timeEntries.reduce((sum, e) => sum + entryValue(e), 0);
   const totalHours = timeEntries.reduce((sum, e) => sum + e.hours + toNum(e.days) * 8, 0);
 
-  function openNewForm(pre?: { description: string; clientId: string; hours: string; date: string }) {
+  function openNewForm(pre?: { description: string; clientName: string; hours: string; date: string }) {
     setPrefill(pre ?? null);
     setEntryType("HOURLY");
+    setError(null);
     setShowForm(true);
   }
 
@@ -216,55 +182,77 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
     setEditingEntry(null);
     setPrefill(null);
     setEntryType("HOURLY");
+    setError(null);
   }
 
   function handleEditOpen(entry: TimeEntry) {
+    setError(null);
     setEditingEntry(entry);
     setEntryType((entry.entryType as "HOURLY" | "DAILY") || "HOURLY");
   }
 
-  async function handleTimerStop(description: string, clientName: string, seconds: number) {
-    const hours = (seconds / 3600).toFixed(2);
+  // Timer stop — opens form immediately with exact seconds, no server call
+  function handleTimerStop(description: string, clientName: string, seconds: number) {
+    const hours = (seconds / 3600).toFixed(4);
     const date = new Date().toISOString().split("T")[0];
-    let clientId = "";
-    if (clientName.trim()) {
-      const client = await createClientByName(clientName.trim());
-      clientId = client.id;
-    }
-    openNewForm({ description, clientId, hours, date });
+    openNewForm({ description, clientName, hours, date });
   }
 
   async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const clientName = fd.get("clientName") as string;
-    if (clientName?.trim()) {
-      const client = await createClientByName(clientName.trim());
-      fd.set("clientId", client.id);
+    setLoading(true);
+    setError(null);
+    try {
+      const fd = new FormData(e.currentTarget);
+      const clientName = fd.get("clientName") as string;
+      if (clientName?.trim()) {
+        const client = await createClientByName(clientName.trim());
+        fd.set("clientId", client.id);
+      }
+      fd.set("entryType", entryType);
+      await createTimeEntry(fd);
+      closeModal();
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to log time. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    fd.set("entryType", entryType);
-    await createTimeEntry(fd);
-    closeModal();
   }
 
   async function handleUpdate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!editingEntry) return;
-    const fd = new FormData(e.currentTarget);
-    const clientName = fd.get("clientName") as string;
-    if (clientName?.trim()) {
-      const client = await createClientByName(clientName.trim());
-      fd.set("clientId", client.id);
+    setLoading(true);
+    setError(null);
+    try {
+      const fd = new FormData(e.currentTarget);
+      const clientName = fd.get("clientName") as string;
+      if (clientName?.trim()) {
+        const client = await createClientByName(clientName.trim());
+        fd.set("clientId", client.id);
+      }
+      fd.set("entryType", entryType);
+      await updateTimeEntry(editingEntry.id, fd);
+      closeModal();
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    fd.set("entryType", entryType);
-    await updateTimeEntry(editingEntry.id, fd);
-    closeModal();
   }
 
   async function handleDelete(id: string) {
     setDeleting(id);
-    await deleteTimeEntry(id);
-    setDeleting(null);
+    try {
+      await deleteTimeEntry(id);
+      router.refresh();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    } finally {
+      setDeleting(null);
+    }
   }
 
   const modal = showForm || editingEntry;
@@ -288,7 +276,6 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
         </button>
       </div>
 
-      {/* Live Timer */}
       <LiveTimer clients={clients} onStop={handleTimerStop} />
 
       {timeEntries.length === 0 ? (
@@ -311,15 +298,9 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                   <div className="flex items-center gap-4">
                     <div className="text-center w-12">
                       {isDaily ? (
-                        <>
-                          <p className="text-lg font-bold text-stone-900 font-data">{daysNum}</p>
-                          <p className="text-xs text-stone-400">days</p>
-                        </>
+                        <><p className="text-lg font-bold text-stone-900 font-data">{daysNum}</p><p className="text-xs text-stone-400">days</p></>
                       ) : (
-                        <>
-                          <p className="text-lg font-bold text-stone-900 font-data">{entry.hours}</p>
-                          <p className="text-xs text-stone-400">hrs</p>
-                        </>
+                        <><p className="text-lg font-bold text-stone-900 font-data">{entry.hours}</p><p className="text-xs text-stone-400">hrs</p></>
                       )}
                     </div>
                     <div>
@@ -331,18 +312,18 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-sm font-semibold text-stone-800 font-data">{fmt(entryValue(entry))}</p>
-                      {isDaily ? (
-                        <p className="text-xs text-stone-400">{fmt(dayRateNum)}/day</p>
-                      ) : (
-                        <p className="text-xs text-stone-400">{fmt(entry.rate)}/hr</p>
-                      )}
+                      {isDaily ? <p className="text-xs text-stone-400">{fmt(dayRateNum)}/day</p> : <p className="text-xs text-stone-400">{fmt(entry.rate)}/hr</p>}
                       {entry.invoiceId && <p className="text-xs text-emerald-500 mt-0.5">Invoiced</p>}
                     </div>
                     <div className="flex items-center gap-1">
                       <button onClick={() => handleEditOpen(entry)} className="p-2 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(entry.id)} disabled={deleting === entry.id} className="p-2 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50">
+                      <button
+                        onClick={() => handleDelete(entry.id)}
+                        disabled={deleting === entry.id}
+                        className="p-2 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -362,24 +343,23 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
               <h2 className="font-semibold text-stone-900">{editData ? "Edit time entry" : "Log time"}</h2>
             </div>
             <form onSubmit={editData ? handleUpdate : handleCreate} className="p-6 space-y-4">
-              {/* Entry type toggle */}
+
+              {error && (
+                <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 text-red-700 text-sm">
+                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Entry type</label>
                 <div className="flex rounded-xl border border-stone-200 overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => setEntryType("HOURLY")}
-                    className="flex-1 py-2 text-sm font-medium transition-colors"
-                    style={entryType === "HOURLY" ? { background: "oklch(0.62 0.22 195)", color: "white" } : { background: "white", color: "oklch(0.4 0 0)" }}
-                  >
+                  <button type="button" onClick={() => setEntryType("HOURLY")} className="flex-1 py-2 text-sm font-medium transition-colors"
+                    style={entryType === "HOURLY" ? { background: "oklch(0.62 0.22 195)", color: "white" } : { background: "white", color: "oklch(0.4 0 0)" }}>
                     Hourly
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setEntryType("DAILY")}
-                    className="flex-1 py-2 text-sm font-medium transition-colors"
-                    style={entryType === "DAILY" ? { background: "oklch(0.62 0.22 195)", color: "white" } : { background: "white", color: "oklch(0.4 0 0)" }}
-                  >
+                  <button type="button" onClick={() => setEntryType("DAILY")} className="flex-1 py-2 text-sm font-medium transition-colors"
+                    style={entryType === "DAILY" ? { background: "oklch(0.62 0.22 195)", color: "white" } : { background: "white", color: "oklch(0.4 0 0)" }}>
                     Daily
                   </button>
                 </div>
@@ -390,7 +370,7 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                 <input
                   list="modal-clients"
                   name="clientName"
-                  defaultValue={prefill?.clientId ? clients.find(c => c.id === prefill.clientId)?.name ?? "" : editData?.client.name ?? ""}
+                  defaultValue={prefill?.clientName ?? editData?.client.name ?? ""}
                   required
                   placeholder="Type client name or pick existing"
                   className={inputClass}
@@ -400,10 +380,12 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                   {clients.map((c) => <option key={c.id} value={c.name} />)}
                 </datalist>
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Project / Description</label>
                 <input name="project" defaultValue={prefill?.description ?? editData?.project ?? ""} placeholder="e.g. Website redesign" className={inputClass} style={ringStyle} />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Date *</label>
                 <input name="date" type="date" defaultValue={prefill?.date ?? (editData ? toDateInput(editData.date) : new Date().toISOString().split("T")[0])} required className={inputClass} style={ringStyle} />
@@ -413,7 +395,7 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1.5">Hours *</label>
-                    <input name="hours" type="number" step="0.25" min="0.25" defaultValue={prefill?.hours ?? editData?.hours ?? "1"} required className={inputClass} style={ringStyle} />
+                    <input name="hours" type="number" step="0.01" min="0" defaultValue={prefill?.hours ?? editData?.hours ?? "1"} required className={inputClass} style={ringStyle} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1.5">Hourly rate (£) *</label>
@@ -437,12 +419,13 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Notes</label>
                 <input name="notes" defaultValue={editData?.notes ?? ""} placeholder="Optional note" className={inputClass} style={ringStyle} />
               </div>
+
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={closeModal} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
                   Cancel
                 </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.62 0.22 195)" }}>
-                  {editData ? "Save changes" : "Log time"}
+                <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60" style={{ background: "oklch(0.62 0.22 195)" }}>
+                  {loading ? "Saving…" : editData ? "Save changes" : "Log time"}
                 </button>
               </div>
             </form>
