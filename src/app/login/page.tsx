@@ -32,7 +32,7 @@ export default function LoginPage() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12" style={{ background: "oklch(0.72 0.22 48)" }}>
         <Link href="/" className="flex items-center">
-          <img src="/Wordmark.png" alt="Beancountr" style={{ height: "52px", objectFit: "contain" }} />
+          <img src="/Wordmark.png" alt="Beancountr" style={{ height: "67px", objectFit: "contain" }} />
         </Link>
         <div>
           <blockquote className="text-white text-2xl font-medium leading-relaxed mb-6">
@@ -54,7 +54,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <div className="lg:hidden mb-8 flex justify-center">
             <Link href="/">
-              <img src="/Wordmark.png" alt="Beancountr" style={{ width: "168px", height: "51px", objectFit: "contain" }} />
+              <img src="/Wordmark.png" alt="Beancountr" style={{ width: "220px", height: "67px", objectFit: "contain" }} />
             </Link>
           </div>
 

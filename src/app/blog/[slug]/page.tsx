@@ -74,7 +74,7 @@ export default async function BlogPostPage({
             <img
               src="/Wordmark.png"
               alt="Beancountr"
-              style={{ width: "168px", height: "51px", objectFit: "contain" }}
+              style={{ width: "220px", height: "67px", objectFit: "contain" }}
             />
           </Link>
           <div className="hidden md:flex items-center gap-8">

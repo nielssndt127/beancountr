@@ -8,7 +8,7 @@ export default function PrivacyPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <img src="/Wordmark.png" alt="Beancountr" style={{ width: "168px", height: "51px", objectFit: "contain" }} />
+            <img src="/Wordmark.png" alt="Beancountr" style={{ width: "220px", height: "67px", objectFit: "contain" }} />
           </Link>
           <Link href="/signup" className="text-sm font-bold text-white px-4 py-2 rounded-lg" style={{ background: ORANGE }}>
             Sign up free

@@ -38,7 +38,7 @@ export function AppSidebar() {
       {/* Wordmark */}
       <div className="px-4 py-3 border-b border-stone-100">
         <Link href="/app/dashboard" className="flex items-center">
-          <img src="/Wordmark.png" alt="Beancountr" style={{ width: "168px", height: "51px", objectFit: "contain" }} />
+          <img src="/Wordmark.png" alt="Beancountr" style={{ width: "220px", height: "67px", objectFit: "contain" }} />
         </Link>
       </div>
 
