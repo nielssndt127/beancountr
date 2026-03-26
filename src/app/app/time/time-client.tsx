@@ -45,11 +45,11 @@ function fmtSeconds(secs: number): string {
   return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
 }
 
-const CREAM = "oklch(0.94 0.025 80)";
-const CHARCOAL = "oklch(0.16 0.008 80)";
-const CARD = "oklch(0.22 0.008 80)";
-const BORDER = "oklch(0.28 0.008 80)";
-const MUTED = "oklch(0.65 0.01 80)";
+const CREAM = "oklch(0.97 0.015 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)"; // dark text
+const CARD = "oklch(0.97 0.015 80)";
+const BORDER = "oklch(0.88 0.015 80)";
+const MUTED = "oklch(0.45 0.01 80)";
 
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
 const inputStyle = { background: CARD, border: `1px solid ${BORDER}`, color: CREAM, "--tw-ring-color": CREAM } as React.CSSProperties;
