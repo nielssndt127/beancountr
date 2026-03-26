@@ -38,7 +38,7 @@ export default function SignupPage() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12" style={{ background: "oklch(0.72 0.22 48)" }}>
         <Link href="/" className="flex items-center">
-          <img src="/Wordmark.png" alt="Beancountr" style={{ height: "67px", objectFit: "contain" }} />
+          <img src="/Wordmark.png" alt="Beancountr" style={{ height: "92px", objectFit: "contain" }} />
         </Link>
         <div className="space-y-4">
           <p className="text-white/80 text-sm font-medium uppercase tracking-wide">What you get for free</p>
@@ -62,7 +62,7 @@ export default function SignupPage() {
         <div className="w-full max-w-sm">
           <div className="lg:hidden mb-8 flex justify-center">
             <Link href="/">
-              <img src="/Wordmark.png" alt="Beancountr" style={{ width: "220px", height: "67px", objectFit: "contain" }} />
+              <img src="/Wordmark.png" alt="Beancountr" style={{ width: "300px", height: "92px", objectFit: "contain" }} />
             </Link>
           </div>
 

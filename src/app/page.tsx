@@ -17,7 +17,7 @@ export default function HomePage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <img src="/Wordmark.png" alt="Beancountr" style={{ width: "220px", height: "67px", objectFit: "contain" }} />
+            <img src="/Wordmark.png" alt="Beancountr" style={{ width: "300px", height: "92px", objectFit: "contain" }} />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link href="/pricing" className="text-sm text-stone-600 hover:text-stone-900 transition-colors">Pricing</Link>
