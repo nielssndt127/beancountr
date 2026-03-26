@@ -32,9 +32,7 @@ export default function LoginPage() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12" style={{ background: "oklch(0.72 0.22 48)" }}>
         <Link href="/" className="flex items-center">
-          <span className="text-3xl font-extrabold tracking-tight text-white">
-            bean<span style={{ color: "oklch(0.85 0.18 88)" }}>countr</span>
-          </span>
+          <img src="/Wordmark.png" alt="Beancountr" style={{ height: "52px", objectFit: "contain" }} />
         </Link>
         <div>
           <blockquote className="text-white text-2xl font-medium leading-relaxed mb-6">
