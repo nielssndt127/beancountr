@@ -35,6 +35,22 @@ export async function updateClient(id: string, formData: FormData) {
   revalidatePath("/app/clients");
 }
 
+export async function createClientByName(name: string): Promise<{ id: string; name: string }> {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+  // Return existing client if name matches
+  const existing = await prisma.client.findFirst({
+    where: { userId: user.id, name: { equals: name, mode: "insensitive" } },
+  });
+  if (existing) return { id: existing.id, name: existing.name };
+  const client = await prisma.client.create({
+    data: { userId: user.id, name },
+  });
+  revalidatePath("/app/clients");
+  revalidatePath("/app/time");
+  return { id: client.id, name: client.name };
+}
+
 export async function deleteClient(id: string) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");

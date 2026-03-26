@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createTimeEntry, updateTimeEntry, deleteTimeEntry } from "@/server/actions/time-entries";
+import { createClientByName } from "@/server/actions/clients";
 import { Clock, Plus, Pencil, Trash2, Play, Pause, Square } from "lucide-react";
 
 type Client = { id: string; name: string };
@@ -55,12 +56,12 @@ function LiveTimer({
   onStop,
 }: {
   clients: Client[];
-  onStop: (desc: string, clientId: string, seconds: number) => void;
+  onStop: (desc: string, clientName: string, seconds: number) => void;
 }) {
   const [timerState, setTimerState] = useState<TimerState>("idle");
-  const [elapsed, setElapsed] = useState(0); // seconds
+  const [elapsed, setElapsed] = useState(0);
   const [description, setDescription] = useState("");
-  const [clientId, setClientId] = useState("");
+  const [clientName, setClientName] = useState("");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -89,11 +90,11 @@ function LiveTimer({
     setTimerState("idle");
     const secs = elapsed;
     const desc = description;
-    const cid = clientId;
+    const name = clientName;
     setElapsed(0);
     setDescription("");
-    setClientId("");
-    onStop(desc, cid, secs);
+    setClientName("");
+    onStop(desc, name, secs);
   }
 
   return (
@@ -109,18 +110,18 @@ function LiveTimer({
             className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent bg-white disabled:bg-stone-50 disabled:text-stone-500"
             style={ringStyle}
           />
-          <select
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
+          <input
+            list="timer-clients"
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
             disabled={timerState !== "idle"}
+            placeholder="Client name (type or pick existing)"
             className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent bg-white disabled:bg-stone-50 disabled:text-stone-500"
             style={ringStyle}
-          >
-            <option value="">Select client…</option>
-            {clients.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
+          />
+          <datalist id="timer-clients">
+            {clients.map((c) => <option key={c.id} value={c.name} />)}
+          </datalist>
         </div>
 
         <div className="flex flex-col items-center gap-3 sm:ml-4">
@@ -222,15 +223,25 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
     setEntryType((entry.entryType as "HOURLY" | "DAILY") || "HOURLY");
   }
 
-  function handleTimerStop(description: string, clientId: string, seconds: number) {
+  async function handleTimerStop(description: string, clientName: string, seconds: number) {
     const hours = (seconds / 3600).toFixed(2);
     const date = new Date().toISOString().split("T")[0];
+    let clientId = "";
+    if (clientName.trim()) {
+      const client = await createClientByName(clientName.trim());
+      clientId = client.id;
+    }
     openNewForm({ description, clientId, hours, date });
   }
 
   async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const clientName = fd.get("clientName") as string;
+    if (clientName?.trim()) {
+      const client = await createClientByName(clientName.trim());
+      fd.set("clientId", client.id);
+    }
     fd.set("entryType", entryType);
     await createTimeEntry(fd);
     closeModal();
@@ -240,6 +251,11 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
     e.preventDefault();
     if (!editingEntry) return;
     const fd = new FormData(e.currentTarget);
+    const clientName = fd.get("clientName") as string;
+    if (clientName?.trim()) {
+      const client = await createClientByName(clientName.trim());
+      fd.set("clientId", client.id);
+    }
     fd.set("entryType", entryType);
     await updateTimeEntry(editingEntry.id, fd);
     closeModal();
@@ -371,10 +387,18 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
 
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Client *</label>
-                <select name="clientId" defaultValue={prefill?.clientId ?? editData?.client.id} required className={inputClass} style={ringStyle}>
-                  <option value="">Select client…</option>
-                  {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <input
+                  list="modal-clients"
+                  name="clientName"
+                  defaultValue={prefill?.clientId ? clients.find(c => c.id === prefill.clientId)?.name ?? "" : editData?.client.name ?? ""}
+                  required
+                  placeholder="Type client name or pick existing"
+                  className={inputClass}
+                  style={ringStyle}
+                />
+                <datalist id="modal-clients">
+                  {clients.map((c) => <option key={c.id} value={c.name} />)}
+                </datalist>
               </div>
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Project / Description</label>
