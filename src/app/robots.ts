@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/app/", "/api/"],
       },
     ],
-    sitemap: "https://beancountr.co.uk/sitemap.xml",
+    sitemap: "https://www.beancountr.co.uk/sitemap.xml",
   };
 }
