@@ -90,7 +90,7 @@ export default async function DashboardPage() {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium uppercase tracking-wide" style={{ color: MUTED }}>Income</span>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ACCENT }}>
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
           <p className="text-xs mt-1" style={{ color: MUTED }}>This month</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium uppercase tracking-wide" style={{ color: MUTED }}>Expenses</span>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ACCENT }}>
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
           <p className="text-xs mt-1" style={{ color: MUTED }}>This month</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium uppercase tracking-wide" style={{ color: MUTED }}>Profit</span>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ACCENT }}>
@@ -123,7 +123,7 @@ export default async function DashboardPage() {
           <p className="text-xs mt-1" style={{ color: MUTED }}>After expenses</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.93 0.04 80)", border: `1px solid oklch(0.86 0.04 80)` }}>
+        <div className="rounded-2xl p-5" style={{ background: "oklch(0.93 0.04 80)", border: `1px solid oklch(0.86 0.04 80)` }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(0.40 0.04 80)" }}>Tax reserve</span>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ACCENT }}>
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
           <p className="text-xs mt-1" style={{ color: "oklch(0.40 0.04 80)" }}>Set aside · {Math.round(user.taxReserveRate * 100)}% of profit</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.93 0.03 230)", border: `1px solid oklch(0.86 0.05 230)` }}>
+        <div className="rounded-2xl p-5" style={{ background: "oklch(0.93 0.03 230)", border: `1px solid oklch(0.86 0.05 230)` }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(0.35 0.06 230)" }}>Pension</span>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ACCENT }}>
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
           <p className="text-xs mt-1" style={{ color: "oklch(0.35 0.06 230)" }}>Set aside · {Math.round(user.pensionRate * 100)}% of profit</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.93 0.05 145)", border: `1px solid oklch(0.86 0.07 145)` }}>
+        <div className="rounded-2xl p-5" style={{ background: "oklch(0.93 0.05 145)", border: `1px solid oklch(0.86 0.07 145)` }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(0.30 0.08 145)" }}>Safe to spend</span>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ACCENT }}>
@@ -158,7 +158,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${BORDER}` }}>
             <h2 className="font-semibold text-sm" style={{ color: TEXT }}>Recent invoices</h2>
             <Link href="/app/invoices" className="text-xs font-medium transition-colors" style={{ color: MUTED }}>View all</Link>
@@ -189,7 +189,7 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${BORDER}` }}>
             <h2 className="font-semibold text-sm" style={{ color: TEXT }}>Recent time entries</h2>
             <Link href="/app/time" className="text-xs font-medium transition-colors" style={{ color: MUTED }}>View all</Link>

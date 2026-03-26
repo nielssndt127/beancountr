@@ -91,7 +91,7 @@ function LiveTimer({
   }
 
   return (
-    <div className="rounded-2xl card-shadow p-6" style={{ background: CARD, borderLeft: `4px solid ${CREAM}`, border: `1px solid ${BORDER}` }}>
+    <div className="rounded-2xl p-6" style={{ background: CARD, borderLeft: `4px solid ${CREAM}`, border: `1px solid ${BORDER}` }}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 space-y-3">
           <input
@@ -286,7 +286,7 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
       <LiveTimer clients={clients} onStop={handleTimerStop} />
 
       {timeEntries.length === 0 ? (
-        <div className="rounded-2xl card-shadow p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: BORDER }}>
             <Clock className="w-6 h-6" style={{ color: MUTED }} />
           </div>
@@ -294,7 +294,7 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
           <p className="text-sm" style={{ color: MUTED }}>Start the timer above or log time manually.</p>
         </div>
       ) : (
-        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div>
             {timeEntries.map((entry) => {
               const isDaily = entry.entryType === "DAILY";
@@ -346,7 +346,7 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="rounded-2xl card-shadow w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="rounded-2xl w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
             <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
               <h2 className="font-semibold" style={{ color: CREAM }}>{editData ? "Edit time entry" : "Log time"}</h2>
             </div>

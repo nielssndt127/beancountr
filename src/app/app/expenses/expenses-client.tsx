@@ -82,7 +82,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
       </div>
 
       {expenses.length === 0 ? (
-        <div className="rounded-2xl card-shadow p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: BORDER }}>
             <Receipt className="w-6 h-6" style={{ color: MUTED }} />
           </div>
@@ -90,7 +90,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
           <p className="text-sm" style={{ color: MUTED }}>Track your business expenses here.</p>
         </div>
       ) : (
-        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div>
             {expenses.map((expense) => (
               <div key={expense.id} className="flex items-center justify-between px-6 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
@@ -132,7 +132,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
 
       {modal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="rounded-2xl card-shadow w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="rounded-2xl w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
             <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
               <h2 className="font-semibold" style={{ color: CREAM }}>{editData ? "Edit expense" : "Add expense"}</h2>
             </div>

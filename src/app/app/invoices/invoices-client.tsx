@@ -124,7 +124,7 @@ export function InvoicesClient({
       </div>
 
       {invoices.length === 0 ? (
-        <div className="rounded-2xl card-shadow p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center mx-auto mb-4">
             <FileText className="w-6 h-6 text-stone-300" />
           </div>
@@ -132,7 +132,7 @@ export function InvoicesClient({
           <p className="text-sm text-stone-400">Create your first invoice to start getting paid.</p>
         </div>
       ) : (
-        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="divide-y divide-stone-50">
             {invoices.map((invoice) => {
               const cfg = statusConfig[invoice.status];
@@ -154,7 +154,7 @@ export function InvoicesClient({
                       <button className="flex items-center gap-1 text-xs text-stone-400 hover:text-stone-600 px-2 py-1.5 rounded-lg hover:bg-stone-100 transition-colors">
                         Status <ChevronDown className="w-3 h-3" />
                       </button>
-                      <div className="absolute right-0 top-full mt-1 bg-white rounded-xl card-shadow border border-stone-100 py-1 w-36 hidden group-hover:block z-10">
+                      <div className="absolute right-0 top-full mt-1 bg-white rounded-xl border border-stone-100 py-1 w-36 hidden group-hover:block z-10">
                         {(["DRAFT", "SENT", "PAID", "OVERDUE"] as InvoiceStatus[]).map((s) => (
                           <button
                             key={s}
@@ -184,7 +184,7 @@ export function InvoicesClient({
       {/* New invoice modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="rounded-2xl card-shadow w-full max-w-lg my-8">
+          <div className="rounded-2xl w-full max-w-lg my-8">
             <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
               <h2 className="font-semibold text-stone-900">New invoice</h2>
               <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors">

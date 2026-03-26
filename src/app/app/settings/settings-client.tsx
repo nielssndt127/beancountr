@@ -77,7 +77,7 @@ export function SettingsClient({ user }: { user: User }) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Your Business */}
-        <div className="rounded-2xl card-shadow p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <h2 className="font-semibold" style={{ color: CREAM }}>Your Business</h2>
           <div>
             <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Full name</label>
@@ -111,7 +111,7 @@ export function SettingsClient({ user }: { user: User }) {
         </div>
 
         {/* Payment Details */}
-        <div className="rounded-2xl card-shadow p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div>
             <h2 className="font-semibold" style={{ color: CREAM }}>Payment Details</h2>
             <p className="text-xs text-stone-400 mt-1">These details can be shown on your invoices.</p>
@@ -147,7 +147,7 @@ export function SettingsClient({ user }: { user: User }) {
         </div>
 
         {/* Tax & Pension */}
-        <div className="rounded-2xl card-shadow p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div>
             <h2 className="font-semibold" style={{ color: CREAM }}>Tax & pension reserves</h2>
             <p className="text-xs text-stone-400 mt-1">Planning estimates only — not formal tax advice.</p>
@@ -185,7 +185,7 @@ export function SettingsClient({ user }: { user: User }) {
         </div>
 
         {/* Invoices */}
-        <div className="rounded-2xl card-shadow p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <h2 className="font-semibold" style={{ color: CREAM }}>Invoice defaults</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -252,7 +252,7 @@ export function SettingsClient({ user }: { user: User }) {
       {/* Delete confirmation modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl card-shadow w-full max-w-md p-7">
+          <div className="bg-white rounded-2xl w-full max-w-md p-7">
             <h3 className="text-lg font-bold text-stone-900 mb-2">Delete your account?</h3>
             <p className="text-sm leading-relaxed mb-5" style={{ color: MUTED }}>
               This will permanently delete all your data including clients, invoices, time entries

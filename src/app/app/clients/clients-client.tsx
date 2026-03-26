@@ -66,7 +66,7 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
       </div>
 
       {clients.length === 0 ? (
-        <div className="rounded-2xl card-shadow p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: BORDER }}>
             <Users className="w-6 h-6" style={{ color: MUTED }} />
           </div>
@@ -74,7 +74,7 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
           <p className="text-sm" style={{ color: MUTED }}>Add your first client to get started.</p>
         </div>
       ) : (
-        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div>
             {clients.map((client) => (
               <div key={client.id} className="flex items-center justify-between px-6 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
@@ -133,7 +133,7 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="rounded-2xl card-shadow w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="rounded-2xl w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
             <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
               <h2 className="font-semibold" style={{ color: CREAM }}>{editData ? "Edit client" : "New client"}</h2>
             </div>
