@@ -35,8 +35,14 @@ const statusConfig: Record<InvoiceStatus, { label: string; className: string }> 
   OVERDUE: { label: "Overdue", className: "bg-red-50 text-red-600" },
 };
 
-const inputClass = "w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent";
-const ringStyle = { "--tw-ring-color": "oklch(0.62 0.22 195)" } as React.CSSProperties;
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
+const inputStyle = { background: CARD, border: `1px solid ${BORDER}`, color: CREAM, "--tw-ring-color": CREAM } as React.CSSProperties;
+const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
+const ringStyle = { "--tw-ring-color": "oklch(0.94 0.025 80)" } as React.CSSProperties;
 
 type FormLineItem = { description: string; quantity: string; unitPrice: string };
 
@@ -105,20 +111,20 @@ export function InvoicesClient({
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900">Invoices</h1>
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Invoices</h1>
           <p className="text-stone-400 text-sm mt-1">{invoices.length} invoice{invoices.length !== 1 ? "s" : ""}</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 text-sm font-semibold text-white px-4 py-2.5 rounded-xl transition-all hover:opacity-90"
-          style={{ background: "oklch(0.62 0.22 195)" }}
+          style={{ background: CREAM, color: CHARCOAL }}
         >
           <Plus className="w-4 h-4" /> New invoice
         </button>
       </div>
 
       {invoices.length === 0 ? (
-        <div className="bg-white rounded-2xl card-shadow p-12 text-center">
+        <div className="rounded-2xl card-shadow p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center mx-auto mb-4">
             <FileText className="w-6 h-6 text-stone-300" />
           </div>
@@ -126,7 +132,7 @@ export function InvoicesClient({
           <p className="text-sm text-stone-400">Create your first invoice to start getting paid.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl card-shadow overflow-hidden">
+        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="divide-y divide-stone-50">
             {invoices.map((invoice) => {
               const cfg = statusConfig[invoice.status];
@@ -178,7 +184,7 @@ export function InvoicesClient({
       {/* New invoice modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl card-shadow w-full max-w-lg my-8">
+          <div className="rounded-2xl card-shadow w-full max-w-lg my-8">
             <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
               <h2 className="font-semibold text-stone-900">New invoice</h2>
               <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors">
@@ -189,24 +195,24 @@ export function InvoicesClient({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">Client *</label>
-                  <select name="clientId" required className={inputClass} style={ringStyle}>
+                  <select name="clientId" required className={inputClass} style={inputStyle}>
                     <option value="">Select client…</option>
                     {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">Invoice number *</label>
-                  <input name="invoiceNumber" defaultValue={nextInvoiceNumber} required className={inputClass} style={ringStyle} />
+                  <input name="invoiceNumber" defaultValue={nextInvoiceNumber} required className={inputClass} style={inputStyle} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">Issue date *</label>
-                  <input name="issueDate" type="date" defaultValue={today} required className={inputClass} style={ringStyle} />
+                  <input name="issueDate" type="date" defaultValue={today} required className={inputClass} style={inputStyle} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-1.5">Due date *</label>
-                  <input name="dueDate" type="date" defaultValue={dueDefault} required className={inputClass} style={ringStyle} />
+                  <input name="dueDate" type="date" defaultValue={dueDefault} required className={inputClass} style={inputStyle} />
                 </div>
               </div>
 
@@ -221,7 +227,7 @@ export function InvoicesClient({
                         onChange={(e) => updateLineItem(i, "description", e.target.value)}
                         placeholder="Description"
                         className="flex-1 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
-                        style={ringStyle}
+                        style={inputStyle}
                       />
                       <input
                         value={li.quantity}
@@ -231,7 +237,7 @@ export function InvoicesClient({
                         min="0"
                         step="0.25"
                         className="w-16 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
-                        style={ringStyle}
+                        style={inputStyle}
                       />
                       <input
                         value={li.unitPrice}
@@ -241,7 +247,7 @@ export function InvoicesClient({
                         min="0"
                         step="0.01"
                         className="w-24 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
-                        style={ringStyle}
+                        style={inputStyle}
                       />
                       {lineItems.length > 1 && (
                         <button type="button" onClick={() => removeLineItem(i)} className="p-2 rounded-lg text-stone-300 hover:text-red-500 transition-colors mt-0.5">
@@ -251,7 +257,7 @@ export function InvoicesClient({
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={addLineItem} className="mt-2 text-xs font-medium flex items-center gap-1 transition-colors" style={{ color: "oklch(0.62 0.22 195)" }}>
+                <button type="button" onClick={addLineItem} className="mt-2 text-xs font-medium flex items-center gap-1 transition-colors" style={{ color: "oklch(0.94 0.025 80)" }}>
                   <Plus className="w-3.5 h-3.5" /> Add line item
                 </button>
               </div>
@@ -285,14 +291,14 @@ export function InvoicesClient({
 
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Notes</label>
-                <textarea name="notes" rows={2} placeholder="Payment instructions, thank you note…" className={`${inputClass} resize-none`} style={ringStyle} />
+                <textarea name="notes" rows={2} placeholder="Payment instructions, thank you note…" className={`${inputClass} resize-none`} style={inputStyle} />
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
                   Cancel
                 </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.62 0.22 195)" }}>
+                <button type="submit" className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90" style={{ background: "oklch(0.94 0.025 80)", color: "oklch(0.16 0.008 80)" }}>
                   Create invoice
                 </button>
               </div>

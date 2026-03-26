@@ -45,8 +45,15 @@ function fmtSeconds(secs: number): string {
   return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
 }
 
-const inputClass = "w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent";
-const ringStyle = { "--tw-ring-color": "oklch(0.62 0.22 195)" } as React.CSSProperties;
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
+
+const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
+const inputStyle = { background: CARD, border: `1px solid ${BORDER}`, color: CREAM, "--tw-ring-color": CREAM } as React.CSSProperties;
+const ringStyle = inputStyle;
 
 type TimerState = "idle" | "running" | "paused";
 
@@ -84,7 +91,7 @@ function LiveTimer({
   }
 
   return (
-    <div className="bg-white rounded-2xl card-shadow p-6" style={{ borderLeft: "4px solid oklch(0.72 0.22 48)" }}>
+    <div className="rounded-2xl card-shadow p-6" style={{ background: CARD, borderLeft: `4px solid ${CREAM}`, border: `1px solid ${BORDER}` }}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 space-y-3">
           <input
@@ -93,8 +100,8 @@ function LiveTimer({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="What are you working on?"
             disabled={timerState !== "idle"}
-            className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent bg-white disabled:bg-stone-50 disabled:text-stone-500"
-            style={ringStyle}
+            className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50"
+            style={inputStyle}
           />
           <input
             list="timer-clients"
@@ -102,8 +109,8 @@ function LiveTimer({
             onChange={(e) => setClientName(e.target.value)}
             disabled={timerState !== "idle"}
             placeholder="Client name (type or pick existing)"
-            className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent bg-white disabled:bg-stone-50 disabled:text-stone-500"
-            style={ringStyle}
+            className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent disabled:opacity-50"
+            style={inputStyle}
           />
           <datalist id="timer-clients">
             {clients.map((c) => <option key={c.id} value={c.name} />)}
@@ -113,32 +120,32 @@ function LiveTimer({
         <div className="flex flex-col items-center gap-3 sm:ml-4">
           <span
             className="font-mono text-4xl font-bold tracking-widest"
-            style={{ color: timerState === "idle" ? "oklch(0.72 0.35 48)" : timerState === "running" ? "oklch(0.72 0.22 48)" : "oklch(0.65 0.18 48)" }}
+            style={{ color: timerState === "idle" ? MUTED : timerState === "running" ? CREAM : "oklch(0.75 0.015 80)" }}
           >
             {fmtSeconds(elapsed)}
           </span>
           <div className="flex items-center gap-2">
             {timerState === "idle" && (
-              <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.55 0.18 145)" }}>
+              <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90" style={{ background: CREAM, color: CHARCOAL }}>
                 <Play className="w-4 h-4" /> Start
               </button>
             )}
             {timerState === "running" && (
               <>
-                <button onClick={() => setTimerState("paused")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.75 0.18 85)" }}>
+                <button onClick={() => setTimerState("paused")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90" style={{ background: BORDER, color: CREAM }}>
                   <Pause className="w-4 h-4" /> Pause
                 </button>
-                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.60 0.22 25)" }}>
+                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.50 0.15 25)", color: CREAM }}>
                   <Square className="w-4 h-4" /> Stop & Log
                 </button>
               </>
             )}
             {timerState === "paused" && (
               <>
-                <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.55 0.18 145)" }}>
+                <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: CREAM, color: CHARCOAL }}>
                   <Play className="w-4 h-4" /> Resume
                 </button>
-                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.60 0.22 25)" }}>
+                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.50 0.15 25)", color: CREAM }}>
                   <Square className="w-4 h-4" /> Stop & Log
                 </button>
               </>
@@ -262,15 +269,15 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900">Time entries</h1>
-          <p className="text-stone-400 text-sm mt-1">
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Time entries</h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
             <span className="font-data">{totalHours.toFixed(1)}h</span> logged · <span className="font-data">{fmt(totalValue)}</span> total
           </p>
         </div>
         <button
           onClick={() => openNewForm()}
-          className="flex items-center gap-2 text-sm font-semibold text-white px-4 py-2.5 rounded-xl transition-all hover:opacity-90"
-          style={{ background: "oklch(0.62 0.22 195)" }}
+          className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all hover:opacity-90"
+          style={{ background: CREAM, color: CHARCOAL }}
         >
           <Plus className="w-4 h-4" /> Log time
         </button>
@@ -279,50 +286,51 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
       <LiveTimer clients={clients} onStop={handleTimerStop} />
 
       {timeEntries.length === 0 ? (
-        <div className="bg-white rounded-2xl card-shadow p-12 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center mx-auto mb-4">
-            <Clock className="w-6 h-6 text-stone-300" />
+        <div className="rounded-2xl card-shadow p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: BORDER }}>
+            <Clock className="w-6 h-6" style={{ color: MUTED }} />
           </div>
-          <p className="font-medium text-stone-700 mb-1">No time entries yet</p>
-          <p className="text-sm text-stone-400">Start the timer above or log time manually.</p>
+          <p className="font-medium mb-1" style={{ color: CREAM }}>No time entries yet</p>
+          <p className="text-sm" style={{ color: MUTED }}>Start the timer above or log time manually.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl card-shadow overflow-hidden">
-          <div className="divide-y divide-stone-50">
+        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div>
             {timeEntries.map((entry) => {
               const isDaily = entry.entryType === "DAILY";
               const daysNum = toNum(entry.days);
               const dayRateNum = toNum(entry.dayRate);
               return (
-                <div key={entry.id} className="flex items-center justify-between px-6 py-4 hover:bg-stone-50/50 transition-colors">
+                <div key={entry.id} className="flex items-center justify-between px-6 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
                   <div className="flex items-center gap-4">
                     <div className="text-center w-12">
                       {isDaily ? (
-                        <><p className="text-lg font-bold text-stone-900 font-data">{daysNum}</p><p className="text-xs text-stone-400">days</p></>
+                        <><p className="text-lg font-bold font-data" style={{ color: CREAM }}>{daysNum}</p><p className="text-xs" style={{ color: MUTED }}>days</p></>
                       ) : (
-                        <><p className="text-lg font-bold text-stone-900 font-data">{entry.hours}</p><p className="text-xs text-stone-400">hrs</p></>
+                        <><p className="text-lg font-bold font-data" style={{ color: CREAM }}>{entry.hours}</p><p className="text-xs" style={{ color: MUTED }}>hrs</p></>
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-stone-900">{entry.project || "Untitled project"}</p>
-                      <p className="text-xs text-stone-400 mt-0.5">{entry.client.name} · {fmtDate(entry.date)}</p>
-                      {entry.notes && <p className="text-xs text-stone-400 mt-0.5 italic">{entry.notes}</p>}
+                      <p className="font-medium" style={{ color: CREAM }}>{entry.project || "Untitled project"}</p>
+                      <p className="text-xs mt-0.5" style={{ color: MUTED }}>{entry.client.name} · {fmtDate(entry.date)}</p>
+                      {entry.notes && <p className="text-xs mt-0.5 italic" style={{ color: MUTED }}>{entry.notes}</p>}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-stone-800 font-data">{fmt(entryValue(entry))}</p>
-                      {isDaily ? <p className="text-xs text-stone-400">{fmt(dayRateNum)}/day</p> : <p className="text-xs text-stone-400">{fmt(entry.rate)}/hr</p>}
-                      {entry.invoiceId && <p className="text-xs text-emerald-500 mt-0.5">Invoiced</p>}
+                      <p className="text-sm font-semibold font-data" style={{ color: CREAM }}>{fmt(entryValue(entry))}</p>
+                      {isDaily ? <p className="text-xs" style={{ color: MUTED }}>{fmt(dayRateNum)}/day</p> : <p className="text-xs" style={{ color: MUTED }}>{fmt(entry.rate)}/hr</p>}
+                      {entry.invoiceId && <p className="text-xs mt-0.5" style={{ color: "oklch(0.72 0.08 145)" }}>Invoiced</p>}
                     </div>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => handleEditOpen(entry)} className="p-2 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors">
+                      <button onClick={() => handleEditOpen(entry)} className="p-2 rounded-lg transition-colors" style={{ color: MUTED }}>
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(entry.id)}
                         disabled={deleting === entry.id}
-                        className="p-2 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                        className="p-2 rounded-lg transition-colors disabled:opacity-50"
+                        style={{ color: MUTED }}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -338,35 +346,35 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl card-shadow w-full max-w-md">
-            <div className="px-6 py-4 border-b border-stone-100">
-              <h2 className="font-semibold text-stone-900">{editData ? "Edit time entry" : "Log time"}</h2>
+          <div className="rounded-2xl card-shadow w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+            <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <h2 className="font-semibold" style={{ color: CREAM }}>{editData ? "Edit time entry" : "Log time"}</h2>
             </div>
             <form onSubmit={editData ? handleUpdate : handleCreate} className="p-6 space-y-4">
 
               {error && (
-                <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 text-red-700 text-sm">
+                <div className="flex items-start gap-2 p-3 rounded-xl text-sm" style={{ background: "oklch(0.25 0.05 25)", color: "oklch(0.72 0.15 25)" }}>
                   <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1.5">Entry type</label>
-                <div className="flex rounded-xl border border-stone-200 overflow-hidden">
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Entry type</label>
+                <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${BORDER}` }}>
                   <button type="button" onClick={() => setEntryType("HOURLY")} className="flex-1 py-2 text-sm font-medium transition-colors"
-                    style={entryType === "HOURLY" ? { background: "oklch(0.62 0.22 195)", color: "white" } : { background: "white", color: "oklch(0.4 0 0)" }}>
+                    style={entryType === "HOURLY" ? { background: CREAM, color: CHARCOAL } : { background: CARD, color: MUTED }}>
                     Hourly
                   </button>
                   <button type="button" onClick={() => setEntryType("DAILY")} className="flex-1 py-2 text-sm font-medium transition-colors"
-                    style={entryType === "DAILY" ? { background: "oklch(0.62 0.22 195)", color: "white" } : { background: "white", color: "oklch(0.4 0 0)" }}>
+                    style={entryType === "DAILY" ? { background: CREAM, color: CHARCOAL } : { background: CARD, color: MUTED }}>
                     Daily
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1.5">Client *</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Client *</label>
                 <input
                   list="modal-clients"
                   name="clientName"
@@ -382,49 +390,49 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1.5">Project / Description</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Project / Description</label>
                 <input name="project" defaultValue={prefill?.description ?? editData?.project ?? ""} placeholder="e.g. Website redesign" className={inputClass} style={ringStyle} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1.5">Date *</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Date *</label>
                 <input name="date" type="date" defaultValue={prefill?.date ?? (editData ? toDateInput(editData.date) : new Date().toISOString().split("T")[0])} required className={inputClass} style={ringStyle} />
               </div>
 
               {entryType === "HOURLY" ? (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Hours *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Hours *</label>
                     <input name="hours" type="number" step="0.01" min="0" defaultValue={prefill?.hours ?? editData?.hours ?? "1"} required className={inputClass} style={ringStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Hourly rate (£) *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Hourly rate (£) *</label>
                     <input name="rate" type="number" step="0.01" min="0" defaultValue={editData?.rate ?? "75"} required className={inputClass} style={ringStyle} />
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Days *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Days *</label>
                     <input name="days" type="number" step="0.5" min="0.5" defaultValue={editData ? toNum(editData.days) || "1" : "1"} required className={inputClass} style={ringStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">Day rate (£) *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Day rate (£) *</label>
                     <input name="dayRate" type="number" step="0.01" min="0" defaultValue={editData ? toNum(editData.dayRate) || "400" : "400"} required className={inputClass} style={ringStyle} />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1.5">Notes</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Notes</label>
                 <input name="notes" defaultValue={editData?.notes ?? ""} placeholder="Optional note" className={inputClass} style={ringStyle} />
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={closeModal} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
+                <button type="button" onClick={closeModal} className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
                   Cancel
                 </button>
-                <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60" style={{ background: "oklch(0.62 0.22 195)" }}>
+                <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60" style={{ background: CREAM, color: CHARCOAL }}>
                   {loading ? "Saving…" : editData ? "Save changes" : "Log time"}
                 </button>
               </div>

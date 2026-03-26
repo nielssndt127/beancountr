@@ -3,13 +3,12 @@ import { ArrowRight, BookOpen, Calendar, Clock } from "lucide-react";
 import { blogPosts } from "@/lib/blog-posts";
 import type { Metadata } from "next";
 
-const ORANGE = "oklch(0.72 0.22 48)";
-const ORANGE_LIGHT = "oklch(0.96 0.07 48)";
-const YELLOW_LIGHT = "oklch(0.97 0.07 85)";
-const TEAL = "oklch(0.55 0.22 195)";
-const TEAL_LIGHT = "oklch(0.94 0.07 195)";
-const PURPLE = "oklch(0.52 0.18 290)";
-const PURPLE_LIGHT = "oklch(0.95 0.06 290)";
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const CHARCOAL_MID = "oklch(0.20 0.008 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
 
 export const metadata: Metadata = {
   title: "Freelancer Finance Guides | Beancountr Blog",
@@ -18,16 +17,16 @@ export const metadata: Metadata = {
 };
 
 const CATEGORY_COLOURS: Record<string, { bg: string; text: string }> = {
-  Tax: { bg: ORANGE_LIGHT, text: ORANGE },
-  Invoicing: { bg: TEAL_LIGHT, text: TEAL },
-  Finance: { bg: PURPLE_LIGHT, text: PURPLE },
-  Business: { bg: YELLOW_LIGHT, text: "oklch(0.50 0.14 75)" },
-  Productivity: { bg: TEAL_LIGHT, text: TEAL },
-  "Getting Started": { bg: ORANGE_LIGHT, text: ORANGE },
+  Tax: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Invoicing: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Finance: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Business: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Productivity: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  "Getting Started": { bg: "oklch(0.26 0.008 80)", text: CREAM },
 };
 
 function categoryStyle(category: string) {
-  return CATEGORY_COLOURS[category] ?? { bg: ORANGE_LIGHT, text: ORANGE };
+  return CATEGORY_COLOURS[category] ?? { bg: "oklch(0.26 0.008 80)", text: CREAM };
 }
 
 const CATEGORIES = ["All", ...Array.from(new Set(blogPosts.map((p) => p.category)))];
@@ -45,33 +44,33 @@ export default async function BlogPage({
       : blogPosts.filter((p) => p.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: CHARCOAL }}>
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100">
+      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: CHARCOAL, borderBottom: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <img
               src="/Wordmark.png"
               alt="Beancountr"
-              style={{ width: "300px", height: "92px", objectFit: "contain" }}
+              style={{ width: "220px", height: "68px", objectFit: "contain" }}
             />
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm text-stone-600 hover:text-stone-900 transition-colors">
+            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>
               Pricing
             </Link>
-            <Link href="/blog" className="text-sm text-stone-900 font-semibold transition-colors">
+            <Link href="/blog" className="text-sm font-semibold transition-colors" style={{ color: CREAM }}>
               Blog
             </Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-stone-700 font-medium hover:text-stone-900 transition-colors">
+            <Link href="/login" className="text-sm font-medium transition-colors" style={{ color: MUTED }}>
               Log in
             </Link>
             <Link
               href="/signup"
-              className="text-sm font-bold text-white px-4 py-2 rounded-lg transition-all hover:opacity-90"
-              style={{ background: ORANGE }}
+              className="text-sm font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
+              style={{ background: CREAM, color: CHARCOAL }}
             >
               Sign up free
             </Link>
@@ -80,20 +79,20 @@ export default async function BlogPage({
       </nav>
 
       {/* Hero */}
-      <section className="pt-28 pb-12 px-6" style={{ background: YELLOW_LIGHT }}>
+      <section className="pt-28 pb-12 px-6" style={{ background: CHARCOAL_MID }}>
         <div className="max-w-6xl mx-auto text-center">
           <div
             className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full mb-6"
-            style={{ background: "white", color: ORANGE }}
+            style={{ background: CARD, color: CREAM, border: `1px solid ${BORDER}` }}
           >
             <BookOpen className="w-3.5 h-3.5" />
             Freelancer Finance Guides
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-stone-900 mb-4">
+          <h1 className="text-4xl sm:text-5xl mb-4" style={{ fontFamily: "var(--font-display)", color: CREAM }}>
             Know your money.<br />
-            <span style={{ color: PURPLE }}>Grow your business.</span>
+            <span style={{ color: MUTED }}>Grow your business.</span>
           </h1>
-          <p className="text-lg text-stone-500 max-w-2xl mx-auto">
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: MUTED }}>
             Practical guides on tax, invoicing, expenses, and cash flow — written specifically for UK
             freelancers and sole traders.
           </p>
@@ -101,11 +100,10 @@ export default async function BlogPage({
       </section>
 
       {/* Category filter */}
-      <section className="sticky top-16 z-40 bg-white border-b border-stone-100 px-6 py-3">
+      <section className="sticky top-16 z-40 px-6 py-3" style={{ background: CHARCOAL, borderBottom: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto flex items-center gap-2 overflow-x-auto scrollbar-none">
           {CATEGORIES.map((cat) => {
             const isActive = cat === activeCategory;
-            const style = cat !== "All" ? categoryStyle(cat) : null;
             return (
               <Link
                 key={cat}
@@ -113,8 +111,8 @@ export default async function BlogPage({
                 className="shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition-all"
                 style={
                   isActive
-                    ? { background: style ? style.bg : ORANGE_LIGHT, color: style ? style.text : ORANGE }
-                    : { background: "transparent", color: "#78716c" }
+                    ? { background: CARD, color: CREAM, border: `1px solid ${BORDER}` }
+                    : { background: "transparent", color: MUTED }
                 }
               >
                 {cat}
@@ -125,9 +123,9 @@ export default async function BlogPage({
       </section>
 
       {/* Blog grid */}
-      <section className="py-12 px-6">
+      <section className="py-12 px-6" style={{ background: CHARCOAL }}>
         <div className="max-w-6xl mx-auto">
-          <p className="text-sm text-stone-400 mb-8">
+          <p className="text-sm mb-8" style={{ color: MUTED }}>
             {filtered.length} article{filtered.length !== 1 ? "s" : ""}
             {activeCategory !== "All" ? ` in ${activeCategory}` : ""}
           </p>
@@ -138,26 +136,28 @@ export default async function BlogPage({
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group bg-white rounded-2xl card-shadow card-shadow-hover p-6 flex flex-col"
+                  className="group rounded-2xl card-shadow card-shadow-hover p-6 flex flex-col"
+                  style={{ background: CARD, border: `1px solid ${BORDER}` }}
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span
                       className="text-xs font-bold px-3 py-1 rounded-full"
-                      style={{ background: cs.bg, color: cs.text }}
+                      style={{ background: cs.bg, color: cs.text, border: `1px solid ${BORDER}` }}
                     >
                       {post.category}
                     </span>
                     <ArrowRight
-                      className="w-4 h-4 text-stone-300 group-hover:text-stone-500 transition-colors"
+                      className="w-4 h-4 transition-colors"
+                      style={{ color: MUTED }}
                     />
                   </div>
-                  <h2 className="font-bold text-stone-900 text-base leading-snug mb-3 group-hover:text-stone-700 transition-colors">
+                  <h2 className="font-bold text-base leading-snug mb-3 transition-colors" style={{ color: CREAM }}>
                     {post.title}
                   </h2>
-                  <p className="text-sm text-stone-500 leading-relaxed flex-1 mb-4">
+                  <p className="text-sm leading-relaxed flex-1 mb-4" style={{ color: MUTED }}>
                     {post.excerpt.split(".")[0]}.
                   </p>
-                  <div className="flex items-center gap-4 text-xs text-stone-400 pt-3 border-t border-stone-50">
+                  <div className="flex items-center gap-4 text-xs pt-3" style={{ borderTop: `1px solid ${BORDER}`, color: MUTED }}>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       {new Date(post.date).toLocaleDateString("en-GB", {
@@ -178,8 +178,8 @@ export default async function BlogPage({
 
           {filtered.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-stone-400 text-lg">No posts found in this category.</p>
-              <Link href="/blog" className="mt-4 inline-block text-sm font-semibold" style={{ color: ORANGE }}>
+              <p className="text-lg" style={{ color: MUTED }}>No posts found in this category.</p>
+              <Link href="/blog" className="mt-4 inline-block text-sm font-semibold" style={{ color: CREAM }}>
                 View all posts
               </Link>
             </div>
@@ -188,18 +188,18 @@ export default async function BlogPage({
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6" style={{ background: ORANGE }}>
+      <section className="py-20 px-6" style={{ background: CARD, borderTop: `1px solid ${BORDER}` }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 className="text-3xl mb-4" style={{ fontFamily: "var(--font-display)", color: CREAM }}>
             Put this knowledge into practice
           </h2>
-          <p className="text-white/80 mb-8">
+          <p className="mb-8" style={{ color: MUTED }}>
             Beancountr tracks your income, calculates your tax reserve, and generates professional invoices — all in one place.
           </p>
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg text-stone-900"
-            style={{ background: "oklch(0.88 0.18 88)" }}
+            className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg"
+            style={{ background: CREAM, color: CHARCOAL }}
           >
             Try Beancountr free <ArrowRight className="w-4 h-4" />
           </Link>
@@ -207,21 +207,17 @@ export default async function BlogPage({
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-stone-100 py-8 px-6 bg-white">
+      <footer className="py-8 px-6" style={{ background: CHARCOAL, borderTop: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img
-              src="/WordmarkAlt.png"
-              alt="Beancountr"
-              style={{ width: "160px", height: "80px", objectFit: "contain" }}
-            />
+            <span style={{ fontFamily: "var(--font-display)", color: CREAM, fontSize: "1.25rem" }}>Beancountr</span>
           </Link>
-          <p className="text-sm text-stone-400">Built for UK freelancers. Planning estimates only, not tax advice.</p>
+          <p className="text-sm" style={{ color: MUTED }}>Built for UK freelancers. Planning estimates only, not tax advice.</p>
           <div className="flex items-center gap-6">
-            <Link href="/pricing" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Pricing</Link>
-            <Link href="/blog" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Blog</Link>
-            <Link href="/privacy" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Privacy</Link>
-            <Link href="/login" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Log in</Link>
+            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>Pricing</Link>
+            <Link href="/blog" className="text-sm transition-colors" style={{ color: MUTED }}>Blog</Link>
+            <Link href="/privacy" className="text-sm transition-colors" style={{ color: MUTED }}>Privacy</Link>
+            <Link href="/login" className="text-sm transition-colors" style={{ color: MUTED }}>Log in</Link>
           </div>
         </div>
       </footer>

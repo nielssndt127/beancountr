@@ -6,11 +6,17 @@ import { TrendingUp, TrendingDown, Wallet, Shield, AlertCircle, ArrowRight } fro
 import Link from "next/link";
 import { InvoiceStatus } from "@prisma/client";
 
-const statusConfig: Record<InvoiceStatus, { label: string; className: string }> = {
-  DRAFT: { label: "Draft", className: "bg-stone-100 text-stone-600" },
-  SENT: { label: "Sent", className: "bg-blue-50 text-blue-600" },
-  PAID: { label: "Paid", className: "bg-emerald-50 text-emerald-600" },
-  OVERDUE: { label: "Overdue", className: "bg-red-50 text-red-600" },
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
+
+const statusConfig: Record<InvoiceStatus, { label: string; bg: string; text: string }> = {
+  DRAFT: { label: "Draft", bg: "oklch(0.28 0.008 80)", text: "oklch(0.65 0.01 80)" },
+  SENT: { label: "Sent", bg: "oklch(0.25 0.01 230)", text: "oklch(0.72 0.08 230)" },
+  PAID: { label: "Paid", bg: "oklch(0.25 0.01 145)", text: "oklch(0.72 0.08 145)" },
+  OVERDUE: { label: "Overdue", bg: "oklch(0.25 0.05 25)", text: "oklch(0.72 0.15 25)" },
 };
 
 export default async function DashboardPage() {
@@ -62,116 +68,116 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-stone-900">Dashboard</h1>
-        <p className="text-stone-400 text-sm mt-1">{monthName} {now.getFullYear()} overview</p>
+        <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Dashboard</h1>
+        <p className="text-sm mt-1" style={{ color: MUTED }}>{monthName} {now.getFullYear()} overview</p>
       </div>
 
       {unpaidInvoices > 0 && (
-        <div className="flex items-center justify-between rounded-2xl px-5 py-4" style={{ background: "oklch(0.97 0.05 195)" }}>
+        <div className="flex items-center justify-between rounded-2xl px-5 py-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center gap-3">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" style={{ color: "oklch(0.72 0.22 48)" }} />
-            <p className="text-sm font-medium text-stone-800">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" style={{ color: CREAM }} />
+            <p className="text-sm font-medium" style={{ color: CREAM }}>
               {formatCurrency(unpaidInvoices)} in unpaid invoices
             </p>
           </div>
-          <Link href="/app/invoices" className="flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: "oklch(0.72 0.22 48)" }}>
+          <Link href="/app/invoices" className="flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: MUTED }}>
             View all <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl p-5 card-shadow">
+        <div className="rounded-2xl p-5 card-shadow" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Income</span>
-            <div className="w-8 h-8 rounded-xl bg-stone-50 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-stone-400" />
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: MUTED }}>Income</span>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: BORDER }}>
+              <TrendingUp className="w-4 h-4" style={{ color: MUTED }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-stone-900 font-data">{formatCurrency(financials.income)}</p>
-          <p className="text-xs text-stone-400 mt-1">This month</p>
+          <p className="text-2xl font-bold font-data" style={{ color: CREAM }}>{formatCurrency(financials.income)}</p>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>This month</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 card-shadow">
+        <div className="rounded-2xl p-5 card-shadow" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Expenses</span>
-            <div className="w-8 h-8 rounded-xl bg-stone-50 flex items-center justify-center">
-              <TrendingDown className="w-4 h-4 text-stone-400" />
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: MUTED }}>Expenses</span>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: BORDER }}>
+              <TrendingDown className="w-4 h-4" style={{ color: MUTED }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-stone-900 font-data">{formatCurrency(financials.expenses)}</p>
-          <p className="text-xs text-stone-400 mt-1">This month</p>
+          <p className="text-2xl font-bold font-data" style={{ color: CREAM }}>{formatCurrency(financials.expenses)}</p>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>This month</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 card-shadow">
+        <div className="rounded-2xl p-5 card-shadow" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Profit</span>
-            <div className="w-8 h-8 rounded-xl bg-stone-50 flex items-center justify-center">
-              <Wallet className="w-4 h-4 text-stone-400" />
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: MUTED }}>Profit</span>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: BORDER }}>
+              <Wallet className="w-4 h-4" style={{ color: MUTED }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-stone-900 font-data">{formatCurrency(financials.profit)}</p>
-          <p className="text-xs text-stone-400 mt-1">After expenses</p>
+          <p className="text-2xl font-bold font-data" style={{ color: CREAM }}>{formatCurrency(financials.profit)}</p>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>After expenses</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.98 0.02 60)" }}>
+        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.24 0.012 70)", border: `1px solid oklch(0.32 0.012 70)` }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-amber-600 uppercase tracking-wide">Tax reserve</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center">
-              <Shield className="w-4 h-4 text-amber-500" />
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(0.70 0.02 70)" }}>Tax reserve</span>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "oklch(0.30 0.012 70)" }}>
+              <Shield className="w-4 h-4" style={{ color: "oklch(0.70 0.02 70)" }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-amber-900 font-data">{formatCurrency(financials.taxReserve)}</p>
-          <p className="text-xs text-amber-600 mt-1">Set aside · {Math.round(user.taxReserveRate * 100)}% of profit</p>
+          <p className="text-2xl font-bold font-data" style={{ color: CREAM }}>{formatCurrency(financials.taxReserve)}</p>
+          <p className="text-xs mt-1" style={{ color: "oklch(0.70 0.02 70)" }}>Set aside · {Math.round(user.taxReserveRate * 100)}% of profit</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.97 0.02 240)" }}>
+        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.22 0.008 230)", border: `1px solid oklch(0.30 0.01 230)` }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-blue-600 uppercase tracking-wide">Pension</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
-              <Shield className="w-4 h-4 text-blue-500" />
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(0.70 0.06 230)" }}>Pension</span>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "oklch(0.28 0.01 230)" }}>
+              <Shield className="w-4 h-4" style={{ color: "oklch(0.70 0.06 230)" }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-blue-900 font-data">{formatCurrency(financials.pensionReserve)}</p>
-          <p className="text-xs text-blue-600 mt-1">Set aside · {Math.round(user.pensionRate * 100)}% of profit</p>
+          <p className="text-2xl font-bold font-data" style={{ color: CREAM }}>{formatCurrency(financials.pensionReserve)}</p>
+          <p className="text-xs mt-1" style={{ color: "oklch(0.70 0.06 230)" }}>Set aside · {Math.round(user.pensionRate * 100)}% of profit</p>
         </div>
 
-        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.97 0.04 145)" }}>
+        <div className="rounded-2xl p-5 card-shadow" style={{ background: "oklch(0.22 0.008 145)", border: `1px solid oklch(0.30 0.01 145)` }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-emerald-600 uppercase tracking-wide">Safe to spend</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <Wallet className="w-4 h-4 text-emerald-500" />
+            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(0.70 0.06 145)" }}>Safe to spend</span>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "oklch(0.28 0.01 145)" }}>
+              <Wallet className="w-4 h-4" style={{ color: "oklch(0.70 0.06 145)" }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-emerald-900 font-data">{formatCurrency(financials.safeToSpend)}</p>
-          <p className="text-xs text-emerald-600 mt-1">After all reserves</p>
+          <p className="text-2xl font-bold font-data" style={{ color: CREAM }}>{formatCurrency(financials.safeToSpend)}</p>
+          <p className="text-xs mt-1" style={{ color: "oklch(0.70 0.06 145)" }}>After all reserves</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl card-shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-stone-50 flex items-center justify-between">
-            <h2 className="font-semibold text-stone-800 text-sm">Recent invoices</h2>
-            <Link href="/app/invoices" className="text-xs font-medium transition-colors" style={{ color: "oklch(0.72 0.22 48)" }}>View all</Link>
+        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${BORDER}` }}>
+            <h2 className="font-semibold text-sm" style={{ color: CREAM }}>Recent invoices</h2>
+            <Link href="/app/invoices" className="text-xs font-medium transition-colors" style={{ color: MUTED }}>View all</Link>
           </div>
           {recentInvoices.length === 0 ? (
             <div className="px-6 py-8 text-center">
-              <p className="text-sm text-stone-400">No invoices yet</p>
-              <Link href="/app/invoices" className="text-xs font-medium mt-1 block" style={{ color: "oklch(0.72 0.22 48)" }}>Create one →</Link>
+              <p className="text-sm" style={{ color: MUTED }}>No invoices yet</p>
+              <Link href="/app/invoices" className="text-xs font-medium mt-1 block" style={{ color: CREAM }}>Create one →</Link>
             </div>
           ) : (
-            <div className="divide-y divide-stone-50">
+            <div>
               {recentInvoices.map((inv) => {
                 const cfg = statusConfig[inv.status];
                 return (
-                  <div key={inv.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-stone-50/50 transition-colors">
+                  <div key={inv.id} className="flex items-center justify-between px-6 py-3.5 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
                     <div>
-                      <p className="text-sm font-medium text-stone-800">{inv.invoiceNumber}</p>
-                      <p className="text-xs text-stone-400 mt-0.5">{inv.client.name} · Due {formatDate(inv.dueDate)}</p>
+                      <p className="text-sm font-medium" style={{ color: CREAM }}>{inv.invoiceNumber}</p>
+                      <p className="text-xs mt-0.5" style={{ color: MUTED }}>{inv.client.name} · Due {formatDate(inv.dueDate)}</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold text-stone-800 font-data">{formatCurrency(inv.total)}</span>
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${cfg.className}`}>{cfg.label}</span>
+                      <span className="text-sm font-semibold font-data" style={{ color: CREAM }}>{formatCurrency(inv.total)}</span>
+                      <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: cfg.bg, color: cfg.text }}>{cfg.label}</span>
                     </div>
                   </div>
                 );
@@ -180,27 +186,27 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl card-shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-stone-50 flex items-center justify-between">
-            <h2 className="font-semibold text-stone-800 text-sm">Recent time entries</h2>
-            <Link href="/app/time" className="text-xs font-medium transition-colors" style={{ color: "oklch(0.72 0.22 48)" }}>View all</Link>
+        <div className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${BORDER}` }}>
+            <h2 className="font-semibold text-sm" style={{ color: CREAM }}>Recent time entries</h2>
+            <Link href="/app/time" className="text-xs font-medium transition-colors" style={{ color: MUTED }}>View all</Link>
           </div>
           {recentTimeEntries.length === 0 ? (
             <div className="px-6 py-8 text-center">
-              <p className="text-sm text-stone-400">No time logged yet</p>
-              <Link href="/app/time" className="text-xs font-medium mt-1 block" style={{ color: "oklch(0.72 0.22 48)" }}>Log time →</Link>
+              <p className="text-sm" style={{ color: MUTED }}>No time logged yet</p>
+              <Link href="/app/time" className="text-xs font-medium mt-1 block" style={{ color: CREAM }}>Log time →</Link>
             </div>
           ) : (
-            <div className="divide-y divide-stone-50">
+            <div>
               {recentTimeEntries.map((entry) => (
-                <div key={entry.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-stone-50/50 transition-colors">
+                <div key={entry.id} className="flex items-center justify-between px-6 py-3.5 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
                   <div>
-                    <p className="text-sm font-medium text-stone-800">{entry.project || "Untitled"}</p>
-                    <p className="text-xs text-stone-400 mt-0.5">{entry.client.name} · {formatDate(entry.date)}</p>
+                    <p className="text-sm font-medium" style={{ color: CREAM }}>{entry.project || "Untitled"}</p>
+                    <p className="text-xs mt-0.5" style={{ color: MUTED }}>{entry.client.name} · {formatDate(entry.date)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-stone-800 font-data">{formatCurrency(entry.hours * entry.rate)}</p>
-                    <p className="text-xs text-stone-400 mt-0.5">{entry.hours}h @ {formatCurrency(entry.rate)}/hr</p>
+                    <p className="text-sm font-semibold font-data" style={{ color: CREAM }}>{formatCurrency(entry.hours * entry.rate)}</p>
+                    <p className="text-xs mt-0.5" style={{ color: MUTED }}>{entry.hours}h @ {formatCurrency(entry.rate)}/hr</p>
                   </div>
                 </div>
               ))}
@@ -209,7 +215,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <p className="text-xs text-stone-300 text-center pb-2">
+      <p className="text-xs text-center pb-2" style={{ color: MUTED }}>
         Planning estimates only — not formal tax advice. Use your accountant&apos;s rates if you have them.
       </p>
     </div>

@@ -4,25 +4,23 @@ import { ArrowRight, Calendar, Clock, ChevronRight } from "lucide-react";
 import { blogPosts } from "@/lib/blog-posts";
 import type { Metadata } from "next";
 
-const ORANGE = "oklch(0.72 0.22 48)";
-const ORANGE_LIGHT = "oklch(0.96 0.07 48)";
-const YELLOW_LIGHT = "oklch(0.97 0.07 85)";
-const TEAL = "oklch(0.55 0.22 195)";
-const TEAL_LIGHT = "oklch(0.94 0.07 195)";
-const PURPLE = "oklch(0.52 0.18 290)";
-const PURPLE_LIGHT = "oklch(0.95 0.06 290)";
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
 
 const CATEGORY_COLOURS: Record<string, { bg: string; text: string }> = {
-  Tax: { bg: ORANGE_LIGHT, text: ORANGE },
-  Invoicing: { bg: TEAL_LIGHT, text: TEAL },
-  Finance: { bg: PURPLE_LIGHT, text: PURPLE },
-  Business: { bg: YELLOW_LIGHT, text: "oklch(0.50 0.14 75)" },
-  Productivity: { bg: TEAL_LIGHT, text: TEAL },
-  "Getting Started": { bg: ORANGE_LIGHT, text: ORANGE },
+  Tax: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Invoicing: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Finance: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Business: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  Productivity: { bg: "oklch(0.26 0.008 80)", text: CREAM },
+  "Getting Started": { bg: "oklch(0.26 0.008 80)", text: CREAM },
 };
 
 function categoryStyle(category: string) {
-  return CATEGORY_COLOURS[category] ?? { bg: ORANGE_LIGHT, text: ORANGE };
+  return CATEGORY_COLOURS[category] ?? { bg: "oklch(0.26 0.008 80)", text: CREAM };
 }
 
 export async function generateStaticParams() {
@@ -66,33 +64,33 @@ export default async function BlogPostPage({
   const cs = categoryStyle(post.category);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: CHARCOAL }}>
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100">
+      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: CHARCOAL, borderBottom: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <img
               src="/Wordmark.png"
               alt="Beancountr"
-              style={{ width: "300px", height: "92px", objectFit: "contain" }}
+              style={{ width: "220px", height: "68px", objectFit: "contain" }}
             />
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm text-stone-600 hover:text-stone-900 transition-colors">
+            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>
               Pricing
             </Link>
-            <Link href="/blog" className="text-sm text-stone-600 hover:text-stone-900 transition-colors">
+            <Link href="/blog" className="text-sm transition-colors" style={{ color: MUTED }}>
               Blog
             </Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-stone-700 font-medium hover:text-stone-900 transition-colors">
+            <Link href="/login" className="text-sm font-medium transition-colors" style={{ color: MUTED }}>
               Log in
             </Link>
             <Link
               href="/signup"
-              className="text-sm font-bold text-white px-4 py-2 rounded-lg transition-all hover:opacity-90"
-              style={{ background: ORANGE }}
+              className="text-sm font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
+              style={{ background: CREAM, color: CHARCOAL }}
             >
               Sign up free
             </Link>
@@ -103,12 +101,12 @@ export default async function BlogPostPage({
       <div className="pt-24 pb-20 px-6">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-stone-400 mb-8">
-            <Link href="/" className="hover:text-stone-600 transition-colors">Home</Link>
+          <nav className="flex items-center gap-1.5 text-xs mb-8" style={{ color: MUTED }}>
+            <Link href="/" className="transition-colors hover:opacity-80">Home</Link>
             <ChevronRight className="w-3 h-3" />
-            <Link href="/blog" className="hover:text-stone-600 transition-colors">Blog</Link>
+            <Link href="/blog" className="transition-colors hover:opacity-80">Blog</Link>
             <ChevronRight className="w-3 h-3" />
-            <span className="text-stone-600 truncate max-w-xs">{post.title}</span>
+            <span className="truncate max-w-xs" style={{ color: CREAM }}>{post.title}</span>
           </nav>
 
           <div className="flex flex-col lg:flex-row gap-12">
@@ -118,15 +116,15 @@ export default async function BlogPostPage({
               <div className="mb-8">
                 <span
                   className="inline-block text-xs font-bold px-3 py-1 rounded-full mb-4"
-                  style={{ background: cs.bg, color: cs.text }}
+                  style={{ background: cs.bg, color: cs.text, border: `1px solid ${BORDER}` }}
                 >
                   {post.category}
                 </span>
-                <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 leading-tight mb-4">
+                <h1 className="text-3xl sm:text-4xl leading-tight mb-4" style={{ fontFamily: "var(--font-display)", color: CREAM }}>
                   {post.title}
                 </h1>
-                <p className="text-lg text-stone-500 leading-relaxed mb-6">{post.excerpt}</p>
-                <div className="flex items-center gap-5 text-sm text-stone-400">
+                <p className="text-lg leading-relaxed mb-6" style={{ color: MUTED }}>{post.excerpt}</p>
+                <div className="flex items-center gap-5 text-sm" style={{ color: MUTED }}>
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-4 h-4" />
                     {new Date(post.date).toLocaleDateString("en-GB", {
@@ -144,18 +142,30 @@ export default async function BlogPostPage({
 
               {/* Article content */}
               <div
-                className="prose prose-stone max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2 prose-p:text-stone-600 prose-p:leading-relaxed prose-li:text-stone-600 prose-strong:text-stone-800 prose-a:text-orange-600"
+                className="prose max-w-none prose-headings:font-bold prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2"
+                style={{
+                  "--tw-prose-body": MUTED,
+                  "--tw-prose-headings": CREAM,
+                  "--tw-prose-links": CREAM,
+                  "--tw-prose-bold": CREAM,
+                  "--tw-prose-bullets": MUTED,
+                  "--tw-prose-counters": MUTED,
+                  "--tw-prose-hr": BORDER,
+                  "--tw-prose-quotes": CREAM,
+                  "--tw-prose-quote-borders": BORDER,
+                } as React.CSSProperties}
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
 
               {/* Tags */}
-              <div className="mt-10 pt-8 border-t border-stone-100">
-                <p className="text-xs text-stone-400 font-semibold uppercase tracking-widest mb-3">Tags</p>
+              <div className="mt-10 pt-8" style={{ borderTop: `1px solid ${BORDER}` }}>
+                <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: MUTED }}>Tags</p>
                 <div className="flex flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs px-3 py-1 rounded-full bg-stone-100 text-stone-500"
+                      className="text-xs px-3 py-1 rounded-full"
+                      style={{ background: CARD, color: MUTED, border: `1px solid ${BORDER}` }}
                     >
                       {tag}
                     </span>
@@ -165,18 +175,18 @@ export default async function BlogPostPage({
 
               {/* CTA */}
               <div
-                className="mt-10 rounded-2xl p-8 text-white"
-                style={{ background: ORANGE }}
+                className="mt-10 rounded-2xl p-8"
+                style={{ background: CARD, border: `1px solid ${BORDER}` }}
               >
-                <h2 className="text-xl font-bold mb-2">Try Beancountr free</h2>
-                <p className="text-white/80 text-sm mb-5 leading-relaxed">
+                <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Try Beancountr free</h2>
+                <p className="text-sm mb-5 leading-relaxed" style={{ color: MUTED }}>
                   Track your finances automatically — income, tax reserve, invoices, and expenses
                   all in one clean dashboard built for UK freelancers.
                 </p>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-sm transition-all hover:opacity-90 hover:shadow-lg text-stone-900"
-                  style={{ background: "oklch(0.88 0.18 88)" }}
+                  className="inline-flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-sm transition-all hover:opacity-90 hover:shadow-lg"
+                  style={{ background: CREAM, color: CHARCOAL }}
                 >
                   Get started free <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -187,7 +197,7 @@ export default async function BlogPostPage({
             <aside className="lg:w-72 xl:w-80 shrink-0">
               {related.length > 0 && (
                 <div className="sticky top-24">
-                  <h3 className="text-sm font-bold text-stone-500 uppercase tracking-widest mb-5">
+                  <h3 className="text-sm font-bold uppercase tracking-widest mb-5" style={{ color: MUTED }}>
                     Related articles
                   </h3>
                   <div className="space-y-4">
@@ -197,18 +207,19 @@ export default async function BlogPostPage({
                         <Link
                           key={rel.slug}
                           href={`/blog/${rel.slug}`}
-                          className="group block bg-white rounded-2xl card-shadow card-shadow-hover p-5"
+                          className="group block rounded-2xl card-shadow card-shadow-hover p-5"
+                          style={{ background: CARD, border: `1px solid ${BORDER}` }}
                         >
                           <span
                             className="inline-block text-xs font-bold px-2.5 py-0.5 rounded-full mb-2"
-                            style={{ background: rcs.bg, color: rcs.text }}
+                            style={{ background: rcs.bg, color: rcs.text, border: `1px solid ${BORDER}` }}
                           >
                             {rel.category}
                           </span>
-                          <p className="text-sm font-semibold text-stone-800 leading-snug group-hover:text-stone-600 transition-colors mb-2">
+                          <p className="text-sm font-semibold leading-snug transition-colors mb-2" style={{ color: CREAM }}>
                             {rel.title}
                           </p>
-                          <p className="text-xs text-stone-400 flex items-center gap-1">
+                          <p className="text-xs flex items-center gap-1" style={{ color: MUTED }}>
                             <Clock className="w-3 h-3" />
                             {rel.readTime}
                           </p>
@@ -217,17 +228,17 @@ export default async function BlogPostPage({
                     })}
                   </div>
 
-                  <div className="mt-8 rounded-2xl p-6" style={{ background: YELLOW_LIGHT }}>
-                    <p className="text-sm font-bold text-stone-800 mb-2">
+                  <div className="mt-8 rounded-2xl p-6" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                    <p className="text-sm font-bold mb-2" style={{ color: CREAM }}>
                       Free for UK freelancers
                     </p>
-                    <p className="text-xs text-stone-500 mb-4 leading-relaxed">
+                    <p className="text-xs mb-4 leading-relaxed" style={{ color: MUTED }}>
                       Beancountr tracks your hours, invoices, expenses and tax reserve automatically.
                     </p>
                     <Link
                       href="/signup"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-lg text-white transition-all hover:opacity-90"
-                      style={{ background: ORANGE }}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
+                      style={{ background: CREAM, color: CHARCOAL }}
                     >
                       Start free <ArrowRight className="w-3 h-3" />
                     </Link>
@@ -240,21 +251,17 @@ export default async function BlogPostPage({
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-stone-100 py-8 px-6 bg-white">
+      <footer className="py-8 px-6" style={{ background: CHARCOAL, borderTop: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img
-              src="/WordmarkAlt.png"
-              alt="Beancountr"
-              style={{ width: "160px", height: "80px", objectFit: "contain" }}
-            />
+            <span style={{ fontFamily: "var(--font-display)", color: CREAM, fontSize: "1.25rem" }}>Beancountr</span>
           </Link>
-          <p className="text-sm text-stone-400">Built for UK freelancers. Planning estimates only, not tax advice.</p>
+          <p className="text-sm" style={{ color: MUTED }}>Built for UK freelancers. Planning estimates only, not tax advice.</p>
           <div className="flex items-center gap-6">
-            <Link href="/pricing" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Pricing</Link>
-            <Link href="/blog" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Blog</Link>
-            <Link href="/privacy" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Privacy</Link>
-            <Link href="/login" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Log in</Link>
+            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>Pricing</Link>
+            <Link href="/blog" className="text-sm transition-colors" style={{ color: MUTED }}>Blog</Link>
+            <Link href="/privacy" className="text-sm transition-colors" style={{ color: MUTED }}>Privacy</Link>
+            <Link href="/login" className="text-sm transition-colors" style={{ color: MUTED }}>Log in</Link>
           </div>
         </div>
       </footer>

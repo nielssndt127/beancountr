@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-const ORANGE = "oklch(0.72 0.22 48)";
+const CREAM = "oklch(0.94 0.025 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
 
 const FAQS = [
   {
@@ -74,21 +77,21 @@ export function FaqAccordion() {
   return (
     <div className="space-y-2">
       {FAQS.map((faq, idx) => (
-        <div key={idx} className="bg-white rounded-2xl card-shadow overflow-hidden">
+        <div key={idx} className="rounded-2xl card-shadow overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <button
-            className="w-full flex items-center justify-between px-6 py-4 text-left transition-colors hover:bg-stone-50"
+            className="w-full flex items-center justify-between px-6 py-4 text-left transition-colors"
             onClick={() => setOpen(open === idx ? null : idx)}
             aria-expanded={open === idx}
           >
-            <span className="font-semibold text-stone-800 text-sm pr-4">{faq.q}</span>
+            <span className="font-semibold text-sm pr-4" style={{ color: CREAM }}>{faq.q}</span>
             <ChevronDown
-              className="w-4 h-4 shrink-0 text-stone-400 transition-transform duration-200"
-              style={{ transform: open === idx ? "rotate(180deg)" : "rotate(0deg)" }}
+              className="w-4 h-4 shrink-0 transition-transform duration-200"
+              style={{ color: MUTED, transform: open === idx ? "rotate(180deg)" : "rotate(0deg)" }}
             />
           </button>
           {open === idx && (
             <div className="px-6 pb-5">
-              <p className="text-sm text-stone-500 leading-relaxed">{faq.a}</p>
+              <p className="text-sm leading-relaxed" style={{ color: MUTED }}>{faq.a}</p>
             </div>
           )}
         </div>

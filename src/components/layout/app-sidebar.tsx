@@ -14,6 +14,13 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const SIDEBAR_BG = "oklch(0.19 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
+const ACTIVE_BG = "oklch(0.28 0.008 80)";
+
 const navItems = [
   { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/app/clients", label: "Clients", icon: Users },
@@ -34,11 +41,11 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="w-60 bg-white border-r border-stone-100 flex flex-col min-h-screen sticky top-0">
+    <aside className="w-60 flex flex-col min-h-screen sticky top-0" style={{ background: SIDEBAR_BG, borderRight: `1px solid ${BORDER}` }}>
       {/* Wordmark */}
-      <div className="px-4 py-3 border-b border-stone-100">
+      <div className="px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
         <Link href="/app/dashboard" className="flex items-center">
-          <img src="/Wordmark.png" alt="Beancountr" style={{ width: "300px", height: "92px", objectFit: "contain" }} />
+          <span style={{ fontFamily: "var(--font-display)", color: CREAM, fontSize: "1.25rem" }}>Beancountr</span>
         </Link>
       </div>
 
@@ -52,15 +59,12 @@ export function AppSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-                active
-                  ? "text-white"
-                  : "text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
               )}
               style={
                 active
-                  ? { background: "oklch(0.72 0.22 48)" }
-                  : undefined
+                  ? { background: ACTIVE_BG, color: CREAM }
+                  : { color: MUTED }
               }
             >
               <item.icon className="w-4 h-4 flex-shrink-0" />
@@ -71,19 +75,16 @@ export function AppSidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 py-4 border-t border-stone-100 space-y-0.5">
+      <div className="px-3 py-4 space-y-0.5" style={{ borderTop: `1px solid ${BORDER}` }}>
         <Link
           href="/app/settings"
           className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-            pathname === "/app/settings"
-              ? "text-white"
-              : "text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+            "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
           )}
           style={
             pathname === "/app/settings"
-              ? { background: "oklch(0.72 0.22 48)" }
-              : undefined
+              ? { background: ACTIVE_BG, color: CREAM }
+              : { color: MUTED }
           }
         >
           <Settings className="w-4 h-4 flex-shrink-0" />
@@ -91,7 +92,8 @@ export function AppSidebar() {
         </Link>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-stone-400 hover:bg-stone-50 hover:text-stone-700 w-full transition-all"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium w-full transition-all"
+          style={{ color: MUTED }}
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           Sign out

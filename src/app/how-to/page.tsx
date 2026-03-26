@@ -13,14 +13,12 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 
-const ORANGE = "oklch(0.72 0.22 48)";
-const ORANGE_LIGHT = "oklch(0.96 0.07 48)";
-const YELLOW = "oklch(0.88 0.18 88)";
-const YELLOW_LIGHT = "oklch(0.97 0.07 85)";
-const TEAL = "oklch(0.55 0.22 195)";
-const TEAL_LIGHT = "oklch(0.94 0.07 195)";
-const PURPLE = "oklch(0.52 0.18 290)";
-const PURPLE_LIGHT = "oklch(0.95 0.06 290)";
+const CREAM = "oklch(0.94 0.025 80)";
+const CHARCOAL = "oklch(0.16 0.008 80)";
+const CHARCOAL_MID = "oklch(0.20 0.008 80)";
+const CARD = "oklch(0.22 0.008 80)";
+const BORDER = "oklch(0.28 0.008 80)";
+const MUTED = "oklch(0.65 0.01 80)";
 
 export const metadata: Metadata = {
   title: "How to Use Beancountr | Step-by-Step Guide",
@@ -40,8 +38,6 @@ const STEPS = [
       "The free plan is genuinely free forever — no trial period",
       "You can upgrade to Pro at any time without losing data",
     ],
-    color: ORANGE,
-    bg: ORANGE_LIGHT,
   },
   {
     number: "02",
@@ -54,8 +50,6 @@ const STEPS = [
       "Higher earners: increase the tax reserve to 30–35%",
       "Your pension rate is separate — consider at least 5% as a minimum",
     ],
-    color: TEAL,
-    bg: TEAL_LIGHT,
   },
   {
     number: "03",
@@ -68,8 +62,6 @@ const STEPS = [
       "Include the client's billing address — you'll need it on invoices",
       "Free accounts support up to 3 clients; upgrade for unlimited",
     ],
-    color: PURPLE,
-    bg: PURPLE_LIGHT,
   },
   {
     number: "04",
@@ -82,8 +74,6 @@ const STEPS = [
       "Add a specific description — it appears on your invoice line items",
       "You can log time in decimal hours (e.g., 1.5 hours for 90 minutes)",
     ],
-    color: ORANGE,
-    bg: ORANGE_LIGHT,
   },
   {
     number: "05",
@@ -96,8 +86,6 @@ const STEPS = [
       "Mark expenses as deductible only if they're wholly for business use",
       "Common categories: software, equipment, travel, professional fees",
     ],
-    color: TEAL,
-    bg: TEAL_LIGHT,
   },
   {
     number: "06",
@@ -110,8 +98,6 @@ const STEPS = [
       "Use Import Time Entries to convert logged hours into invoice lines instantly",
       "Include your bank details on every invoice so payment is frictionless",
     ],
-    color: PURPLE,
-    bg: PURPLE_LIGHT,
   },
   {
     number: "07",
@@ -124,8 +110,6 @@ const STEPS = [
       "The income chart shows revenue trends across the year",
       "Outstanding invoices are highlighted so you can chase promptly",
     ],
-    color: ORANGE,
-    bg: ORANGE_LIGHT,
   },
   {
     number: "08",
@@ -138,43 +122,41 @@ const STEPS = [
       "Always consult an accountant before submitting your Self Assessment",
       "The pension set-aside is shown separately from the tax reserve",
     ],
-    color: TEAL,
-    bg: TEAL_LIGHT,
   },
 ];
 
 export default function HowToPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: CHARCOAL }}>
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-stone-100">
+      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: CHARCOAL, borderBottom: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <img
               src="/Wordmark.png"
               alt="Beancountr"
-              style={{ width: "300px", height: "92px", objectFit: "contain" }}
+              style={{ width: "220px", height: "68px", objectFit: "contain" }}
             />
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm text-stone-600 hover:text-stone-900 transition-colors">
+            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>
               Pricing
             </Link>
-            <Link href="/blog" className="text-sm text-stone-600 hover:text-stone-900 transition-colors">
+            <Link href="/blog" className="text-sm transition-colors" style={{ color: MUTED }}>
               Blog
             </Link>
-            <Link href="/how-to" className="text-sm text-stone-900 font-semibold transition-colors">
+            <Link href="/how-to" className="text-sm font-semibold transition-colors" style={{ color: CREAM }}>
               How it works
             </Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-stone-700 font-medium hover:text-stone-900 transition-colors">
+            <Link href="/login" className="text-sm font-medium transition-colors" style={{ color: MUTED }}>
               Log in
             </Link>
             <Link
               href="/signup"
-              className="text-sm font-bold text-white px-4 py-2 rounded-lg transition-all hover:opacity-90"
-              style={{ background: ORANGE }}
+              className="text-sm font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
+              style={{ background: CREAM, color: CHARCOAL }}
             >
               Sign up free
             </Link>
@@ -183,30 +165,30 @@ export default function HowToPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-28 pb-16 px-6" style={{ background: YELLOW_LIGHT }}>
+      <section className="pt-28 pb-16 px-6" style={{ background: CHARCOAL_MID }}>
         <div className="max-w-3xl mx-auto text-center">
           <p
             className="text-xs font-bold uppercase tracking-widest mb-4"
-            style={{ color: ORANGE }}
+            style={{ color: MUTED }}
           >
             Step-by-step guide
           </p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-stone-900 mb-5">
-            How to use <span style={{ color: PURPLE }}>Beancountr</span>
+          <h1 className="text-4xl sm:text-5xl mb-5" style={{ fontFamily: "var(--font-display)", color: CREAM }}>
+            How to use <span style={{ color: MUTED }}>Beancountr</span>
           </h1>
-          <p className="text-lg text-stone-500 leading-relaxed max-w-2xl mx-auto">
-            From signing up to understanding your tax estimate — here's everything you need to get
+          <p className="text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: MUTED }}>
+            From signing up to understanding your tax estimate — here&apos;s everything you need to get
             Beancountr working for your freelance finances.
           </p>
           <div className="flex items-center justify-center gap-6 mt-8">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 font-bold text-white px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg"
-              style={{ background: ORANGE }}
+              className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg"
+              style={{ background: CREAM, color: CHARCOAL }}
             >
               Get started free <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link href="/help" className="text-sm font-semibold text-stone-500 hover:text-stone-800 transition-colors">
+            <Link href="/help" className="text-sm font-semibold transition-colors" style={{ color: MUTED }}>
               Read the FAQ →
             </Link>
           </div>
@@ -214,42 +196,43 @@ export default function HowToPage() {
       </section>
 
       {/* Steps */}
-      <section className="py-16 px-6">
+      <section className="py-16 px-6" style={{ background: CHARCOAL }}>
         <div className="max-w-4xl mx-auto">
           <div className="space-y-10">
-            {STEPS.map((step, idx) => (
+            {STEPS.map((step) => (
               <div
                 key={step.number}
-                className="bg-white rounded-2xl card-shadow overflow-hidden flex flex-col md:flex-row"
+                className="rounded-2xl card-shadow overflow-hidden flex flex-col md:flex-row"
+                style={{ background: CARD, border: `1px solid ${BORDER}` }}
               >
                 {/* Step number + icon */}
                 <div
                   className="md:w-24 flex flex-row md:flex-col items-center justify-center gap-3 p-6 shrink-0"
-                  style={{ background: step.bg }}
+                  style={{ background: "oklch(0.26 0.008 80)", borderRight: `1px solid ${BORDER}` }}
                 >
-                  <span className="text-2xl font-bold" style={{ color: step.color }}>
+                  <span className="text-2xl font-bold" style={{ color: CREAM }}>
                     {step.number}
                   </span>
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{ background: step.color }}
+                    style={{ background: BORDER }}
                   >
-                    <step.icon className="w-5 h-5 text-white" />
+                    <step.icon className="w-5 h-5" style={{ color: CREAM }} />
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 p-6">
-                  <h2 className="text-lg font-bold text-stone-900 mb-3">{step.title}</h2>
-                  <p className="text-stone-500 text-sm leading-relaxed mb-5">{step.description}</p>
+                  <h2 className="text-lg font-bold mb-3" style={{ fontFamily: "var(--font-display)", color: CREAM }}>{step.title}</h2>
+                  <p className="text-sm leading-relaxed mb-5" style={{ color: MUTED }}>{step.description}</p>
                   <div className="space-y-2">
                     {step.tips.map((tip) => (
                       <div key={tip} className="flex items-start gap-2.5">
                         <CheckCircle
                           className="w-4 h-4 mt-0.5 shrink-0"
-                          style={{ color: step.color }}
+                          style={{ color: MUTED }}
                         />
-                        <p className="text-sm text-stone-600">{tip}</p>
+                        <p className="text-sm" style={{ color: MUTED }}>{tip}</p>
                       </div>
                     ))}
                   </div>
@@ -261,47 +244,44 @@ export default function HowToPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6" style={{ background: ORANGE }}>
+      <section className="py-20 px-6" style={{ background: CARD, borderTop: `1px solid ${BORDER}` }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to take control of your finances?</h2>
-          <p className="text-white/80 mb-8 leading-relaxed">
+          <h2 className="text-3xl mb-4" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Ready to take control of your finances?</h2>
+          <p className="mb-8 leading-relaxed" style={{ color: MUTED }}>
             Join thousands of UK freelancers who use Beancountr to know exactly where they stand financially — every month.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg text-stone-900"
-              style={{ background: YELLOW }}
+              className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg"
+              style={{ background: CREAM, color: CHARCOAL }}
             >
               Start for free <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/help"
-              className="text-sm font-semibold text-white/80 hover:text-white transition-colors"
+              className="text-sm font-semibold transition-colors"
+              style={{ color: MUTED }}
             >
               Browse the help centre →
             </Link>
           </div>
-          <p className="text-white/50 text-sm mt-5">No credit card required · Free forever for up to 3 clients</p>
+          <p className="text-sm mt-5" style={{ color: MUTED }}>No credit card required · Free forever for up to 3 clients</p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-stone-100 py-8 px-6 bg-white">
+      <footer className="py-8 px-6" style={{ background: CHARCOAL, borderTop: `1px solid ${BORDER}` }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center">
-            <img
-              src="/WordmarkAlt.png"
-              alt="Beancountr"
-              style={{ width: "160px", height: "80px", objectFit: "contain" }}
-            />
+            <span style={{ fontFamily: "var(--font-display)", color: CREAM, fontSize: "1.25rem" }}>Beancountr</span>
           </Link>
-          <p className="text-sm text-stone-400">Built for UK freelancers. Planning estimates only, not tax advice.</p>
+          <p className="text-sm" style={{ color: MUTED }}>Built for UK freelancers. Planning estimates only, not tax advice.</p>
           <div className="flex items-center gap-6">
-            <Link href="/pricing" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Pricing</Link>
-            <Link href="/blog" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Blog</Link>
-            <Link href="/privacy" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Privacy</Link>
-            <Link href="/login" className="text-sm text-stone-400 hover:text-stone-700 transition-colors">Log in</Link>
+            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>Pricing</Link>
+            <Link href="/blog" className="text-sm transition-colors" style={{ color: MUTED }}>Blog</Link>
+            <Link href="/privacy" className="text-sm transition-colors" style={{ color: MUTED }}>Privacy</Link>
+            <Link href="/login" className="text-sm transition-colors" style={{ color: MUTED }}>Log in</Link>
           </div>
         </div>
       </footer>

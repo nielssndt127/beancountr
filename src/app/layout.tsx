@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter_Tight, JetBrains_Mono, Sora } from "next/font/google";
+import { Inter_Tight, JetBrains_Mono, Pacifico } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieBanner } from "@/components/cookie-banner";
@@ -16,10 +16,10 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
-const sora = Sora({
-  variable: "--font-heading",
+const pacifico = Pacifico({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${interTight.variable} ${jetbrainsMono.variable} ${sora.variable} h-full antialiased`}
+      className={`${interTight.variable} ${jetbrainsMono.variable} ${pacifico.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}
