@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { CheckCircle } from "lucide-react";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -68,6 +69,8 @@ export default function SignupPage() {
 
           <h1 className="text-2xl font-bold text-stone-900 mb-1">Create your account</h1>
           <p className="text-stone-400 text-sm mb-8">Free forever for 1 client</p>
+
+          <SocialLoginButtons />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

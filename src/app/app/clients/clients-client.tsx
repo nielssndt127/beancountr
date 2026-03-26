@@ -9,6 +9,7 @@ type Client = {
   name: string;
   email: string | null;
   address: string | null;
+  vatId: string | null;
   notes: string | null;
   _count: { invoices: number; timeEntries: number };
 };
@@ -138,6 +139,10 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Address</label>
                 <input name="address" defaultValue={editData?.address ?? ""} className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={{ "--tw-ring-color": "oklch(0.62 0.22 195)" } as React.CSSProperties} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1.5">VAT ID</label>
+                <input name="vatId" defaultValue={editData?.vatId ?? ""} placeholder="e.g. GB123456789" className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={{ "--tw-ring-color": "oklch(0.62 0.22 195)" } as React.CSSProperties} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-1.5">Notes</label>

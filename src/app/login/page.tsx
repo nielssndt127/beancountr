@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -60,6 +61,8 @@ export default function LoginPage() {
 
           <h1 className="text-2xl font-bold text-stone-900 mb-1">Welcome back</h1>
           <p className="text-stone-400 text-sm mb-8">Log in to your account</p>
+
+          <SocialLoginButtons />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

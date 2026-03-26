@@ -12,6 +12,7 @@ export async function createClient(formData: FormData) {
       name: formData.get("name") as string,
       email: (formData.get("email") as string) || null,
       address: (formData.get("address") as string) || null,
+      vatId: (formData.get("vatId") as string) || null,
       notes: (formData.get("notes") as string) || null,
     },
   });
@@ -27,6 +28,7 @@ export async function updateClient(id: string, formData: FormData) {
       name: formData.get("name") as string,
       email: (formData.get("email") as string) || null,
       address: (formData.get("address") as string) || null,
+      vatId: (formData.get("vatId") as string) || null,
       notes: (formData.get("notes") as string) || null,
     },
   });

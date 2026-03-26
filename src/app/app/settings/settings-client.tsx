@@ -10,11 +10,20 @@ type User = {
   fullName: string | null;
   businessName: string | null;
   businessType: BusinessType;
+  address: string | null;
+  phone: string | null;
+  website: string | null;
   taxReserveRate: number;
   pensionRate: number;
   invoicePrefix: string;
   paymentTerms: number;
   invoiceNotes: string | null;
+  paypalEmail: string | null;
+  bankName: string | null;
+  bankAccountName: string | null;
+  bankSortCode: string | null;
+  bankAccountNo: string | null;
+  bankIban: string | null;
 };
 
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent bg-white";
@@ -61,9 +70,9 @@ export function SettingsClient({ user }: { user: User }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Business */}
+        {/* Your Business */}
         <div className="bg-white rounded-2xl card-shadow p-6 space-y-4">
-          <h2 className="font-semibold text-stone-800">Business details</h2>
+          <h2 className="font-semibold text-stone-800">Your Business</h2>
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-1.5">Full name</label>
             <input name="fullName" defaultValue={user.fullName ?? ""} placeholder="Alex Smith" className={inputClass} style={ringStyle} />
@@ -78,6 +87,56 @@ export function SettingsClient({ user }: { user: User }) {
               <option value="SOLE_TRADER">Sole trader</option>
               <option value="LIMITED_COMPANY">Limited company</option>
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-1.5">Business address</label>
+            <textarea name="address" defaultValue={user.address ?? ""} rows={3} placeholder="123 Example Street&#10;London&#10;EC1A 1BB" className={`${inputClass} resize-none`} style={ringStyle} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Phone</label>
+              <input name="phone" defaultValue={user.phone ?? ""} placeholder="+44 7700 900000" className={inputClass} style={ringStyle} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Website</label>
+              <input name="website" defaultValue={user.website ?? ""} placeholder="https://example.com" className={inputClass} style={ringStyle} />
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Details */}
+        <div className="bg-white rounded-2xl card-shadow p-6 space-y-4">
+          <div>
+            <h2 className="font-semibold text-stone-800">Payment Details</h2>
+            <p className="text-xs text-stone-400 mt-1">These details can be shown on your invoices.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-1.5">PayPal email</label>
+            <input name="paypalEmail" type="email" defaultValue={user.paypalEmail ?? ""} placeholder="paypal@example.com" className={inputClass} style={ringStyle} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Bank name</label>
+              <input name="bankName" defaultValue={user.bankName ?? ""} placeholder="Monzo" className={inputClass} style={ringStyle} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Account name</label>
+              <input name="bankAccountName" defaultValue={user.bankAccountName ?? ""} placeholder="Alex Smith" className={inputClass} style={ringStyle} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Sort code</label>
+              <input name="bankSortCode" defaultValue={user.bankSortCode ?? ""} placeholder="04-00-04" className={inputClass} style={ringStyle} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Account number</label>
+              <input name="bankAccountNo" defaultValue={user.bankAccountNo ?? ""} placeholder="12345678" className={inputClass} style={ringStyle} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-1.5">IBAN</label>
+            <input name="bankIban" defaultValue={user.bankIban ?? ""} placeholder="GB29 NWBK 6016 1331 9268 19" className={inputClass} style={ringStyle} />
           </div>
         </div>
 
