@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle, Clock, FileText, PoundSterling, Shield, TrendingUp, ArrowRight, Star } from "lucide-react";
+import { CheckCircle, Clock, FileText, PoundSterling, Shield, TrendingUp, ArrowRight, Star, AlertTriangle, Mail, LayoutGrid } from "lucide-react";
 
 const CREAM = "oklch(0.94 0.025 80)";
 const CHARCOAL = "oklch(0.16 0.008 80)";
@@ -117,12 +117,14 @@ export default function HomePage() {
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              { icon: "😰", title: "Tax time panic", body: "Not sure how much to put away for HMRC? Beancountr calculates a sensible reserve every month so you're never caught short." },
-              { icon: "📬", title: "Chasing payments", body: "Losing track of who owes you what? See every unpaid invoice at a glance and mark them paid with one click." },
-              { icon: "📊", title: "Spreadsheet chaos", body: "Managing invoices, expenses, and time logs across multiple sheets? Beancountr brings it all into one place." },
+              { icon: AlertTriangle, title: "Tax time panic", body: "Not sure how much to put away for HMRC? Beancountr calculates a sensible reserve every month so you're never caught short." },
+              { icon: Mail, title: "Chasing payments", body: "Losing track of who owes you what? See every unpaid invoice at a glance and mark them paid with one click." },
+              { icon: LayoutGrid, title: "Spreadsheet chaos", body: "Managing invoices, expenses, and time logs across multiple sheets? Beancountr brings it all into one place." },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl p-6 card-shadow card-shadow-hover" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-                <div className="text-3xl mb-4">{item.icon}</div>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: CREAM }}>
+                  <item.icon className="w-5 h-5" style={{ color: CHARCOAL }} />
+                </div>
                 <h3 className="font-bold mb-2 text-lg" style={{ fontFamily: "var(--font-display)", color: CREAM }}>{item.title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: MUTED }}>{item.body}</p>
               </div>
