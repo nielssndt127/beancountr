@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   description:
     "Track hours, manage expenses, send invoices, and plan for tax — all in one simple dashboard.",
   icons: {
-    icon: "/Icon.png",
-    apple: "/Icon.png",
+    icon: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
