@@ -46,7 +46,7 @@ export default function LoginPage() {
           <img
             src="/beaver-hero.png"
             alt="Beancountr beaver"
-            style={{ width: "220px", mixBlendMode: "lighten", marginBottom: "8px" }}
+            style={{ width: "340px", mixBlendMode: "lighten", marginBottom: "8px" }}
           />
           <p className="text-lg font-semibold leading-snug" style={{ color: CREAM }}>
             Know exactly what you can spend — and what to set aside for tax.

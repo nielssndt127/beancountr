@@ -51,7 +51,7 @@ export default function SignupPage() {
           <img
             src="/beaver-hero.png"
             alt="Beancountr beaver"
-            style={{ width: "220px", mixBlendMode: "lighten", marginBottom: "8px" }}
+            style={{ width: "340px", mixBlendMode: "lighten", marginBottom: "8px" }}
           />
           <p className="text-lg font-semibold leading-snug" style={{ color: CREAM }}>
             Everything a freelancer needs to stay on top of their finances.
