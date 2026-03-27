@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient, updateClient, deleteClient } from "@/server/actions/clients";
-import { Users, Plus, Check, X, Trash2 } from "lucide-react";
+import { Plus, Check, X, Trash2 } from "lucide-react";
 
 const CHARCOAL = "#1F1F1F";
 const GREEN = "#4F7D6A";
@@ -31,7 +31,7 @@ const cell: React.CSSProperties = {
 };
 
 export function ClientsClient({ clients }: { clients: Client[] }) {
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState(clients.length === 0);
   const [newRow, setNewRow] = useState<Row>(empty);
   const [editId, setEditId] = useState<string | null>(null);
   const [editRow, setEditRow] = useState<Row>(empty);
@@ -44,7 +44,7 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
     const fd = new FormData();
     Object.entries(newRow).forEach(([k, v]) => fd.set(k, v));
     await createClient(fd);
-    setAdding(false); setNewRow(empty); setSaving(false);
+    setNewRow(empty); setSaving(false);
   }
 
   async function saveEdit() {
@@ -91,11 +91,9 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
           <h1 className="text-2xl font-bold" style={{ color: CHARCOAL }}>Clients</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>{clients.length} client{clients.length !== 1 ? "s" : ""}</p>
         </div>
-        {!adding && (
-          <button onClick={() => setAdding(true)} className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full hover:opacity-90 transition-all" style={{ background: GREEN, color: "#fff" }}>
-            <Plus className="w-4 h-4" /> Add client
-          </button>
-        )}
+        <button onClick={() => setAdding(true)} className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full hover:opacity-90 transition-all" style={{ background: adding ? KHAKI : GREEN, color: adding ? CHARCOAL : "#fff" }}>
+          <Plus className="w-4 h-4" /> Add client
+        </button>
       </div>
 
       <div className="rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
@@ -123,15 +121,27 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
                 <td className="px-3 py-2"><SaveCancel onSave={saveNew} onCancel={() => { setAdding(false); setNewRow(empty); }} disabled={!newRow.name.trim()} /></td>
               </tr>
             )}
-            {clients.length === 0 && !adding ? (
-              <tr>
-                <td colSpan={7} className="px-6 py-14 text-center">
-                  <Users className="w-8 h-8 mx-auto mb-3" style={{ color: MUTED }} />
-                  <p className="font-medium mb-1" style={{ color: CHARCOAL }}>No clients yet</p>
-                  <p className="text-sm" style={{ color: MUTED }}>Click "Add client" above to get started.</p>
+            {clients.length === 0 && !adding && (
+              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <td className="px-3 py-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: KHAKI, color: MUTED }}>A</div>
+                    <span className="text-sm italic" style={{ color: MUTED }}>e.g. Acme Ltd</span>
+                  </div>
+                </td>
+                <td className="px-3 py-3 text-sm italic" style={{ color: MUTED }}>hello@acme.com</td>
+                <td className="px-3 py-3 text-sm italic" style={{ color: MUTED }}>London, UK</td>
+                <td className="px-3 py-3 text-sm" style={{ color: MUTED }}>—</td>
+                <td className="px-3 py-3 text-sm" style={{ color: MUTED }}>—</td>
+                <td className="px-3 py-3 text-xs" style={{ color: MUTED }}>0 inv · 0 entries</td>
+                <td className="px-3 py-3">
+                  <button onClick={() => setAdding(true)} className="text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap" style={{ background: GREEN, color: "#fff" }}>
+                    + Add first
+                  </button>
                 </td>
               </tr>
-            ) : clients.map((c) => editId === c.id ? (
+            )}
+            {clients.map((c) => editId === c.id ? (
               <tr key={c.id} style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
                 <td className="px-3 py-2"><input autoFocus value={editRow.name} onChange={e => setEditRow(r => ({ ...r, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && saveEdit()} style={cell} /></td>
                 <td className="px-3 py-2"><input value={editRow.email} onChange={e => setEditRow(r => ({ ...r, email: e.target.value }))} style={cell} /></td>

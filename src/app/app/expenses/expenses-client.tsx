@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createExpense, updateExpense, deleteExpense } from "@/server/actions/expenses";
-import { Receipt, Plus, Check, X, Trash2 } from "lucide-react";
+import { Plus, Check, X, Trash2 } from "lucide-react";
 
 const CHARCOAL = "#1F1F1F";
 const GREEN = "#4F7D6A";
@@ -30,7 +30,7 @@ const cell: React.CSSProperties = {
 const selectCell: React.CSSProperties = { ...cell, cursor: "pointer" };
 
 export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState(expenses.length === 0);
   const [newRow, setNewRow] = useState<Row>(empty);
   const [editId, setEditId] = useState<string | null>(null);
   const [editRow, setEditRow] = useState<Row>(empty);
@@ -46,7 +46,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
     const fd = new FormData();
     Object.entries(newRow).forEach(([k, v]) => fd.set(k, v));
     await createExpense(fd);
-    setAdding(false); setNewRow({ ...empty, date: today() }); setSaving(false);
+    setNewRow({ ...empty, date: today() }); setSaving(false);
   }
 
   async function saveEdit() {
@@ -95,11 +95,9 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
             <span className="font-mono">{fmt(total)}</span> total · <span className="font-mono">{fmt(deductible)}</span> deductible
           </p>
         </div>
-        {!adding && (
-          <button onClick={() => setAdding(true)} className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full hover:opacity-90 transition-all" style={{ background: GREEN, color: "#fff" }}>
-            <Plus className="w-4 h-4" /> Add expense
-          </button>
-        )}
+        <button onClick={() => { setAdding(true); setNewRow({ ...empty, date: today() }); }} className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full hover:opacity-90 transition-all" style={{ background: adding ? KHAKI : GREEN, color: adding ? CHARCOAL : "#fff" }}>
+          <Plus className="w-4 h-4" /> Add expense
+        </button>
       </div>
 
       <div className="rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
@@ -132,19 +130,30 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
                     <option value="false">No</option>
                   </select>
                 </td>
-                <td className="px-3 py-2"><SaveCancel onSave={saveNew} onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }} disabled={!newRow.description.trim() || !newRow.amount} /></td>
+                <td className="px-3 py-2"><SaveCancel onSave={saveNew} onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }} disabled={!newRow.description.trim() || !newRow.amount} />
+                </td>
               </tr>
             )}
 
-            {expenses.length === 0 && !adding ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-14 text-center">
-                  <Receipt className="w-8 h-8 mx-auto mb-3" style={{ color: MUTED }} />
-                  <p className="font-medium mb-1" style={{ color: CHARCOAL }}>No expenses yet</p>
-                  <p className="text-sm" style={{ color: MUTED }}>Click "Add expense" to start tracking.</p>
+            {expenses.length === 0 && !adding && (
+              <tr style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <td className="px-3 py-3 text-sm" style={{ color: MUTED }}>27 Mar 2026</td>
+                <td className="px-3 py-3">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: KHAKI, color: MUTED }}>Software</span>
+                </td>
+                <td className="px-3 py-3 text-sm italic" style={{ color: MUTED }}>e.g. Adobe Creative Cloud</td>
+                <td className="px-3 py-3 font-mono text-sm" style={{ color: MUTED }}>£54.99</td>
+                <td className="px-3 py-3">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: KHAKI, color: MUTED }}>Yes</span>
+                </td>
+                <td className="px-3 py-3">
+                  <button onClick={() => setAdding(true)} className="text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap" style={{ background: GREEN, color: "#fff" }}>
+                    + Add first
+                  </button>
                 </td>
               </tr>
-            ) : expenses.map((e) => editId === e.id ? (
+            )}
+            {expenses.map((e) => editId === e.id ? (
               <tr key={e.id} style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
                 <td className="px-3 py-2"><input type="date" value={editRow.date} onChange={ev => setEditRow(r => ({ ...r, date: ev.target.value }))} style={cell} /></td>
                 <td className="px-3 py-2">
