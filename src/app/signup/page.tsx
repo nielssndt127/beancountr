@@ -48,6 +48,11 @@ export default function SignupPage() {
           <img src="/Wordmark.png" alt="Beancountr" style={{ height: "80px", objectFit: "contain" }} />
         </Link>
         <div className="space-y-6">
+          <img
+            src="/beaver-hero.png"
+            alt="Beancountr beaver"
+            style={{ width: "220px", mixBlendMode: "lighten", marginBottom: "8px" }}
+          />
           <p className="text-lg font-semibold leading-snug" style={{ color: CREAM }}>
             Everything a freelancer needs to stay on top of their finances.
           </p>
