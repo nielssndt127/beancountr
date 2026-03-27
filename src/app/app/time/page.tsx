@@ -20,5 +20,5 @@ export default async function TimePage() {
     }),
   ]);
 
-  return <TimeClient timeEntries={timeEntries} clients={clients} />;
+  return <TimeClient entries={timeEntries} clients={clients} defaultRate={75} />;
 }
