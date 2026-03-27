@@ -45,14 +45,17 @@ function fmtSeconds(secs: number): string {
   return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
 }
 
-const CREAM = "oklch(0.97 0.015 80)";
-const CHARCOAL = "oklch(0.16 0.008 80)"; // dark text
-const CARD = "oklch(0.97 0.015 80)";
-const BORDER = "oklch(0.88 0.015 80)";
-const MUTED = "oklch(0.45 0.01 80)";
+const CREAM = "#F5F1E8";
+const CHARCOAL = "#1F1F1F";
+const GREEN = "#4F7D6A";
+const AMBER = "#D4A373";
+const CARD = "#FDFAF4";
+const KHAKI = "#EAE3D2";
+const BORDER = "rgba(31,31,31,0.1)";
+const MUTED = "rgba(31,31,31,0.55)";
 
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
-const inputStyle = { background: CARD, border: `1px solid ${BORDER}`, color: CREAM, "--tw-ring-color": CREAM } as React.CSSProperties;
+const inputStyle = { background: "#fff", border: `1px solid ${BORDER}`, color: CHARCOAL, "--tw-ring-color": GREEN } as React.CSSProperties;
 const ringStyle = inputStyle;
 
 type TimerState = "idle" | "running" | "paused";
@@ -91,7 +94,7 @@ function LiveTimer({
   }
 
   return (
-    <div className="rounded-2xl p-6" style={{ background: CARD, borderLeft: `4px solid ${CREAM}`, border: `1px solid ${BORDER}` }}>
+    <div className="rounded-2xl p-6" style={{ background: KHAKI, border: `1px solid ${BORDER}` }}>
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 space-y-3">
           <input
@@ -120,32 +123,32 @@ function LiveTimer({
         <div className="flex flex-col items-center gap-3 sm:ml-4">
           <span
             className="font-mono text-4xl font-bold tracking-widest"
-            style={{ color: timerState === "idle" ? MUTED : timerState === "running" ? CREAM : "oklch(0.75 0.015 80)" }}
+            style={{ color: timerState === "idle" ? MUTED : timerState === "running" ? CHARCOAL : AMBER }}
           >
             {fmtSeconds(elapsed)}
           </span>
           <div className="flex items-center gap-2">
             {timerState === "idle" && (
-              <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90" style={{ background: CREAM, color: CHARCOAL }}>
+              <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: GREEN, color: "#fff" }}>
                 <Play className="w-4 h-4" /> Start
               </button>
             )}
             {timerState === "running" && (
               <>
-                <button onClick={() => setTimerState("paused")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90" style={{ background: BORDER, color: CREAM }}>
+                <button onClick={() => setTimerState("paused")} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: AMBER, color: "#fff" }}>
                   <Pause className="w-4 h-4" /> Pause
                 </button>
-                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.50 0.15 25)", color: CREAM }}>
+                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: CHARCOAL, color: CREAM }}>
                   <Square className="w-4 h-4" /> Stop & Log
                 </button>
               </>
             )}
             {timerState === "paused" && (
               <>
-                <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: CREAM, color: CHARCOAL }}>
+                <button onClick={() => setTimerState("running")} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: GREEN, color: "#fff" }}>
                   <Play className="w-4 h-4" /> Resume
                 </button>
-                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: "oklch(0.50 0.15 25)", color: CREAM }}>
+                <button onClick={handleStop} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: CHARCOAL, color: CREAM }}>
                   <Square className="w-4 h-4" /> Stop & Log
                 </button>
               </>
@@ -269,15 +272,15 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Time entries</h1>
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CHARCOAL }}>Time entries</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>
             <span className="font-data">{totalHours.toFixed(1)}h</span> logged · <span className="font-data">{fmt(totalValue)}</span> total
           </p>
         </div>
         <button
           onClick={() => openNewForm()}
-          className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all hover:opacity-90"
-          style={{ background: CREAM, color: CHARCOAL }}
+          className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full transition-all hover:opacity-90"
+          style={{ background: GREEN, color: "#fff" }}
         >
           <Plus className="w-4 h-4" /> Log time
         </button>
@@ -287,10 +290,10 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
 
       {timeEntries.length === 0 ? (
         <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: BORDER }}>
-            <Clock className="w-6 h-6" style={{ color: MUTED }} />
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "#E6F2ED" }}>
+            <Clock className="w-6 h-6" style={{ color: GREEN }} />
           </div>
-          <p className="font-medium mb-1" style={{ color: CREAM }}>No time entries yet</p>
+          <p className="font-medium mb-1" style={{ color: CHARCOAL }}>No time entries yet</p>
           <p className="text-sm" style={{ color: MUTED }}>Start the timer above or log time manually.</p>
         </div>
       ) : (
@@ -305,22 +308,22 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
                   <div className="flex items-center gap-4">
                     <div className="text-center w-12">
                       {isDaily ? (
-                        <><p className="text-lg font-bold font-data" style={{ color: CREAM }}>{daysNum}</p><p className="text-xs" style={{ color: MUTED }}>days</p></>
+                        <><p className="text-lg font-bold font-data" style={{ color: CHARCOAL }}>{daysNum}</p><p className="text-xs" style={{ color: MUTED }}>days</p></>
                       ) : (
-                        <><p className="text-lg font-bold font-data" style={{ color: CREAM }}>{entry.hours}</p><p className="text-xs" style={{ color: MUTED }}>hrs</p></>
+                        <><p className="text-lg font-bold font-data" style={{ color: CHARCOAL }}>{entry.hours}</p><p className="text-xs" style={{ color: MUTED }}>hrs</p></>
                       )}
                     </div>
                     <div>
-                      <p className="font-medium" style={{ color: CREAM }}>{entry.project || "Untitled project"}</p>
+                      <p className="font-medium" style={{ color: CHARCOAL }}>{entry.project || "Untitled project"}</p>
                       <p className="text-xs mt-0.5" style={{ color: MUTED }}>{entry.client.name} · {fmtDate(entry.date)}</p>
                       {entry.notes && <p className="text-xs mt-0.5 italic" style={{ color: MUTED }}>{entry.notes}</p>}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <p className="text-sm font-semibold font-data" style={{ color: CREAM }}>{fmt(entryValue(entry))}</p>
+                      <p className="text-sm font-semibold font-data" style={{ color: CHARCOAL }}>{fmt(entryValue(entry))}</p>
                       {isDaily ? <p className="text-xs" style={{ color: MUTED }}>{fmt(dayRateNum)}/day</p> : <p className="text-xs" style={{ color: MUTED }}>{fmt(entry.rate)}/hr</p>}
-                      {entry.invoiceId && <p className="text-xs mt-0.5" style={{ color: "oklch(0.72 0.08 145)" }}>Invoiced</p>}
+                      {entry.invoiceId && <p className="text-xs mt-0.5" style={{ color: GREEN }}>Invoiced</p>}
                     </div>
                     <div className="flex items-center gap-1">
                       <button onClick={() => handleEditOpen(entry)} className="p-2 rounded-lg transition-colors" style={{ color: MUTED }}>
@@ -346,35 +349,35 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="rounded-2xl w-full max-w-md" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+          <div className="rounded-2xl w-full max-w-md" style={{ background: CREAM, border: `1px solid ${BORDER}` }}>
             <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
-              <h2 className="font-semibold" style={{ color: CREAM }}>{editData ? "Edit time entry" : "Log time"}</h2>
+              <h2 className="font-semibold" style={{ color: CHARCOAL }}>{editData ? "Edit time entry" : "Log time"}</h2>
             </div>
             <form onSubmit={editData ? handleUpdate : handleCreate} className="p-6 space-y-4">
 
               {error && (
-                <div className="flex items-start gap-2 p-3 rounded-xl text-sm" style={{ background: "oklch(0.25 0.05 25)", color: "oklch(0.72 0.15 25)" }}>
+                <div className="flex items-start gap-2 p-3 rounded-xl text-sm" style={{ background: "#FEF2F2", color: "#DC2626", border: "1px solid #FECACA" }}>
                   <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Entry type</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Entry type</label>
                 <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${BORDER}` }}>
                   <button type="button" onClick={() => setEntryType("HOURLY")} className="flex-1 py-2 text-sm font-medium transition-colors"
-                    style={entryType === "HOURLY" ? { background: CREAM, color: CHARCOAL } : { background: CARD, color: MUTED }}>
+                    style={entryType === "HOURLY" ? { background: GREEN, color: "#fff" } : { background: "#fff", color: MUTED }}>
                     Hourly
                   </button>
                   <button type="button" onClick={() => setEntryType("DAILY")} className="flex-1 py-2 text-sm font-medium transition-colors"
-                    style={entryType === "DAILY" ? { background: CREAM, color: CHARCOAL } : { background: CARD, color: MUTED }}>
+                    style={entryType === "DAILY" ? { background: GREEN, color: "#fff" } : { background: "#fff", color: MUTED }}>
                     Daily
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Client *</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Client *</label>
                 <input
                   list="modal-clients"
                   name="clientName"
@@ -390,49 +393,49 @@ export function TimeClient({ timeEntries, clients }: { timeEntries: TimeEntry[];
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Project / Description</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Project / Description</label>
                 <input name="project" defaultValue={prefill?.description ?? editData?.project ?? ""} placeholder="e.g. Website redesign" className={inputClass} style={ringStyle} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Date *</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Date *</label>
                 <input name="date" type="date" defaultValue={prefill?.date ?? (editData ? toDateInput(editData.date) : new Date().toISOString().split("T")[0])} required className={inputClass} style={ringStyle} />
               </div>
 
               {entryType === "HOURLY" ? (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Hours *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Hours *</label>
                     <input name="hours" type="number" step="0.01" min="0" defaultValue={prefill?.hours ?? editData?.hours ?? "1"} required className={inputClass} style={ringStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Hourly rate (£) *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Hourly rate (£) *</label>
                     <input name="rate" type="number" step="0.01" min="0" defaultValue={editData?.rate ?? "75"} required className={inputClass} style={ringStyle} />
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Days *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Days *</label>
                     <input name="days" type="number" step="0.5" min="0.5" defaultValue={editData ? toNum(editData.days) || "1" : "1"} required className={inputClass} style={ringStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Day rate (£) *</label>
+                    <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Day rate (£) *</label>
                     <input name="dayRate" type="number" step="0.01" min="0" defaultValue={editData ? toNum(editData.dayRate) || "400" : "400"} required className={inputClass} style={ringStyle} />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Notes</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Notes</label>
                 <input name="notes" defaultValue={editData?.notes ?? ""} placeholder="Optional note" className={inputClass} style={ringStyle} />
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={closeModal} className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
+                <button type="button" onClick={closeModal} className="flex-1 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
                   Cancel
                 </button>
-                <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60" style={{ background: CREAM, color: CHARCOAL }}>
+                <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60" style={{ background: GREEN, color: "#fff" }}>
                   {loading ? "Saving…" : editData ? "Save changes" : "Log time"}
                 </button>
               </div>

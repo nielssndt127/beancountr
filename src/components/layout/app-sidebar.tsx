@@ -14,12 +14,12 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
-const CREAM = "oklch(0.94 0.025 80)";
-const CHARCOAL = "oklch(0.16 0.008 80)";
-const SIDEBAR_BG = "oklch(0.19 0.008 80)";
-const BORDER = "oklch(0.28 0.008 80)";
-const MUTED = "oklch(0.65 0.01 80)";
-const ACTIVE_BG = "oklch(0.28 0.008 80)";
+const CREAM = "#F5F1E8";
+const CHARCOAL = "#1F1F1F";
+const SIDEBAR_BG = CHARCOAL;
+const BORDER = "rgba(255,255,255,0.08)";
+const MUTED = "rgba(245,241,232,0.55)";
+const ACTIVE_BG = "#4F7D6A";
 
 const navItems = [
   { href: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -45,7 +45,7 @@ export function AppSidebar() {
       {/* Wordmark */}
       <div className="px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
         <Link href="/app/dashboard" className="flex items-center">
-          <span style={{ fontFamily: "var(--font-display)", color: CREAM, fontSize: "1.25rem" }}>Beancountr</span>
+          <img src="/Wordmark.png" alt="Beancountr" style={{ height: "52px", objectFit: "contain" }} />
         </Link>
       </div>
 

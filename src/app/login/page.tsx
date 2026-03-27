@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { SocialLoginButtons } from "@/components/SocialLoginButtons";
+import { CheckCircle } from "lucide-react";
 
-const CREAM = "oklch(0.94 0.025 80)";
-const CHARCOAL = "oklch(0.16 0.008 80)";
-const CARD = "oklch(0.22 0.008 80)";
-const BORDER = "oklch(0.28 0.008 80)";
-const MUTED = "oklch(0.65 0.01 80)";
+const CREAM = "#F5F1E8";
+const CHARCOAL = "#1F1F1F";
+const GREEN = "#4F7D6A";
+const BORDER = "rgba(31,31,31,0.1)";
+const MUTED = "rgba(31,31,31,0.55)";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,29 +36,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: CHARCOAL }}>
-      {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12" style={{ background: CARD, borderRight: `1px solid ${BORDER}` }}>
+    <div className="min-h-screen flex">
+      {/* Left panel — charcoal */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12" style={{ background: CHARCOAL }}>
         <Link href="/" className="flex items-center">
           <img src="/Wordmark.png" alt="Beancountr" style={{ height: "80px", objectFit: "contain" }} />
         </Link>
-        <div>
-          <blockquote className="text-2xl font-medium leading-relaxed mb-6" style={{ color: CREAM }}>
-            &ldquo;Finally I know exactly what I can spend and what to set aside for tax.&rdquo;
-          </blockquote>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style={{ background: BORDER, color: CREAM }}>S</div>
-            <div>
-              <p className="font-medium text-sm" style={{ color: CREAM }}>Sam Okafor</p>
-              <p className="text-sm" style={{ color: MUTED }}>Freelance developer, London</p>
-            </div>
+        <div className="space-y-6">
+          <p className="text-lg font-semibold leading-snug" style={{ color: CREAM }}>
+            Know exactly what you can spend — and what to set aside for tax.
+          </p>
+          <div className="space-y-3">
+            {[
+              "Clean income and profit dashboard",
+              "Tax reserve and pension estimates",
+              "Invoice generation and tracking",
+              "Time and expense logging",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: GREEN }} />
+                <span className="text-sm" style={{ color: "rgba(245,241,232,0.75)" }}>{item}</span>
+              </div>
+            ))}
           </div>
         </div>
-        <p className="text-sm" style={{ color: MUTED }}>Planning estimates only — not formal tax advice.</p>
+        <p className="text-xs" style={{ color: "rgba(245,241,232,0.4)" }}>Planning estimates only — not formal tax advice.</p>
       </div>
 
-      {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-8" style={{ background: CHARCOAL }}>
+      {/* Right panel — cream */}
+      <div className="flex-1 flex items-center justify-center p-8" style={{ background: CREAM }}>
         <div className="w-full max-w-sm">
           <div className="lg:hidden mb-8 flex justify-center">
             <Link href="/">
@@ -65,14 +72,14 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Welcome back</h1>
+          <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: "var(--font-display)", color: CHARCOAL }}>Welcome back</h1>
           <p className="text-sm mb-8" style={{ color: MUTED }}>Log in to your account</p>
 
           <SocialLoginButtons />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Email</label>
+              <label htmlFor="email" className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Email</label>
               <input
                 id="email"
                 type="email"
@@ -82,15 +89,15 @@ export default function LoginPage() {
                 placeholder="you@example.com"
                 className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
                 style={{
-                  background: CARD,
+                  background: "#fff",
                   border: `1px solid ${BORDER}`,
-                  color: CREAM,
-                  "--tw-ring-color": CREAM,
+                  color: CHARCOAL,
+                  "--tw-ring-color": GREEN,
                 } as React.CSSProperties}
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-1.5" style={{ color: CREAM }}>Password</label>
+              <label htmlFor="password" className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Password</label>
               <input
                 id="password"
                 type="password"
@@ -100,21 +107,21 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
                 style={{
-                  background: CARD,
+                  background: "#fff",
                   border: `1px solid ${BORDER}`,
-                  color: CREAM,
-                  "--tw-ring-color": CREAM,
+                  color: CHARCOAL,
+                  "--tw-ring-color": GREEN,
                 } as React.CSSProperties}
               />
             </div>
             {error && (
-              <p className="text-sm bg-red-950/50 text-red-400 px-3 py-2 rounded-lg">{error}</p>
+              <p className="text-sm bg-red-50 text-red-600 px-3 py-2 rounded-lg border border-red-200">{error}</p>
             )}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60"
-              style={{ background: CREAM, color: CHARCOAL }}
+              className="w-full py-3 rounded-full text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60"
+              style={{ background: GREEN, color: "#fff" }}
             >
               {loading ? "Logging in..." : "Log in"}
             </button>
@@ -122,7 +129,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm mt-6" style={{ color: MUTED }}>
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-medium hover:underline" style={{ color: CREAM }}>
+            <Link href="/signup" className="font-medium hover:underline" style={{ color: CHARCOAL }}>
               Sign up free
             </Link>
           </p>

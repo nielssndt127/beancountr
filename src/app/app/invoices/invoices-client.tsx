@@ -28,21 +28,25 @@ function fmtDate(date: Date) {
   return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(date));
 }
 
-const statusConfig: Record<InvoiceStatus, { label: string; className: string }> = {
-  DRAFT: { label: "Draft", className: "bg-stone-100 text-stone-600" },
-  SENT: { label: "Sent", className: "bg-blue-50 text-blue-600" },
-  PAID: { label: "Paid", className: "bg-emerald-50 text-emerald-600" },
-  OVERDUE: { label: "Overdue", className: "bg-red-50 text-red-600" },
+const CREAM = "#F5F1E8";
+const CHARCOAL = "#1F1F1F";
+const GREEN = "#4F7D6A";
+const LIGHT_GREEN = "#E6F2ED";
+const AMBER = "#D4A373";
+const LIGHT_AMBER = "#F6E7D8";
+const CARD = "#FDFAF4";
+const BORDER = "rgba(31,31,31,0.1)";
+const MUTED = "rgba(31,31,31,0.55)";
+
+const statusConfig: Record<InvoiceStatus, { label: string; bg: string; color: string }> = {
+  DRAFT: { label: "Draft", bg: "#EAE3D2", color: MUTED },
+  SENT: { label: "Sent", bg: LIGHT_AMBER, color: AMBER },
+  PAID: { label: "Paid", bg: LIGHT_GREEN, color: GREEN },
+  OVERDUE: { label: "Overdue", bg: "#FEE2E2", color: "#DC2626" },
 };
 
-const CREAM = "oklch(0.97 0.015 80)";
-const CHARCOAL = "oklch(0.16 0.008 80)"; // dark text
-const CARD = "oklch(0.97 0.015 80)";
-const BORDER = "oklch(0.88 0.015 80)";
-const MUTED = "oklch(0.45 0.01 80)";
-const inputStyle = { background: CARD, border: `1px solid ${BORDER}`, color: CREAM, "--tw-ring-color": CREAM } as React.CSSProperties;
+const inputStyle = { background: "#fff", border: `1px solid ${BORDER}`, color: CHARCOAL, "--tw-ring-color": GREEN } as React.CSSProperties;
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
-const ringStyle = { "--tw-ring-color": "oklch(0.94 0.025 80)" } as React.CSSProperties;
 
 type FormLineItem = { description: string; quantity: string; unitPrice: string };
 
@@ -111,13 +115,13 @@ export function InvoicesClient({
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Invoices</h1>
-          <p className="text-stone-400 text-sm mt-1">{invoices.length} invoice{invoices.length !== 1 ? "s" : ""}</p>
+          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CHARCOAL }}>Invoices</h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>{invoices.length} invoice{invoices.length !== 1 ? "s" : ""}</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 text-sm font-semibold text-white px-4 py-2.5 rounded-xl transition-all hover:opacity-90"
-          style={{ background: CREAM, color: CHARCOAL }}
+          className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full transition-all hover:opacity-90"
+          style={{ background: GREEN, color: "#fff" }}
         >
           <Plus className="w-4 h-4" /> New invoice
         </button>
@@ -125,41 +129,42 @@ export function InvoicesClient({
 
       {invoices.length === 0 ? (
         <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center mx-auto mb-4">
-            <FileText className="w-6 h-6 text-stone-300" />
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: LIGHT_GREEN }}>
+            <FileText className="w-6 h-6" style={{ color: GREEN }} />
           </div>
-          <p className="font-medium text-stone-700 mb-1">No invoices yet</p>
-          <p className="text-sm text-stone-400">Create your first invoice to start getting paid.</p>
+          <p className="font-medium mb-1" style={{ color: CHARCOAL }}>No invoices yet</p>
+          <p className="text-sm" style={{ color: MUTED }}>Create your first invoice to start getting paid.</p>
         </div>
       ) : (
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div className="divide-y divide-stone-50">
+          <div>
             {invoices.map((invoice) => {
               const cfg = statusConfig[invoice.status];
               return (
-                <div key={invoice.id} className="flex items-center justify-between px-6 py-4 hover:bg-stone-50/50 transition-colors">
+                <div key={invoice.id} className="flex items-center justify-between px-6 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
                   <div>
                     <div className="flex items-center gap-3">
-                      <p className="font-medium text-stone-900">{invoice.invoiceNumber}</p>
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${cfg.className}`}>{cfg.label}</span>
+                      <p className="font-medium" style={{ color: CHARCOAL }}>{invoice.invoiceNumber}</p>
+                      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium" style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
                     </div>
-                    <p className="text-xs text-stone-400 mt-0.5">
+                    <p className="text-xs mt-0.5" style={{ color: MUTED }}>
                       {invoice.client.name} · Issued {fmtDate(invoice.issueDate)} · Due {fmtDate(invoice.dueDate)}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <p className="text-sm font-semibold text-stone-800 font-data">{fmt(invoice.total)}</p>
+                    <p className="text-sm font-semibold font-data" style={{ color: CHARCOAL }}>{fmt(invoice.total)}</p>
                     {/* Status dropdown */}
                     <div className="relative group">
-                      <button className="flex items-center gap-1 text-xs text-stone-400 hover:text-stone-600 px-2 py-1.5 rounded-lg hover:bg-stone-100 transition-colors">
+                      <button className="flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg transition-colors" style={{ color: MUTED }}>
                         Status <ChevronDown className="w-3 h-3" />
                       </button>
-                      <div className="absolute right-0 top-full mt-1 bg-white rounded-xl border border-stone-100 py-1 w-36 hidden group-hover:block z-10">
+                      <div className="absolute right-0 top-full mt-1 rounded-xl py-1 w-36 hidden group-hover:block z-10" style={{ background: CREAM, border: `1px solid ${BORDER}` }}>
                         {(["DRAFT", "SENT", "PAID", "OVERDUE"] as InvoiceStatus[]).map((s) => (
                           <button
                             key={s}
                             onClick={() => handleStatusChange(invoice.id, s)}
-                            className={`w-full text-left px-3 py-2 text-xs font-medium hover:bg-stone-50 transition-colors ${invoice.status === s ? "text-stone-900" : "text-stone-500"}`}
+                            className="w-full text-left px-3 py-2 text-xs font-medium transition-colors"
+                            style={{ color: invoice.status === s ? CHARCOAL : MUTED }}
                           >
                             {statusConfig[s].label}
                           </button>
@@ -169,7 +174,8 @@ export function InvoicesClient({
                     <button
                       onClick={() => handleDelete(invoice.id)}
                       disabled={deleting === invoice.id}
-                      className="p-2 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                      className="p-2 rounded-lg transition-colors disabled:opacity-50"
+                      style={{ color: MUTED }}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -184,41 +190,41 @@ export function InvoicesClient({
       {/* New invoice modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">
-          <div className="rounded-2xl w-full max-w-lg my-8">
-            <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
-              <h2 className="font-semibold text-stone-900">New invoice</h2>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors">
+          <div className="rounded-2xl w-full max-w-lg my-8" style={{ background: CREAM, border: `1px solid ${BORDER}` }}>
+            <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${BORDER}` }}>
+              <h2 className="font-semibold" style={{ color: CHARCOAL }}>New invoice</h2>
+              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg transition-colors" style={{ color: MUTED }}>
                 <X className="w-4 h-4" />
               </button>
             </div>
             <form onSubmit={handleCreate} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Client *</label>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Client *</label>
                   <select name="clientId" required className={inputClass} style={inputStyle}>
                     <option value="">Select client…</option>
                     {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Invoice number *</label>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Invoice number *</label>
                   <input name="invoiceNumber" defaultValue={nextInvoiceNumber} required className={inputClass} style={inputStyle} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Issue date *</label>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Issue date *</label>
                   <input name="issueDate" type="date" defaultValue={today} required className={inputClass} style={inputStyle} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-stone-700 mb-1.5">Due date *</label>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Due date *</label>
                   <input name="dueDate" type="date" defaultValue={dueDefault} required className={inputClass} style={inputStyle} />
                 </div>
               </div>
 
               {/* Line items */}
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Line items</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: CHARCOAL }}>Line items</label>
                 <div className="space-y-2">
                   {lineItems.map((li, i) => (
                     <div key={i} className="flex gap-2 items-start">
@@ -226,7 +232,7 @@ export function InvoicesClient({
                         value={li.description}
                         onChange={(e) => updateLineItem(i, "description", e.target.value)}
                         placeholder="Description"
-                        className="flex-1 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                        className="flex-1 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                         style={inputStyle}
                       />
                       <input
@@ -236,7 +242,7 @@ export function InvoicesClient({
                         type="number"
                         min="0"
                         step="0.25"
-                        className="w-16 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                        className="w-16 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                         style={inputStyle}
                       />
                       <input
@@ -246,31 +252,31 @@ export function InvoicesClient({
                         type="number"
                         min="0"
                         step="0.01"
-                        className="w-24 px-3 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                        className="w-24 px-3 py-2 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                         style={inputStyle}
                       />
                       {lineItems.length > 1 && (
-                        <button type="button" onClick={() => removeLineItem(i)} className="p-2 rounded-lg text-stone-300 hover:text-red-500 transition-colors mt-0.5">
+                        <button type="button" onClick={() => removeLineItem(i)} className="p-2 rounded-lg transition-colors mt-0.5" style={{ color: MUTED }}>
                           <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={addLineItem} className="mt-2 text-xs font-medium flex items-center gap-1 transition-colors" style={{ color: "oklch(0.94 0.025 80)" }}>
+                <button type="button" onClick={addLineItem} className="mt-2 text-xs font-medium flex items-center gap-1 transition-colors" style={{ color: GREEN }}>
                   <Plus className="w-3.5 h-3.5" /> Add line item
                 </button>
               </div>
 
               {/* Totals */}
-              <div className="bg-stone-50 rounded-xl p-3 space-y-1">
+              <div className="rounded-xl p-3 space-y-1" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
                 <div className="flex justify-between text-sm">
-                  <span className="text-stone-500">Subtotal</span>
-                  <span className="font-data font-medium text-stone-800">{fmt(subtotal)}</span>
+                  <span style={{ color: MUTED }}>Subtotal</span>
+                  <span className="font-data font-medium" style={{ color: CHARCOAL }}>{fmt(subtotal)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-stone-500">VAT rate</span>
+                    <span className="text-sm" style={{ color: MUTED }}>VAT rate</span>
                     <input
                       name="vatRate"
                       type="number"
@@ -278,27 +284,28 @@ export function InvoicesClient({
                       min="0"
                       max="100"
                       step="1"
-                      className="w-16 px-2 py-1 rounded-lg border border-stone-200 text-xs text-center focus:outline-none"
+                      className="w-16 px-2 py-1 rounded-lg text-xs text-center focus:outline-none"
+                      style={{ border: `1px solid ${BORDER}`, background: "#fff", color: CHARCOAL }}
                     />
-                    <span className="text-sm text-stone-500">%</span>
+                    <span className="text-sm" style={{ color: MUTED }}>%</span>
                   </div>
                 </div>
-                <div className="flex justify-between text-sm font-semibold border-t border-stone-200 pt-1 mt-1">
-                  <span className="text-stone-700">Total</span>
-                  <span className="font-data text-stone-900">{fmt(subtotal)}</span>
+                <div className="flex justify-between text-sm font-semibold pt-1 mt-1" style={{ borderTop: `1px solid ${BORDER}` }}>
+                  <span style={{ color: CHARCOAL }}>Total</span>
+                  <span className="font-data" style={{ color: CHARCOAL }}>{fmt(subtotal)}</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1.5">Notes</label>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Notes</label>
                 <textarea name="notes" rows={2} placeholder="Payment instructions, thank you note…" className={`${inputClass} resize-none`} style={inputStyle} />
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
                   Cancel
                 </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90" style={{ background: "oklch(0.94 0.025 80)", color: "oklch(0.16 0.008 80)" }}>
+                <button type="submit" className="flex-1 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: GREEN, color: "#fff" }}>
                   Create invoice
                 </button>
               </div>
