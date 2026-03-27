@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createExpense, updateExpense, deleteExpense } from "@/server/actions/expenses";
-import { Plus, Check, X, Trash2, Paperclip, ExternalLink, ImageIcon, FileText } from "lucide-react";
+import { Plus, Check, X, Trash2, Paperclip, ExternalLink, ImageIcon, FileText, ZoomIn } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
 const CHARCOAL = "#1F1F1F";
@@ -33,23 +33,93 @@ const selectCell: React.CSSProperties = { ...cell, cursor: "pointer" };
 function isImage(url: string) {
   return /\.(jpg|jpeg|png|gif|webp|heic)$/i.test(url);
 }
+function isPdf(url: string) {
+  return /\.pdf$/i.test(url);
+}
 
-function ReceiptBadge({ url, onClick }: { url: string; onClick?: (e: React.MouseEvent) => void }) {
-  const isPdf = /\.pdf$/i.test(url);
+function ReceiptModal({ url, description, onClose }: { url: string; description: string; onClose: () => void }) {
+  const isImg = isImage(url);
+  const isPDF = isPdf(url);
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={e => { e.stopPropagation(); onClick?.(e); }}
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="relative rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+        style={{ background: CARD, maxWidth: "90vw", maxHeight: "90vh", minWidth: 320 }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${BORDER}` }}>
+          <div className="flex items-center gap-2">
+            {isPDF ? <FileText className="w-4 h-4" style={{ color: GREEN }} /> : <ImageIcon className="w-4 h-4" style={{ color: GREEN }} />}
+            <span className="text-sm font-semibold truncate max-w-[200px]" style={{ color: CHARCOAL }}>{description}</span>
+          </div>
+          <div className="flex items-center gap-2 ml-4">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full hover:opacity-80 transition-opacity"
+              style={{ background: LIGHT_GREEN, color: GREEN }}
+            >
+              <ExternalLink className="w-3 h-3" /> Open full size
+            </a>
+            <button
+              onClick={onClose}
+              className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-70 transition-opacity"
+              style={{ border: `1px solid ${BORDER}` }}
+            >
+              <X className="w-3.5 h-3.5" style={{ color: MUTED }} />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="overflow-auto flex-1" style={{ maxHeight: "75vh" }}>
+          {isImg ? (
+            <img src={url} alt={description} className="block w-full h-auto" style={{ maxHeight: "75vh", objectFit: "contain" }} />
+          ) : isPDF ? (
+            <iframe src={url} title={description} className="w-full" style={{ height: "75vh", minWidth: "60vw", border: "none" }} />
+          ) : (
+            <div className="p-8 text-center">
+              <FileText className="w-12 h-12 mx-auto mb-3" style={{ color: MUTED }} />
+              <p className="text-sm mb-3" style={{ color: MUTED }}>Preview not available for this file type.</p>
+              <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold underline" style={{ color: GREEN }}>
+                Download file
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReceiptBadge({ url, description, onView }: { url: string; description: string; onView: () => void }) {
+  const isImg = isImage(url);
+  const isPDF = isPdf(url);
+  return (
+    <button
+      onClick={e => { e.stopPropagation(); onView(); }}
       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium hover:opacity-80 transition-opacity"
       style={{ background: LIGHT_GREEN, color: GREEN }}
       title="View receipt"
     >
-      {isPdf ? <FileText className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+      {isPDF ? <FileText className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
       Receipt
-      <ExternalLink className="w-2.5 h-2.5" />
-    </a>
+      <ZoomIn className="w-2.5 h-2.5" />
+    </button>
   );
 }
 
@@ -120,6 +190,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [viewReceipt, setViewReceipt] = useState<{ url: string; description: string } | null>(null);
 
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const deductibleTotal = expenses.filter(e => e.deductible).reduce((s, e) => s + e.amount, 0);
@@ -262,6 +333,10 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
   );
 
   return (
+    <>
+    {viewReceipt && (
+      <ReceiptModal url={viewReceipt.url} description={viewReceipt.description} onClose={() => setViewReceipt(null)} />
+    )}
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <div>
@@ -331,7 +406,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
                 </td>
                 <td className="px-3 py-3">
                   {e.receiptUrl
-                    ? <ReceiptBadge url={e.receiptUrl} />
+                    ? <ReceiptBadge url={e.receiptUrl} description={e.description} onView={() => setViewReceipt({ url: e.receiptUrl!, description: e.description })} />
                     : <span className="text-xs" style={{ color: MUTED }}>—</span>}
                 </td>
                 <td className="px-3 py-3">
@@ -382,7 +457,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
               {e.deductible && (
                 <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>Deductible</span>
               )}
-              {e.receiptUrl && <ReceiptBadge url={e.receiptUrl} />}
+              {e.receiptUrl && <ReceiptBadge url={e.receiptUrl} description={e.description} onView={() => setViewReceipt({ url: e.receiptUrl!, description: e.description })} />}
             </div>
             {e.receiptUrl && isImage(e.receiptUrl) && (
               <img src={e.receiptUrl} alt="Receipt" className="rounded-xl mb-3 max-h-32 object-cover w-full" style={{ border: `1px solid ${BORDER}` }} />
@@ -412,5 +487,6 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
         )}
       </div>
     </div>
+    </>
   );
 }
