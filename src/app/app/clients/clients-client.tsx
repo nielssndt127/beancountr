@@ -84,6 +84,40 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
     </div>
   );
 
+  // Mobile stacked form for new/edit
+  const MobileForm = ({ row, set, onSave, onCancel }: {
+    row: Row;
+    set: (fn: (r: Row) => Row) => void;
+    onSave: () => void;
+    onCancel: () => void;
+  }) => (
+    <div className="rounded-2xl p-4 space-y-3" style={{ background: "#F0F9F4", border: `1px solid ${BORDER}` }}>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Name *</label>
+        <input autoFocus placeholder="Client name" value={row.name} onChange={e => set(r => ({ ...r, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && onSave()} style={cell} />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Email</label>
+        <input placeholder="Email" value={row.email} onChange={e => set(r => ({ ...r, email: e.target.value }))} style={cell} />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Address</label>
+        <input placeholder="Address" value={row.address} onChange={e => set(r => ({ ...r, address: e.target.value }))} style={cell} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>VAT ID</label>
+          <input placeholder="GB123456789" value={row.vatId} onChange={e => set(r => ({ ...r, vatId: e.target.value }))} style={cell} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Notes</label>
+          <input placeholder="Notes" value={row.notes} onChange={e => set(r => ({ ...r, notes: e.target.value }))} style={cell} />
+        </div>
+      </div>
+      <SaveCancel onSave={onSave} onCancel={onCancel} disabled={!row.name.trim()} />
+    </div>
+  );
+
   return (
     <div className="max-w-6xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
@@ -96,7 +130,8 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
         </button>
       </div>
 
-      <div className="rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+      {/* Desktop table — hidden on mobile */}
+      <div className="hidden md:block rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
         <table className="w-full text-sm min-w-[700px]">
           <thead style={{ background: KHAKI }}>
             <tr>
@@ -177,6 +212,84 @@ export function ClientsClient({ clients }: { clients: Client[] }) {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list — hidden on md+ */}
+      <div className="md:hidden space-y-2 px-4 pb-4">
+        {/* New client form card */}
+        {adding && (
+          <MobileForm
+            row={newRow}
+            set={setNewRow}
+            onSave={saveNew}
+            onCancel={() => { setAdding(false); setNewRow(empty); }}
+          />
+        )}
+
+        {/* Empty state */}
+        {clients.length === 0 && !adding && (
+          <div className="rounded-2xl p-4 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+            <p className="text-sm italic mb-3" style={{ color: MUTED }}>No clients yet</p>
+            <button onClick={() => setAdding(true)} className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: GREEN, color: "#fff" }}>
+              + Add first
+            </button>
+          </div>
+        )}
+
+        {/* Client cards */}
+        {clients.map((c) => editId === c.id ? (
+          <MobileForm
+            key={c.id}
+            row={editRow}
+            set={setEditRow}
+            onSave={saveEdit}
+            onCancel={() => setEditId(null)}
+          />
+        ) : (
+          <div
+            key={c.id}
+            onClick={() => startEdit(c)}
+            className="rounded-2xl p-4 cursor-pointer active:opacity-80 transition-opacity"
+            style={{ background: CARD, border: `1px solid ${BORDER}` }}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: LIGHT_GREEN, color: GREEN }}>
+                  {c.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold truncate" style={{ color: CHARCOAL }}>{c.name}</p>
+                  {c.email && <p className="text-xs truncate mt-0.5" style={{ color: MUTED }}>{c.email}</p>}
+                  {c.address && <p className="text-xs truncate" style={{ color: MUTED }}>{c.address.split(",")[0]}</p>}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: KHAKI, color: MUTED }}>
+                  {c._count.invoices} inv
+                </span>
+                <button
+                  onClick={e => { e.stopPropagation(); handleDelete(c.id); }}
+                  disabled={deleting === c.id}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center disabled:opacity-40"
+                  style={{ color: MUTED }}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Add client button at bottom of list */}
+        {!adding && clients.length > 0 && (
+          <button
+            onClick={() => setAdding(true)}
+            className="w-full py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+            style={{ background: KHAKI, color: CHARCOAL, border: `1px solid ${BORDER}` }}
+          >
+            <Plus className="w-4 h-4" /> Add client
+          </button>
+        )}
       </div>
     </div>
   );

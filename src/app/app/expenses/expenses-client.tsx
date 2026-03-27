@@ -86,6 +86,49 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
     </div>
   );
 
+  // Mobile stacked form (used for both new and edit on mobile)
+  const MobileForm = ({ row, set, onSave, onCancel, isNew }: {
+    row: Row;
+    set: (fn: (r: Row) => Row) => void;
+    onSave: () => void;
+    onCancel: () => void;
+    isNew?: boolean;
+  }) => (
+    <div className="rounded-2xl p-4 space-y-3" style={{ background: "#F0F9F4", border: `1px solid ${BORDER}` }}>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Description *</label>
+        <input autoFocus placeholder="e.g. Adobe Creative Cloud" value={row.description} onChange={e => set(r => ({ ...r, description: e.target.value }))} onKeyDown={e => e.key === "Enter" && onSave()} style={cell} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Date</label>
+          <input type="date" value={row.date} onChange={e => set(r => ({ ...r, date: e.target.value }))} style={cell} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Amount</label>
+          <input type="number" step="0.01" min="0" placeholder="0.00" value={row.amount} onChange={e => set(r => ({ ...r, amount: e.target.value }))} style={cell} />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Category</label>
+          <select value={row.category} onChange={e => set(r => ({ ...r, category: e.target.value }))} style={selectCell}>
+            <option value="">Category…</option>
+            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Deductible</label>
+          <select value={row.deductible} onChange={e => set(r => ({ ...r, deductible: e.target.value }))} style={selectCell}>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+      <SaveCancel onSave={onSave} onCancel={onCancel} disabled={!row.description.trim() || !row.amount} />
+    </div>
+  );
+
   return (
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
@@ -100,7 +143,8 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
         </button>
       </div>
 
-      <div className="rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+      {/* Desktop table — hidden on mobile */}
+      <div className="hidden md:block rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
         <table className="w-full text-sm min-w-[680px]">
           <thead style={{ background: KHAKI }}>
             <tr>
@@ -195,6 +239,83 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list — hidden on md+ */}
+      <div className="md:hidden space-y-2 px-4 pb-4">
+        {/* New expense form card */}
+        {adding && (
+          <MobileForm
+            row={newRow}
+            set={setNewRow}
+            onSave={saveNew}
+            onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }}
+            isNew
+          />
+        )}
+
+        {/* Empty state */}
+        {expenses.length === 0 && !adding && (
+          <div className="rounded-2xl p-4 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+            <p className="text-sm italic mb-3" style={{ color: MUTED }}>No expenses yet</p>
+            <button onClick={() => setAdding(true)} className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: GREEN, color: "#fff" }}>
+              + Add first
+            </button>
+          </div>
+        )}
+
+        {/* Expense cards */}
+        {expenses.map((e) => editId === e.id ? (
+          <MobileForm
+            key={e.id}
+            row={editRow}
+            set={setEditRow}
+            onSave={saveEdit}
+            onCancel={() => setEditId(null)}
+          />
+        ) : (
+          <div
+            key={e.id}
+            onClick={() => startEdit(e)}
+            className="rounded-2xl p-4 cursor-pointer active:opacity-80 transition-opacity"
+            style={{ background: CARD, border: `1px solid ${BORDER}` }}
+          >
+            <div className="flex items-start justify-between mb-2">
+              <span className="font-semibold text-base" style={{ color: CHARCOAL }}>{e.description}</span>
+              <span className="text-xs ml-3 flex-shrink-0" style={{ color: MUTED }}>{fmtDate(e.date)}</span>
+            </div>
+            <div className="flex items-center gap-2 mb-3">
+              {e.category && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>{e.category}</span>
+              )}
+              {e.deductible && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>Deductible</span>
+              )}
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-mono font-bold text-lg" style={{ color: GREEN }}>{fmt(e.amount)}</span>
+              <button
+                onClick={ev => { ev.stopPropagation(); handleDelete(e.id); }}
+                disabled={deleting === e.id}
+                className="w-7 h-7 rounded-lg flex items-center justify-center disabled:opacity-40"
+                style={{ color: MUTED }}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* Add expense button at bottom of list */}
+        {!adding && expenses.length > 0 && (
+          <button
+            onClick={() => { setAdding(true); setNewRow({ ...empty, date: today() }); }}
+            className="w-full py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+            style={{ background: KHAKI, color: CHARCOAL, border: `1px solid ${BORDER}` }}
+          >
+            <Plus className="w-4 h-4" /> Add expense
+          </button>
+        )}
       </div>
     </div>
   );
