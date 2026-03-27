@@ -2,58 +2,65 @@
 
 import { useState } from "react";
 import { createExpense, updateExpense, deleteExpense } from "@/server/actions/expenses";
-import { Receipt, Plus, Pencil, Trash2 } from "lucide-react";
+import { Receipt, Plus, Check, X, Trash2 } from "lucide-react";
 
-const CREAM = "#F5F1E8";
 const CHARCOAL = "#1F1F1F";
 const GREEN = "#4F7D6A";
 const LIGHT_GREEN = "#E6F2ED";
 const CARD = "#FDFAF4";
+const KHAKI = "#EAE3D2";
 const BORDER = "rgba(31,31,31,0.1)";
 const MUTED = "rgba(31,31,31,0.55)";
 
-type Expense = {
-  id: string;
-  date: Date;
-  category: string;
-  description: string;
-  amount: number;
-  deductible: boolean;
-};
+type Expense = { id: string; date: Date; category: string; description: string; amount: number; deductible: boolean };
+type Row = { date: string; category: string; description: string; amount: string; deductible: string };
 
 const CATEGORIES = ["Software", "Equipment", "Travel", "Office", "Marketing", "Professional services", "Utilities", "Other"];
+const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n);
+const fmtDate = (d: Date) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(d));
+const toDateInput = (d: Date) => new Date(d).toISOString().split("T")[0];
+const today = () => new Date().toISOString().split("T")[0];
 
-function fmt(amount: number) {
-  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(amount);
-}
-function fmtDate(date: Date) {
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(date));
-}
-function toDateInput(date: Date) {
-  return new Date(date).toISOString().split("T")[0];
-}
+const empty: Row = { date: today(), category: "", description: "", amount: "", deductible: "true" };
 
-const inputStyle = { background: "#fff", border: `1px solid ${BORDER}`, color: CHARCOAL, "--tw-ring-color": GREEN } as React.CSSProperties;
+const cell: React.CSSProperties = {
+  background: "transparent", border: "none", borderBottom: `2px solid ${GREEN}`,
+  outline: "none", color: CHARCOAL, fontSize: "13px", padding: "2px 4px", width: "100%",
+};
+const selectCell: React.CSSProperties = { ...cell, cursor: "pointer" };
 
 export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
-  const [showForm, setShowForm] = useState(false);
-  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [newRow, setNewRow] = useState<Row>(empty);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editRow, setEditRow] = useState<Row>(empty);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
-  const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const deductibleAmount = expenses.filter((e) => e.deductible).reduce((sum, e) => sum + e.amount, 0);
+  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const deductible = expenses.filter(e => e.deductible).reduce((s, e) => s + e.amount, 0);
 
-  async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    await createExpense(new FormData(e.currentTarget));
-    setShowForm(false);
+  async function saveNew() {
+    if (!newRow.description.trim() || !newRow.amount || saving) return;
+    setSaving(true);
+    const fd = new FormData();
+    Object.entries(newRow).forEach(([k, v]) => fd.set(k, v));
+    await createExpense(fd);
+    setAdding(false); setNewRow({ ...empty, date: today() }); setSaving(false);
   }
 
-  async function handleUpdate(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!editingExpense) return;
-    await updateExpense(editingExpense.id, new FormData(e.currentTarget));
-    setEditingExpense(null);
+  async function saveEdit() {
+    if (!editId || saving) return;
+    setSaving(true);
+    const fd = new FormData();
+    Object.entries(editRow).forEach(([k, v]) => fd.set(k, v));
+    await updateExpense(editId, fd);
+    setEditId(null); setSaving(false);
+  }
+
+  function startEdit(e: Expense) {
+    setEditId(e.id);
+    setEditRow({ date: toDateInput(e.date), category: e.category, description: e.description, amount: String(e.amount), deductible: e.deductible ? "true" : "false" });
   }
 
   async function handleDelete(id: string) {
@@ -62,123 +69,124 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
     setDeleting(null);
   }
 
-  const modal = showForm || editingExpense;
-  const editData = editingExpense;
+  const TH = ({ label, w }: { label: string; w?: string }) => (
+    <th className="text-left px-3 py-2.5 text-xs font-semibold uppercase tracking-wider whitespace-nowrap" style={{ color: MUTED, borderBottom: `1px solid ${BORDER}`, width: w }}>
+      {label}
+    </th>
+  );
+
+  const SaveCancel = ({ onSave, onCancel, disabled }: { onSave: () => void; onCancel: () => void; disabled?: boolean }) => (
+    <div className="flex items-center gap-1 justify-end">
+      <button onClick={onSave} disabled={disabled || saving} className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-all" style={{ background: GREEN }}>
+        <Check className="w-3.5 h-3.5 text-white" />
+      </button>
+      <button onClick={onCancel} className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition-all" style={{ border: `1px solid ${BORDER}` }}>
+        <X className="w-3.5 h-3.5" style={{ color: MUTED }} />
+      </button>
+    </div>
+  );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: CHARCOAL }}>Expenses</h1>
+          <h1 className="text-2xl font-bold" style={{ color: CHARCOAL }}>Expenses</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>
-            <span className="font-data">{fmt(totalAmount)}</span> total · <span className="font-data">{fmt(deductibleAmount)}</span> deductible
+            <span className="font-mono">{fmt(total)}</span> total · <span className="font-mono">{fmt(deductible)}</span> deductible
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full transition-all hover:opacity-90"
-          style={{ background: GREEN, color: "#fff" }}
-        >
-          <Plus className="w-4 h-4" /> Add expense
-        </button>
+        {!adding && (
+          <button onClick={() => setAdding(true)} className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full hover:opacity-90 transition-all" style={{ background: GREEN, color: "#fff" }}>
+            <Plus className="w-4 h-4" /> Add expense
+          </button>
+        )}
       </div>
 
-      {expenses.length === 0 ? (
-        <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: LIGHT_GREEN }}>
-            <Receipt className="w-6 h-6" style={{ color: GREEN }} />
-          </div>
-          <p className="font-medium mb-1" style={{ color: CHARCOAL }}>No expenses yet</p>
-          <p className="text-sm" style={{ color: MUTED }}>Track your business expenses here.</p>
-        </div>
-      ) : (
-        <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div>
-            {expenses.map((expense) => (
-              <div key={expense.id} className="flex items-center justify-between px-6 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: LIGHT_GREEN }}>
-                    <Receipt className="w-4 h-4" style={{ color: GREEN }} />
-                  </div>
-                  <div>
-                    <p className="font-medium" style={{ color: CHARCOAL }}>{expense.description}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs" style={{ color: MUTED }}>{expense.category}</span>
-                      <span style={{ color: BORDER }}>·</span>
-                      <span className="text-xs" style={{ color: MUTED }}>{fmtDate(expense.date)}</span>
-                      {expense.deductible && (
-                        <>
-                          <span style={{ color: BORDER }}>·</span>
-                          <span className="text-xs font-medium px-1.5 py-0.5 rounded-full" style={{ background: LIGHT_GREEN, color: GREEN }}>Deductible</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold font-data" style={{ color: CHARCOAL }}>{fmt(expense.amount)}</span>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => setEditingExpense(expense)} className="p-2 rounded-lg transition-colors" style={{ color: MUTED }}>
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => handleDelete(expense.id)} disabled={deleting === expense.id} className="p-2 rounded-lg transition-colors disabled:opacity-50" style={{ color: MUTED }}>
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <table className="w-full text-sm min-w-[680px]">
+          <thead style={{ background: KHAKI }}>
+            <tr>
+              <TH label="Date" w="110px" />
+              <TH label="Category" w="140px" />
+              <TH label="Description" />
+              <TH label="Amount" w="100px" />
+              <TH label="Deductible" w="100px" />
+              <th style={{ width: 72, borderBottom: `1px solid ${BORDER}` }} />
+            </tr>
+          </thead>
+          <tbody>
+            {adding && (
+              <tr style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
+                <td className="px-3 py-2"><input type="date" value={newRow.date} onChange={e => setNewRow(r => ({ ...r, date: e.target.value }))} style={cell} /></td>
+                <td className="px-3 py-2">
+                  <select value={newRow.category} onChange={e => setNewRow(r => ({ ...r, category: e.target.value }))} style={selectCell}>
+                    <option value="">Category…</option>
+                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </td>
+                <td className="px-3 py-2"><input autoFocus placeholder="Description *" value={newRow.description} onChange={e => setNewRow(r => ({ ...r, description: e.target.value }))} onKeyDown={e => e.key === "Enter" && saveNew()} style={cell} /></td>
+                <td className="px-3 py-2"><input type="number" step="0.01" min="0" placeholder="0.00" value={newRow.amount} onChange={e => setNewRow(r => ({ ...r, amount: e.target.value }))} style={cell} /></td>
+                <td className="px-3 py-2">
+                  <select value={newRow.deductible} onChange={e => setNewRow(r => ({ ...r, deductible: e.target.value }))} style={selectCell}>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </td>
+                <td className="px-3 py-2"><SaveCancel onSave={saveNew} onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }} disabled={!newRow.description.trim() || !newRow.amount} /></td>
+              </tr>
+            )}
 
-      {modal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="rounded-2xl w-full max-w-md" style={{ background: CREAM, border: `1px solid ${BORDER}` }}>
-            <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
-              <h2 className="font-semibold" style={{ color: CHARCOAL }}>{editData ? "Edit expense" : "Add expense"}</h2>
-            </div>
-            <form onSubmit={editData ? handleUpdate : handleCreate} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Date *</label>
-                  <input name="date" type="date" defaultValue={editData ? toDateInput(editData.date) : new Date().toISOString().split("T")[0]} required className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={inputStyle} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Amount (£) *</label>
-                  <input name="amount" type="number" step="0.01" min="0" defaultValue={editData?.amount ?? ""} required className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={inputStyle} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Category *</label>
-                <select name="category" defaultValue={editData?.category ?? ""} required className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={inputStyle}>
-                  <option value="">Select category…</option>
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Description *</label>
-                <input name="description" defaultValue={editData?.description ?? ""} required placeholder="e.g. Figma subscription" className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={inputStyle} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Tax deductible?</label>
-                <select name="deductible" defaultValue={editData?.deductible === false ? "false" : "true"} className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent" style={inputStyle}>
-                  <option value="true">Yes — deductible</option>
-                  <option value="false">No — not deductible</option>
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => { setShowForm(false); setEditingExpense(null); }} className="flex-1 py-2.5 rounded-full text-sm font-medium transition-colors" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
-                  Cancel
-                </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90" style={{ background: GREEN, color: "#fff" }}>
-                  {editData ? "Save changes" : "Add expense"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            {expenses.length === 0 && !adding ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-14 text-center">
+                  <Receipt className="w-8 h-8 mx-auto mb-3" style={{ color: MUTED }} />
+                  <p className="font-medium mb-1" style={{ color: CHARCOAL }}>No expenses yet</p>
+                  <p className="text-sm" style={{ color: MUTED }}>Click "Add expense" to start tracking.</p>
+                </td>
+              </tr>
+            ) : expenses.map((e) => editId === e.id ? (
+              <tr key={e.id} style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
+                <td className="px-3 py-2"><input type="date" value={editRow.date} onChange={ev => setEditRow(r => ({ ...r, date: ev.target.value }))} style={cell} /></td>
+                <td className="px-3 py-2">
+                  <select value={editRow.category} onChange={ev => setEditRow(r => ({ ...r, category: ev.target.value }))} style={selectCell}>
+                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </td>
+                <td className="px-3 py-2"><input autoFocus value={editRow.description} onChange={ev => setEditRow(r => ({ ...r, description: ev.target.value }))} onKeyDown={ev => ev.key === "Enter" && saveEdit()} style={cell} /></td>
+                <td className="px-3 py-2"><input type="number" step="0.01" value={editRow.amount} onChange={ev => setEditRow(r => ({ ...r, amount: ev.target.value }))} style={cell} /></td>
+                <td className="px-3 py-2">
+                  <select value={editRow.deductible} onChange={ev => setEditRow(r => ({ ...r, deductible: ev.target.value }))} style={selectCell}>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </td>
+                <td className="px-3 py-2"><SaveCancel onSave={saveEdit} onCancel={() => setEditId(null)} /></td>
+              </tr>
+            ) : (
+              <tr key={e.id} onClick={() => startEdit(e)} className="cursor-pointer group transition-colors hover:bg-[#F0F9F4]" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <td className="px-3 py-3 text-sm" style={{ color: MUTED }}>{fmtDate(e.date)}</td>
+                <td className="px-3 py-3">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>{e.category}</span>
+                </td>
+                <td className="px-3 py-3 font-medium" style={{ color: CHARCOAL }}>{e.description}</td>
+                <td className="px-3 py-3 font-mono font-semibold text-sm" style={{ color: CHARCOAL }}>{fmt(e.amount)}</td>
+                <td className="px-3 py-3">
+                  {e.deductible
+                    ? <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>Yes</span>
+                    : <span className="text-xs" style={{ color: MUTED }}>No</span>}
+                </td>
+                <td className="px-3 py-3">
+                  <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={ev => { ev.stopPropagation(); handleDelete(e.id); }} disabled={deleting === e.id} className="w-7 h-7 rounded-lg flex items-center justify-center disabled:opacity-40" style={{ color: MUTED }}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
