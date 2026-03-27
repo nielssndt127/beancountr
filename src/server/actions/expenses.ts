@@ -14,6 +14,7 @@ export async function createExpense(formData: FormData) {
       description: formData.get("description") as string,
       amount: parseFloat(formData.get("amount") as string),
       deductible: formData.get("deductible") === "true",
+      receiptUrl: (formData.get("receiptUrl") as string) || null,
     },
   });
   revalidatePath("/app/expenses");
@@ -22,6 +23,7 @@ export async function createExpense(formData: FormData) {
 export async function updateExpense(id: string, formData: FormData) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
+  const receiptUrl = formData.get("receiptUrl") as string;
   await prisma.expense.updateMany({
     where: { id, userId: user.id },
     data: {
@@ -30,6 +32,8 @@ export async function updateExpense(id: string, formData: FormData) {
       description: formData.get("description") as string,
       amount: parseFloat(formData.get("amount") as string),
       deductible: formData.get("deductible") === "true",
+      // Only update receiptUrl if a value was explicitly passed
+      ...(receiptUrl !== null ? { receiptUrl: receiptUrl || null } : {}),
     },
   });
   revalidatePath("/app/expenses");

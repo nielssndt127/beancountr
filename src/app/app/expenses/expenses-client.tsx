@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createExpense, updateExpense, deleteExpense } from "@/server/actions/expenses";
-import { Plus, Check, X, Trash2 } from "lucide-react";
+import { Plus, Check, X, Trash2, Paperclip, ExternalLink, ImageIcon, FileText } from "lucide-react";
+import { createClient } from "@/lib/supabase";
 
 const CHARCOAL = "#1F1F1F";
 const GREEN = "#4F7D6A";
@@ -12,8 +13,8 @@ const KHAKI = "#EAE3D2";
 const BORDER = "rgba(31,31,31,0.1)";
 const MUTED = "rgba(31,31,31,0.55)";
 
-type Expense = { id: string; date: Date; category: string; description: string; amount: number; deductible: boolean };
-type Row = { date: string; category: string; description: string; amount: string; deductible: string };
+type Expense = { id: string; date: Date; category: string; description: string; amount: number; deductible: boolean; receiptUrl: string | null };
+type Row = { date: string; category: string; description: string; amount: string; deductible: string; receiptUrl: string };
 
 const CATEGORIES = ["Software", "Equipment", "Travel", "Office", "Marketing", "Professional services", "Utilities", "Other"];
 const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n);
@@ -21,13 +22,95 @@ const fmtDate = (d: Date) => new Intl.DateTimeFormat("en-GB", { day: "numeric", 
 const toDateInput = (d: Date) => new Date(d).toISOString().split("T")[0];
 const today = () => new Date().toISOString().split("T")[0];
 
-const empty: Row = { date: today(), category: "", description: "", amount: "", deductible: "true" };
+const empty: Row = { date: today(), category: "", description: "", amount: "", deductible: "true", receiptUrl: "" };
 
 const cell: React.CSSProperties = {
   background: "transparent", border: "none", borderBottom: `2px solid ${GREEN}`,
   outline: "none", color: CHARCOAL, fontSize: "13px", padding: "2px 4px", width: "100%",
 };
 const selectCell: React.CSSProperties = { ...cell, cursor: "pointer" };
+
+function isImage(url: string) {
+  return /\.(jpg|jpeg|png|gif|webp|heic)$/i.test(url);
+}
+
+function ReceiptBadge({ url, onClick }: { url: string; onClick?: (e: React.MouseEvent) => void }) {
+  const isPdf = /\.pdf$/i.test(url);
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={e => { e.stopPropagation(); onClick?.(e); }}
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium hover:opacity-80 transition-opacity"
+      style={{ background: LIGHT_GREEN, color: GREEN }}
+      title="View receipt"
+    >
+      {isPdf ? <FileText className="w-3 h-3" /> : <ImageIcon className="w-3 h-3" />}
+      Receipt
+      <ExternalLink className="w-2.5 h-2.5" />
+    </a>
+  );
+}
+
+function FileUploadButton({
+  currentUrl,
+  onUploaded,
+  uploading,
+  setUploading,
+}: {
+  currentUrl: string;
+  onUploaded: (url: string) => void;
+  uploading: boolean;
+  setUploading: (v: boolean) => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+
+  async function handleFile(file: File) {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const supabase = createClient();
+      const ext = file.name.split(".").pop();
+      const path = `receipts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from("receipts").upload(path, file, { upsert: false });
+      if (error) throw error;
+      const { data } = supabase.storage.from("receipts").getPublicUrl(path);
+      onUploaded(data.publicUrl);
+    } catch (err) {
+      console.error("Upload failed", err);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        ref={ref}
+        type="file"
+        accept="image/*,.pdf"
+        className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+      />
+      <button
+        type="button"
+        onClick={() => ref.current?.click()}
+        disabled={uploading}
+        className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full transition-all hover:opacity-80 disabled:opacity-40"
+        style={{ background: currentUrl ? LIGHT_GREEN : KHAKI, color: currentUrl ? GREEN : CHARCOAL }}
+      >
+        <Paperclip className="w-3 h-3" />
+        {uploading ? "Uploading…" : currentUrl ? "Change" : "Attach receipt"}
+      </button>
+      {currentUrl && (
+        <a href={currentUrl} target="_blank" rel="noopener noreferrer" className="text-xs underline" style={{ color: GREEN }}>
+          View
+        </a>
+      )}
+    </div>
+  );
+}
 
 export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
   const [adding, setAdding] = useState(expenses.length === 0);
@@ -36,12 +119,13 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
   const [editRow, setEditRow] = useState<Row>(empty);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const total = expenses.reduce((s, e) => s + e.amount, 0);
-  const deductible = expenses.filter(e => e.deductible).reduce((s, e) => s + e.amount, 0);
+  const deductibleTotal = expenses.filter(e => e.deductible).reduce((s, e) => s + e.amount, 0);
 
   async function saveNew() {
-    if (!newRow.description.trim() || !newRow.amount || saving) return;
+    if (!newRow.description.trim() || !newRow.amount || saving || uploading) return;
     setSaving(true);
     const fd = new FormData();
     Object.entries(newRow).forEach(([k, v]) => fd.set(k, v));
@@ -50,7 +134,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
   }
 
   async function saveEdit() {
-    if (!editId || saving) return;
+    if (!editId || saving || uploading) return;
     setSaving(true);
     const fd = new FormData();
     Object.entries(editRow).forEach(([k, v]) => fd.set(k, v));
@@ -60,7 +144,11 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
 
   function startEdit(e: Expense) {
     setEditId(e.id);
-    setEditRow({ date: toDateInput(e.date), category: e.category, description: e.description, amount: String(e.amount), deductible: e.deductible ? "true" : "false" });
+    setEditRow({
+      date: toDateInput(e.date), category: e.category, description: e.description,
+      amount: String(e.amount), deductible: e.deductible ? "true" : "false",
+      receiptUrl: e.receiptUrl ?? "",
+    });
   }
 
   async function handleDelete(id: string) {
@@ -77,7 +165,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
 
   const SaveCancel = ({ onSave, onCancel, disabled }: { onSave: () => void; onCancel: () => void; disabled?: boolean }) => (
     <div className="flex items-center gap-1 justify-end">
-      <button onClick={onSave} disabled={disabled || saving} className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-all" style={{ background: GREEN }}>
+      <button onClick={onSave} disabled={disabled || saving || uploading} className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-all" style={{ background: GREEN }}>
         <Check className="w-3.5 h-3.5 text-white" />
       </button>
       <button onClick={onCancel} className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition-all" style={{ border: `1px solid ${BORDER}` }}>
@@ -86,13 +174,45 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
     </div>
   );
 
-  // Mobile stacked form (used for both new and edit on mobile)
-  const MobileForm = ({ row, set, onSave, onCancel, isNew }: {
-    row: Row;
-    set: (fn: (r: Row) => Row) => void;
-    onSave: () => void;
-    onCancel: () => void;
-    isNew?: boolean;
+  // Desktop new/edit row
+  const DesktopEditRow = ({ row, set, onSave, onCancel, isNew }: {
+    row: Row; set: React.Dispatch<React.SetStateAction<Row>>;
+    onSave: () => void; onCancel: () => void; isNew?: boolean;
+  }) => (
+    <tr style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
+      <td className="px-3 py-2"><input type="date" value={row.date} onChange={e => set(r => ({ ...r, date: e.target.value }))} style={cell} /></td>
+      <td className="px-3 py-2">
+        <select value={row.category} onChange={e => set(r => ({ ...r, category: e.target.value }))} style={selectCell}>
+          <option value="">Category…</option>
+          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </td>
+      <td className="px-3 py-2"><input autoFocus={isNew} placeholder="Description *" value={row.description} onChange={e => set(r => ({ ...r, description: e.target.value }))} onKeyDown={e => e.key === "Enter" && onSave()} style={cell} /></td>
+      <td className="px-3 py-2"><input type="number" step="0.01" min="0" placeholder="0.00" value={row.amount} onChange={e => set(r => ({ ...r, amount: e.target.value }))} style={cell} /></td>
+      <td className="px-3 py-2">
+        <select value={row.deductible} onChange={e => set(r => ({ ...r, deductible: e.target.value }))} style={selectCell}>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </td>
+      <td className="px-3 py-2">
+        <FileUploadButton
+          currentUrl={row.receiptUrl}
+          onUploaded={url => set(r => ({ ...r, receiptUrl: url }))}
+          uploading={uploading}
+          setUploading={setUploading}
+        />
+      </td>
+      <td className="px-3 py-2">
+        <SaveCancel onSave={onSave} onCancel={onCancel} disabled={!row.description.trim() || !row.amount} />
+      </td>
+    </tr>
+  );
+
+  // Mobile stacked form
+  const MobileForm = ({ row, set, onSave, onCancel }: {
+    row: Row; set: React.Dispatch<React.SetStateAction<Row>>;
+    onSave: () => void; onCancel: () => void;
   }) => (
     <div className="rounded-2xl p-4 space-y-3" style={{ background: "#F0F9F4", border: `1px solid ${BORDER}` }}>
       <div className="space-y-1">
@@ -105,7 +225,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
           <input type="date" value={row.date} onChange={e => set(r => ({ ...r, date: e.target.value }))} style={cell} />
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Amount</label>
+          <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Amount £</label>
           <input type="number" step="0.01" min="0" placeholder="0.00" value={row.amount} onChange={e => set(r => ({ ...r, amount: e.target.value }))} style={cell} />
         </div>
       </div>
@@ -125,6 +245,18 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
           </select>
         </div>
       </div>
+      <div className="space-y-1">
+        <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Receipt / Invoice</label>
+        <FileUploadButton
+          currentUrl={row.receiptUrl}
+          onUploaded={url => set(r => ({ ...r, receiptUrl: url }))}
+          uploading={uploading}
+          setUploading={setUploading}
+        />
+        {row.receiptUrl && isImage(row.receiptUrl) && (
+          <img src={row.receiptUrl} alt="Receipt preview" className="mt-2 rounded-xl max-h-40 object-contain w-full" style={{ border: `1px solid ${BORDER}` }} />
+        )}
+      </div>
       <SaveCancel onSave={onSave} onCancel={onCancel} disabled={!row.description.trim() || !row.amount} />
     </div>
   );
@@ -135,7 +267,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
         <div>
           <h1 className="text-2xl font-bold" style={{ color: CHARCOAL }}>Expenses</h1>
           <p className="text-sm mt-1" style={{ color: MUTED }}>
-            <span className="font-mono">{fmt(total)}</span> total · <span className="font-mono">{fmt(deductible)}</span> deductible
+            <span className="font-mono">{fmt(total)}</span> total · <span className="font-mono">{fmt(deductibleTotal)}</span> deductible
           </p>
         </div>
         <button onClick={() => { setAdding(true); setNewRow({ ...empty, date: today() }); }} className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-full hover:opacity-90 transition-all" style={{ background: adding ? KHAKI : GREEN, color: adding ? CHARCOAL : "#fff" }}>
@@ -145,38 +277,21 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
 
       {/* Desktop table — hidden on mobile */}
       <div className="hidden md:block rounded-2xl overflow-x-auto" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-        <table className="w-full text-sm min-w-[680px]">
+        <table className="w-full text-sm min-w-[780px]">
           <thead style={{ background: KHAKI }}>
             <tr>
               <TH label="Date" w="110px" />
-              <TH label="Category" w="140px" />
+              <TH label="Category" w="130px" />
               <TH label="Description" />
               <TH label="Amount" w="100px" />
-              <TH label="Deductible" w="100px" />
+              <TH label="Deductible" w="90px" />
+              <TH label="Receipt" w="130px" />
               <th style={{ width: 72, borderBottom: `1px solid ${BORDER}` }} />
             </tr>
           </thead>
           <tbody>
             {adding && (
-              <tr style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
-                <td className="px-3 py-2"><input type="date" value={newRow.date} onChange={e => setNewRow(r => ({ ...r, date: e.target.value }))} style={cell} /></td>
-                <td className="px-3 py-2">
-                  <select value={newRow.category} onChange={e => setNewRow(r => ({ ...r, category: e.target.value }))} style={selectCell}>
-                    <option value="">Category…</option>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </td>
-                <td className="px-3 py-2"><input autoFocus placeholder="Description *" value={newRow.description} onChange={e => setNewRow(r => ({ ...r, description: e.target.value }))} onKeyDown={e => e.key === "Enter" && saveNew()} style={cell} /></td>
-                <td className="px-3 py-2"><input type="number" step="0.01" min="0" placeholder="0.00" value={newRow.amount} onChange={e => setNewRow(r => ({ ...r, amount: e.target.value }))} style={cell} /></td>
-                <td className="px-3 py-2">
-                  <select value={newRow.deductible} onChange={e => setNewRow(r => ({ ...r, deductible: e.target.value }))} style={selectCell}>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                  </select>
-                </td>
-                <td className="px-3 py-2"><SaveCancel onSave={saveNew} onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }} disabled={!newRow.description.trim() || !newRow.amount} />
-                </td>
-              </tr>
+              <DesktopEditRow row={newRow} set={setNewRow} onSave={saveNew} onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }} isNew />
             )}
 
             {expenses.length === 0 && !adding && (
@@ -190,6 +305,7 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
                 <td className="px-3 py-3">
                   <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: KHAKI, color: MUTED }}>Yes</span>
                 </td>
+                <td className="px-3 py-3 text-sm italic" style={{ color: MUTED }}>—</td>
                 <td className="px-3 py-3">
                   <button onClick={() => setAdding(true)} className="text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap" style={{ background: GREEN, color: "#fff" }}>
                     + Add first
@@ -197,24 +313,9 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
                 </td>
               </tr>
             )}
+
             {expenses.map((e) => editId === e.id ? (
-              <tr key={e.id} style={{ background: "#F0F9F4", borderBottom: `1px solid ${BORDER}` }}>
-                <td className="px-3 py-2"><input type="date" value={editRow.date} onChange={ev => setEditRow(r => ({ ...r, date: ev.target.value }))} style={cell} /></td>
-                <td className="px-3 py-2">
-                  <select value={editRow.category} onChange={ev => setEditRow(r => ({ ...r, category: ev.target.value }))} style={selectCell}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </td>
-                <td className="px-3 py-2"><input autoFocus value={editRow.description} onChange={ev => setEditRow(r => ({ ...r, description: ev.target.value }))} onKeyDown={ev => ev.key === "Enter" && saveEdit()} style={cell} /></td>
-                <td className="px-3 py-2"><input type="number" step="0.01" value={editRow.amount} onChange={ev => setEditRow(r => ({ ...r, amount: ev.target.value }))} style={cell} /></td>
-                <td className="px-3 py-2">
-                  <select value={editRow.deductible} onChange={ev => setEditRow(r => ({ ...r, deductible: ev.target.value }))} style={selectCell}>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                  </select>
-                </td>
-                <td className="px-3 py-2"><SaveCancel onSave={saveEdit} onCancel={() => setEditId(null)} /></td>
-              </tr>
+              <DesktopEditRow key={e.id} row={editRow} set={setEditRow} onSave={saveEdit} onCancel={() => setEditId(null)} />
             ) : (
               <tr key={e.id} onClick={() => startEdit(e)} className="cursor-pointer group transition-colors hover:bg-[#F0F9F4]" style={{ borderBottom: `1px solid ${BORDER}` }}>
                 <td className="px-3 py-3 text-sm" style={{ color: MUTED }}>{fmtDate(e.date)}</td>
@@ -227,6 +328,11 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
                   {e.deductible
                     ? <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>Yes</span>
                     : <span className="text-xs" style={{ color: MUTED }}>No</span>}
+                </td>
+                <td className="px-3 py-3">
+                  {e.receiptUrl
+                    ? <ReceiptBadge url={e.receiptUrl} />
+                    : <span className="text-xs" style={{ color: MUTED }}>—</span>}
                 </td>
                 <td className="px-3 py-3">
                   <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
@@ -242,19 +348,11 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
       </div>
 
       {/* Mobile card list — hidden on md+ */}
-      <div className="md:hidden space-y-2 px-4 pb-4">
-        {/* New expense form card */}
+      <div className="md:hidden space-y-2 pb-4">
         {adding && (
-          <MobileForm
-            row={newRow}
-            set={setNewRow}
-            onSave={saveNew}
-            onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }}
-            isNew
-          />
+          <MobileForm row={newRow} set={setNewRow} onSave={saveNew} onCancel={() => { setAdding(false); setNewRow({ ...empty, date: today() }); }} />
         )}
 
-        {/* Empty state */}
         {expenses.length === 0 && !adding && (
           <div className="rounded-2xl p-4 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
             <p className="text-sm italic mb-3" style={{ color: MUTED }}>No expenses yet</p>
@@ -264,15 +362,8 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
           </div>
         )}
 
-        {/* Expense cards */}
         {expenses.map((e) => editId === e.id ? (
-          <MobileForm
-            key={e.id}
-            row={editRow}
-            set={setEditRow}
-            onSave={saveEdit}
-            onCancel={() => setEditId(null)}
-          />
+          <MobileForm key={e.id} row={editRow} set={setEditRow} onSave={saveEdit} onCancel={() => setEditId(null)} />
         ) : (
           <div
             key={e.id}
@@ -284,14 +375,18 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
               <span className="font-semibold text-base" style={{ color: CHARCOAL }}>{e.description}</span>
               <span className="text-xs ml-3 flex-shrink-0" style={{ color: MUTED }}>{fmtDate(e.date)}</span>
             </div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center flex-wrap gap-2 mb-3">
               {e.category && (
                 <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>{e.category}</span>
               )}
               {e.deductible && (
                 <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>Deductible</span>
               )}
+              {e.receiptUrl && <ReceiptBadge url={e.receiptUrl} />}
             </div>
+            {e.receiptUrl && isImage(e.receiptUrl) && (
+              <img src={e.receiptUrl} alt="Receipt" className="rounded-xl mb-3 max-h-32 object-cover w-full" style={{ border: `1px solid ${BORDER}` }} />
+            )}
             <div className="flex items-center justify-between">
               <span className="font-mono font-bold text-lg" style={{ color: GREEN }}>{fmt(e.amount)}</span>
               <button
@@ -306,7 +401,6 @@ export function ExpensesClient({ expenses }: { expenses: Expense[] }) {
           </div>
         ))}
 
-        {/* Add expense button at bottom of list */}
         {!adding && expenses.length > 0 && (
           <button
             onClick={() => { setAdding(true); setNewRow({ ...empty, date: today() }); }}
