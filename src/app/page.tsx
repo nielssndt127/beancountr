@@ -37,7 +37,7 @@ function Nav() {
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50"
-      style={{ background: C.cream, borderBottom: `1px solid ${C.khaki}` }}
+      style={{ background: C.charcoal, borderBottom: `1px solid rgba(255,255,255,0.08)` }}
     >
       <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Wordmark */}
@@ -56,7 +56,7 @@ function Nav() {
               key={label}
               href={`/${label.toLowerCase()}`}
               className="text-sm font-medium transition-colors hover:opacity-70"
-              style={{ color: C.muted }}
+              style={{ color: "rgba(245,241,232,0.7)" }}
             >
               {label}
             </Link>
@@ -68,7 +68,7 @@ function Nav() {
           <Link
             href="/login"
             className="text-sm font-medium transition-colors hover:opacity-70"
-            style={{ color: C.muted }}
+            style={{ color: "rgba(245,241,232,0.7)" }}
           >
             Log in
           </Link>
