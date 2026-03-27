@@ -19,7 +19,7 @@ export function SocialLoginButtons() {
   }
 
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-3 mb-6 hidden">
       <button
         type="button"
         onClick={() => handleOAuth("google")}
