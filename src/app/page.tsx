@@ -1,225 +1,746 @@
+"use client";
+
 import Link from "next/link";
-import { CheckCircle, Clock, FileText, PoundSterling, Shield, TrendingUp, ArrowRight, Star, AlertTriangle, Mail, LayoutGrid } from "lucide-react";
+import {
+  TrendingUp,
+  Clock,
+  FileText,
+  PoundSterling,
+  Shield,
+  CheckCircle,
+  Calculator,
+  Mail,
+  LayoutGrid,
+  ArrowRight,
+  Check,
+  X,
+} from "lucide-react";
 
-const CREAM = "oklch(0.94 0.025 80)";
-const CHARCOAL = "oklch(0.16 0.008 80)";
-const CHARCOAL_MID = "oklch(0.20 0.008 80)";
-const CARD = "oklch(0.22 0.008 80)";
-const BORDER = "oklch(0.28 0.008 80)";
-const MUTED = "oklch(0.65 0.01 80)";
+// Design system colours
+const C = {
+  cream: "#F5F1E8",
+  charcoal: "#1F1F1F",
+  green: "#4F7D6A",
+  lightGreen: "#E6F2ED",
+  amber: "#D4A373",
+  lightAmber: "#F6E7D8",
+  khaki: "#EAE3D2",
+  cardBg: "#FBF8F2",
+  white: "#FFFFFF",
+  muted: "#6B6458",
+  mutedLight: "#8C8278",
+} as const;
 
-export default function HomePage() {
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+function Nav() {
   return (
-    <div className="min-h-screen" style={{ background: CHARCOAL }}>
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: CHARCOAL, borderBottom: `1px solid ${BORDER}` }}>
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <img src="/Wordmark.png" alt="Beancountr" style={{ width: "220px", height: "68px", objectFit: "contain" }} />
+    <nav
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{ background: C.cream, borderBottom: `1px solid ${C.khaki}` }}
+    >
+      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        {/* Wordmark */}
+        <Link href="/" className="flex items-center">
+          <img
+            src="/Wordmark.png"
+            alt="Beancountr"
+            style={{ height: "60px", objectFit: "contain" }}
+          />
+        </Link>
+
+        {/* Centre links */}
+        <div className="hidden md:flex items-center gap-8">
+          {["Features", "Pricing", "Blog"].map((label) => (
+            <Link
+              key={label}
+              href={`/${label.toLowerCase()}`}
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: C.muted }}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right side */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="text-sm font-medium transition-colors hover:opacity-70"
+            style={{ color: C.muted }}
+          >
+            Log in
           </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>Pricing</Link>
+          <Link
+            href="/signup"
+            className="text-sm font-bold px-5 py-2.5 rounded-full transition-all hover:opacity-90"
+            style={{ background: C.green, color: C.cream }}
+          >
+            Start free
+          </Link>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function DashboardPreview() {
+  return (
+    <div
+      className="w-full"
+      style={{
+        background: C.cardBg,
+        borderRadius: "32px",
+        border: `1.5px solid ${C.khaki}`,
+        boxShadow: "0 24px 64px rgba(0,0,0,0.13), 0 4px 16px rgba(0,0,0,0.07)",
+        padding: "20px",
+      }}
+    >
+      {/* Browser chrome */}
+      <div
+        className="flex items-center gap-1.5 mb-4 px-1"
+      >
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#E8C4B8" }} />
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#F0D9A0" }} />
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#B4D4B8" }} />
+        <div
+          className="ml-3 flex-1 rounded-full px-3 py-1 text-xs max-w-[200px]"
+          style={{ background: C.khaki, color: C.muted }}
+        >
+          beancountr.com/dashboard
+        </div>
+      </div>
+
+      {/* Top row: Income + badge */}
+      <div className="flex gap-3 mb-3">
+        <div
+          className="flex-1 rounded-2xl p-4"
+          style={{ background: C.white, border: `1px solid ${C.khaki}` }}
+        >
+          <p className="text-xs font-medium mb-1" style={{ color: C.muted }}>This month</p>
+          <p className="text-2xl font-bold" style={{ color: C.charcoal, fontFamily: "var(--font-mono)", letterSpacing: "-0.02em" }}>
+            £4,820.00
+          </p>
+          <p className="text-xs mt-1" style={{ color: C.muted }}>Total income</p>
+        </div>
+        <div
+          className="rounded-2xl p-4 flex flex-col justify-center items-center"
+          style={{ background: C.lightGreen, minWidth: "90px" }}
+        >
+          <p className="text-lg font-bold" style={{ color: C.green }}>+12%</p>
+          <p className="text-xs text-center mt-0.5" style={{ color: C.green }}>vs last<br />month</p>
+        </div>
+      </div>
+
+      {/* Middle row: Tax reserve + Safe to spend */}
+      <div className="flex gap-3 mb-3">
+        {/* Tax reserve */}
+        <div
+          className="flex-1 rounded-2xl p-4"
+          style={{ background: C.lightAmber, border: `1px solid #EDCDA6` }}
+        >
+          <p className="text-xs font-semibold mb-1" style={{ color: C.amber }}>Tax reserve</p>
+          <p className="text-xl font-bold" style={{ color: C.charcoal, fontFamily: "var(--font-mono)" }}>£1,205</p>
+          <div className="mt-2 rounded-full overflow-hidden" style={{ background: "#EDCDA6", height: "6px" }}>
+            <div className="h-full rounded-full" style={{ background: C.amber, width: "25%" }} />
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium transition-colors" style={{ color: MUTED }}>Log in</Link>
-            <Link href="/signup" className="text-sm font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90" style={{ background: CREAM, color: CHARCOAL }}>
-              Sign up free
+          <p className="text-xs mt-1" style={{ color: C.amber }}>25% of income</p>
+        </div>
+
+        {/* Safe to spend */}
+        <div
+          className="flex-1 rounded-2xl p-4"
+          style={{ background: C.charcoal }}
+        >
+          <p className="text-xs font-semibold mb-1" style={{ color: "#8BAF9E" }}>Safe to spend</p>
+          <p className="text-xl font-bold" style={{ color: C.cream, fontFamily: "var(--font-mono)" }}>£3,615</p>
+          <p className="text-xs mt-1" style={{ color: "#8BAF9E" }}>After reserves</p>
+          <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: C.green }}>
+            <span className="text-xs font-semibold" style={{ color: C.cream }}>All clear</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom row: invoices + ledger card */}
+      <div className="flex gap-3">
+        {/* Recent invoices */}
+        <div
+          className="flex-1 rounded-2xl p-4"
+          style={{ background: C.white, border: `1px solid ${C.khaki}` }}
+        >
+          <p className="text-xs font-semibold mb-3" style={{ color: C.muted }}>Recent invoices</p>
+          {[
+            { num: "INV-014", client: "Acme Co", amount: "£2,400", status: "Paid", statusBg: C.lightGreen, statusColor: C.green },
+            { num: "INV-015", client: "StartupHQ", amount: "£1,800", status: "Sent", statusBg: C.lightAmber, statusColor: C.amber },
+          ].map((inv) => (
+            <div
+              key={inv.num}
+              className="flex items-center justify-between py-1.5"
+              style={{ borderBottom: `1px solid ${C.khaki}` }}
+            >
+              <div>
+                <span className="text-xs font-semibold" style={{ color: C.charcoal }}>{inv.num}</span>
+                <span className="text-xs ml-1.5" style={{ color: C.muted }}>{inv.client}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold" style={{ color: C.charcoal, fontFamily: "var(--font-mono)" }}>{inv.amount}</span>
+                <span
+                  className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+                  style={{ background: inv.statusBg, color: inv.statusColor }}
+                >
+                  {inv.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Ledger card (slightly rotated) */}
+        <div
+          className="rounded-2xl p-4 flex flex-col justify-between"
+          style={{
+            background: C.khaki,
+            minWidth: "90px",
+            transform: "rotate(2deg)",
+            transformOrigin: "bottom right",
+          }}
+        >
+          {/* Pen SVG */}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.muted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+          </svg>
+          <div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-0.5 rounded mb-1.5" style={{ background: C.muted, opacity: 0.3 }} />
+            ))}
+            <p className="text-xs font-semibold" style={{ color: C.muted }}>Ledger</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <section
+      className="pt-32 pb-24 px-6"
+      style={{ background: C.cream }}
+    >
+      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-14">
+        {/* Left: text */}
+        <div className="flex-1 text-center lg:text-left">
+          {/* Badge */}
+          <div
+            className="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full mb-6"
+            style={{ background: C.lightAmber, color: C.amber }}
+          >
+            Built for UK freelancers
+          </div>
+
+          {/* H1 */}
+          <h1
+            className="leading-[1.05] mb-6 font-black"
+            style={{
+              fontFamily: "var(--font-display)",
+              color: C.charcoal,
+              fontSize: "clamp(52px, 6vw, 84px)",
+            }}
+          >
+            Know what you earned.
+            <br />
+            Know what to save.
+          </h1>
+
+          {/* Subtext */}
+          <p
+            className="text-lg max-w-xl mb-10 leading-relaxed mx-auto lg:mx-0"
+            style={{ color: C.muted }}
+          >
+            Track hours, send invoices, and see exactly what&apos;s safe to spend — without the spreadsheet chaos or tax panic.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 mb-6">
+            <Link
+              href="/signup"
+              className="flex items-center gap-2 font-bold px-7 py-3.5 rounded-full text-base transition-all hover:opacity-90 hover:shadow-lg"
+              style={{ background: C.green, color: C.cream }}
+            >
+              See what you can safely spend <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/pricing"
+              className="font-semibold px-7 py-3.5 rounded-full text-base border-2 transition-all hover:opacity-80"
+              style={{ color: C.charcoal, borderColor: C.khaki, background: C.white }}
+            >
+              See pricing
+            </Link>
+          </div>
+
+          {/* Stat pills */}
+          <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+            {[
+              "Freelancers already tracking £48k+",
+              "Free plan · 1 client · 5 invoices/month",
+            ].map((text) => (
+              <span
+                key={text}
+                className="text-xs font-medium px-4 py-2 rounded-full"
+                style={{ background: C.khaki, color: C.muted }}
+              >
+                {text}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: dashboard preview */}
+        <div className="flex-1 w-full max-w-lg lg:max-w-none">
+          <DashboardPreview />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SocialProof() {
+  const testimonials = [
+    { quote: "Finally I know exactly what I can spend after tax", name: "Sarah K.", role: "Freelance Designer" },
+    { quote: "Took me 5 minutes to set up. Dashboard is brilliant.", name: "Tom R.", role: "Dev Consultant" },
+    { quote: "Best £12 I spend each month. No more tax surprises.", name: "Maya P.", role: "Copywriter" },
+  ];
+  const badges = [
+    { icon: "🔒", label: "GDPR compliant" },
+    { icon: "🇬🇧", label: "UK tax rates built in" },
+    { icon: "⚡", label: "5 min setup" },
+    { icon: "💳", label: "Cancel anytime" },
+  ];
+
+  return (
+    <section className="py-20 px-6" style={{ background: C.khaki }}>
+      <div className="max-w-5xl mx-auto">
+        <h2
+          className="text-3xl font-black text-center mb-10"
+          style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+        >
+          Trusted by freelancers across the UK
+        </h2>
+
+        {/* Testimonials */}
+        <div className="grid sm:grid-cols-3 gap-5 mb-10">
+          {testimonials.map((t) => (
+            <div
+              key={t.name}
+              className="rounded-2xl p-6"
+              style={{ background: C.white, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
+            >
+              <p className="text-sm leading-relaxed mb-4" style={{ color: C.charcoal }}>
+                &ldquo;{t.quote}&rdquo;
+              </p>
+              <div>
+                <p className="text-sm font-bold" style={{ color: C.charcoal }}>{t.name}</p>
+                <p className="text-xs" style={{ color: C.muted }}>{t.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Trust badges */}
+        <div className="flex flex-wrap justify-center gap-3">
+          {badges.map((b) => (
+            <div
+              key={b.label}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium"
+              style={{ background: C.cream, color: C.muted }}
+            >
+              <span>{b.icon}</span>
+              {b.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProblemSolution() {
+  const painPoints = [
+    {
+      icon: Calculator,
+      title: "Tax time panic",
+      body: "Not sure how much to put away for HMRC? Never be caught short again.",
+    },
+    {
+      icon: Mail,
+      title: "Chasing payments",
+      body: "Losing track of who owes you what? See every unpaid invoice at a glance.",
+    },
+    {
+      icon: LayoutGrid,
+      title: "Spreadsheet chaos",
+      body: "Managing invoices and time logs across sheets? Bring it all into one place.",
+    },
+  ];
+
+  return (
+    <section className="py-20 px-6" style={{ background: C.cream }}>
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <h2
+            className="text-3xl font-black mb-3"
+            style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+          >
+            Sound familiar?
+          </h2>
+          <p className="text-base" style={{ color: C.muted }}>
+            You&apos;re not alone. These are the three things every UK freelancer struggles with.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-5 mb-10">
+          {painPoints.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl p-6"
+              style={{ background: C.lightAmber, border: `1px solid #EDCDA6` }}
+            >
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: C.amber }}
+              >
+                <item.icon className="w-5 h-5" style={{ color: C.cream }} />
+              </div>
+              <h3
+                className="font-bold text-lg mb-2"
+                style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+              >
+                {item.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: C.muted }}>{item.body}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Arrow transition */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-px h-10" style={{ background: C.khaki }} />
+          <div
+            className="px-8 py-4 rounded-full text-lg font-black"
+            style={{ background: C.green, color: C.cream, fontFamily: "var(--font-display)" }}
+          >
+            Beancountr fixes all three.
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  const steps = [
+    {
+      step: "01",
+      icon: Clock,
+      title: "Log time & expenses",
+      body: "Add time entries as you work. Log expenses as they come in. Takes seconds, not minutes.",
+    },
+    {
+      step: "02",
+      icon: FileText,
+      title: "Send professional invoices",
+      body: "Turn logged time into invoices instantly. Export as PDF and send to clients in one click.",
+    },
+    {
+      step: "03",
+      icon: PoundSterling,
+      title: "See what's yours to spend",
+      body: "The dashboard shows income, tax reserve, pension pot and safe-to-spend — always up to date.",
+    },
+  ];
+
+  return (
+    <section className="py-20 px-6" style={{ background: C.khaki }}>
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-14">
+          <h2
+            className="text-3xl font-black"
+            style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+          >
+            Three steps to financial clarity
+          </h2>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-10">
+          {steps.map((item) => (
+            <div key={item.step} className="flex flex-col">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+                style={{ background: C.green }}
+              >
+                <item.icon className="w-5 h-5" style={{ color: C.cream }} />
+              </div>
+              <span
+                className="text-xs font-black tracking-widest mb-2"
+                style={{ color: C.amber }}
+              >
+                {item.step}
+              </span>
+              <h3
+                className="font-bold text-lg mb-2"
+                style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+              >
+                {item.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: C.muted }}>{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Features() {
+  const features = [
+    { icon: TrendingUp, title: "Income & profit dashboard", sub: "See where you stand at a glance" },
+    { icon: Clock, title: "Time tracking", sub: "Log hours by client and project" },
+    { icon: FileText, title: "Invoice generation", sub: "Professional PDF invoices" },
+    { icon: PoundSterling, title: "Tax reserve planning", sub: "Automatic estimates, UK-focused" },
+    { icon: Shield, title: "Pension set-aside", sub: "Pay your future self first" },
+    { icon: CheckCircle, title: "Expense tracking", sub: "Categories, deductibility, totals" },
+  ];
+
+  return (
+    <section className="py-20 px-6" style={{ background: C.cream }}>
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <h2
+            className="text-3xl font-black"
+            style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+          >
+            Everything you need, nothing you don&apos;t
+          </h2>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {features.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl p-5 flex items-start gap-4"
+              style={{
+                background: C.cardBg,
+                border: `1px solid ${C.khaki}`,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+              }}
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: C.lightGreen }}
+              >
+                <item.icon className="w-5 h-5" style={{ color: C.green }} />
+              </div>
+              <div>
+                <p className="font-semibold text-sm" style={{ color: C.charcoal }}>{item.title}</p>
+                <p className="text-xs mt-0.5" style={{ color: C.muted }}>{item.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Pricing() {
+  const freeItems = [
+    { ok: true, text: "3 clients max" },
+    { ok: true, text: "5 invoices/month" },
+    { ok: true, text: "Dashboard with tax + pension estimates" },
+    { ok: true, text: "Time & expense tracking" },
+    { ok: false, text: "Beancountr branding on invoices" },
+  ];
+  const proItems = [
+    { text: "Unlimited clients & invoices" },
+    { text: "No branding on invoices" },
+    { text: "PDF invoices with custom styling" },
+    { text: "Payment reminders" },
+    { text: "CSV exports" },
+  ];
+
+  return (
+    <section className="py-20 px-6" style={{ background: C.lightGreen }}>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h2
+            className="text-3xl font-black"
+            style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
+          >
+            Simple, honest pricing
+          </h2>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-5 items-start justify-center">
+          {/* Free card */}
+          <div
+            className="flex-1 rounded-3xl p-8"
+            style={{
+              background: C.white,
+              border: `1.5px solid ${C.khaki}`,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+            }}
+          >
+            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: C.muted }}>Free</p>
+            <p className="text-4xl font-black mb-1" style={{ fontFamily: "var(--font-display)", color: C.charcoal }}>
+              £0
+            </p>
+            <p className="text-sm mb-6" style={{ color: C.muted }}>Free forever</p>
+
+            <ul className="space-y-3 mb-8">
+              {freeItems.map((item) => (
+                <li key={item.text} className="flex items-center gap-2.5 text-sm">
+                  {item.ok ? (
+                    <Check className="w-4 h-4 flex-shrink-0" style={{ color: C.green }} />
+                  ) : (
+                    <X className="w-4 h-4 flex-shrink-0" style={{ color: C.muted }} />
+                  )}
+                  <span style={{ color: item.ok ? C.charcoal : C.muted }}>{item.text}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/signup"
+              className="block w-full text-center font-bold py-3 rounded-full border-2 transition-all hover:opacity-80"
+              style={{ borderColor: C.green, color: C.green }}
+            >
+              Start free
+            </Link>
+          </div>
+
+          {/* Pro card */}
+          <div
+            className="flex-1 rounded-3xl p-8 md:scale-105"
+            style={{
+              background: C.charcoal,
+              boxShadow: "0 12px 40px rgba(0,0,0,0.18)",
+            }}
+          >
+            <p className="text-xs font-bold tracking-widest uppercase mb-3" style={{ color: "#8BAF9E" }}>Pro</p>
+            <p className="text-4xl font-black mb-1" style={{ fontFamily: "var(--font-display)", color: C.cream }}>
+              £12
+              <span className="text-lg font-semibold ml-1" style={{ color: "#8BAF9E" }}>/month</span>
+            </p>
+            <p className="text-sm mb-1" style={{ color: "#8BAF9E" }}>or £90/year</p>
+            <div
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full mb-6"
+              style={{ background: C.green }}
+            >
+              <span className="text-xs font-bold" style={{ color: C.cream }}>Save 37%</span>
+            </div>
+
+            <p className="text-xs font-semibold mb-3" style={{ color: "#8BAF9E" }}>Everything in Free, plus:</p>
+            <ul className="space-y-3 mb-8">
+              {proItems.map((item) => (
+                <li key={item.text} className="flex items-center gap-2.5 text-sm">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: C.green }} />
+                  <span style={{ color: C.cream }}>{item.text}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/signup"
+              className="block w-full text-center font-bold py-3 rounded-full transition-all hover:opacity-90"
+              style={{ background: C.green, color: C.cream }}
+            >
+              Get Pro
             </Link>
           </div>
         </div>
-      </nav>
+      </div>
+    </section>
+  );
+}
 
-      {/* Hero */}
-      <section className="pt-28 pb-20 px-6" style={{ background: CHARCOAL }}>
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full mb-6" style={{ background: CARD, color: CREAM, border: `1px solid ${BORDER}` }}>
-              <Star className="w-3.5 h-3.5" />
-              Built for UK sole traders and limited companies
-            </div>
-            <h1 className="text-5xl sm:text-6xl leading-[1.1] mb-6" style={{ fontFamily: "var(--font-display)", color: CREAM }}>
-              Know what you earned.<br />
-              <span style={{ color: MUTED }}>Know what to save.</span>
-            </h1>
-            <p className="text-xl max-w-xl mb-10 leading-relaxed" style={{ color: MUTED }}>
-              Track your hours, send invoices, and always know how much to set aside for tax and pension — all in one clean dashboard.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3">
-              <Link href="/signup" className="flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg" style={{ background: CREAM, color: CHARCOAL }}>
-                Get started free <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href="/pricing" className="font-semibold px-7 py-3.5 rounded-xl text-base border-2 transition-all" style={{ color: CREAM, borderColor: BORDER }}>
-                See pricing
-              </Link>
-            </div>
-            <p className="text-sm mt-4" style={{ color: MUTED }}>No credit card required · Free forever for 1 client</p>
-          </div>
-          {/* Hero illustration */}
-          <div className="flex-1 flex items-center justify-center lg:justify-end">
-            <img
-              src="/hero-illustration.png"
-              alt="Beancountr ledger illustration"
-              style={{ width: "420px", maxWidth: "100%", objectFit: "contain", filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.4))" }}
-            />
-          </div>
-        </div>
-      </section>
+function CtaBanner() {
+  return (
+    <section className="py-24 px-6" style={{ background: C.charcoal }}>
+      <div className="max-w-2xl mx-auto text-center">
+        <h2
+          className="text-4xl font-black mb-3"
+          style={{ fontFamily: "var(--font-display)", color: C.cream }}
+        >
+          Ready to know what&apos;s yours?
+        </h2>
+        <p className="text-lg mb-8" style={{ color: "#8C8278" }}>
+          Stop guessing. Start knowing.
+        </p>
+        <Link
+          href="/signup"
+          className="inline-flex items-center gap-2 font-bold px-9 py-4 rounded-full text-base transition-all hover:opacity-90 hover:shadow-2xl"
+          style={{ background: C.green, color: C.cream }}
+        >
+          Start tracking free <ArrowRight className="w-4 h-4" />
+        </Link>
+        <p className="text-sm mt-5" style={{ color: "#6B6458" }}>
+          No credit card required · Free forever for 1 client
+        </p>
+      </div>
+    </section>
+  );
+}
 
-      {/* Dashboard preview */}
-      <section className="px-6 pb-20" style={{ background: CHARCOAL }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="rounded-2xl border-2 overflow-hidden card-shadow" style={{ borderColor: BORDER }}>
-            <div className="px-6 py-3 flex items-center gap-2" style={{ background: CARD }}>
-              <div className="w-3 h-3 rounded-full" style={{ background: BORDER }}></div>
-              <div className="w-3 h-3 rounded-full" style={{ background: BORDER }}></div>
-              <div className="w-3 h-3 rounded-full" style={{ background: CREAM, opacity: 0.5 }}></div>
-              <div className="flex-1 ml-4 rounded-md px-3 py-1 text-xs max-w-xs" style={{ background: "oklch(0.28 0.008 80)", color: MUTED }}>beancountr.com/app/dashboard</div>
-            </div>
-            <div className="p-6" style={{ background: CARD }}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-sm" style={{ fontFamily: "var(--font-sans)", color: CREAM }}>Dashboard — March 2025</h3>
-                <span className="text-xs" style={{ color: MUTED }}>Demo preview</span>
-              </div>
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                {[
-                  { label: "Income", value: "£8,500", sub: "This month", valueColor: CREAM },
-                  { label: "Tax reserve", value: "£2,125", sub: "25% of profit", valueColor: "oklch(0.78 0.015 80)" },
-                  { label: "Safe to spend", value: "£5,525", sub: "After reserves", valueColor: "oklch(0.85 0.02 80)" },
-                ].map((card) => (
-                  <div key={card.label} className="rounded-xl p-4 card-shadow" style={{ background: "oklch(0.26 0.008 80)", border: `1px solid ${BORDER}` }}>
-                    <p className="text-xs mb-1" style={{ color: MUTED }}>{card.label}</p>
-                    <p className="text-xl font-bold font-data" style={{ color: card.valueColor }}>{card.value}</p>
-                    <p className="text-xs mt-0.5" style={{ color: MUTED }}>{card.sub}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded-xl p-4" style={{ background: "oklch(0.26 0.008 80)", border: `1px solid ${BORDER}` }}>
-                <p className="text-xs font-medium mb-3" style={{ color: MUTED }}>Recent invoices</p>
-                {[
-                  { num: "INV-003", client: "Acme Corp", amount: "£3,200", status: "Sent", statusColor: { bg: "oklch(0.28 0.008 80)", text: "oklch(0.75 0.015 80)" } },
-                  { num: "INV-002", client: "TechStart Ltd", amount: "£2,800", status: "Paid", statusColor: { bg: "oklch(0.28 0.008 80)", text: CREAM } },
-                ].map((inv) => (
-                  <div key={inv.num} className="flex items-center justify-between py-2 last:border-0" style={{ borderBottom: `1px solid ${BORDER}` }}>
-                    <div>
-                      <span className="text-sm font-medium" style={{ color: CREAM }}>{inv.num}</span>
-                      <span className="text-xs ml-2" style={{ color: MUTED }}>{inv.client}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium font-data" style={{ color: CREAM }}>{inv.amount}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: inv.statusColor.bg, color: inv.statusColor.text, border: `1px solid ${BORDER}` }}>{inv.status}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+function Footer() {
+  const links = ["Pricing", "Blog", "How-to", "Help", "Privacy"];
 
-      {/* Pain points */}
-      <section className="py-20 px-6" style={{ background: CHARCOAL_MID }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl mb-3" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Sound familiar?</h2>
-            <p style={{ color: MUTED }}>You&apos;re not alone. These are the three things every freelancer struggles with.</p>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              { icon: AlertTriangle, title: "Tax time panic", body: "Not sure how much to put away for HMRC? Beancountr calculates a sensible reserve every month so you're never caught short." },
-              { icon: Mail, title: "Chasing payments", body: "Losing track of who owes you what? See every unpaid invoice at a glance and mark them paid with one click." },
-              { icon: LayoutGrid, title: "Spreadsheet chaos", body: "Managing invoices, expenses, and time logs across multiple sheets? Beancountr brings it all into one place." },
-            ].map((item) => (
-              <div key={item.title} className="rounded-2xl p-6 card-shadow card-shadow-hover" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: CREAM }}>
-                  <item.icon className="w-5 h-5" style={{ color: CHARCOAL }} />
-                </div>
-                <h3 className="font-bold mb-2 text-lg" style={{ fontFamily: "var(--font-display)", color: CREAM }}>{item.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: MUTED }}>{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+  return (
+    <footer className="py-8 px-6" style={{ background: C.charcoal, borderTop: `1px solid #2E2E2E` }}>
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <Link href="/">
+          <img
+            src="/WordmarkAlt.png"
+            alt="Beancountr"
+            style={{ height: "50px", objectFit: "contain" }}
+          />
+        </Link>
 
-      {/* How it works */}
-      <section className="py-20 px-6" style={{ background: CHARCOAL }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Three steps to financial clarity</h2>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-10">
-            {[
-              { step: "01", icon: Clock, title: "Log your time and expenses", body: "Add time entries as you work. Log expenses as they come in. Takes seconds." },
-              { step: "02", icon: FileText, title: "Send professional invoices", body: "Turn logged time into invoices instantly. Export as PDF and send to clients." },
-              { step: "03", icon: PoundSterling, title: "See what's yours to spend", body: "The dashboard shows income, tax reserve, pension and safe-to-spend — always up to date." },
-            ].map((item) => (
-              <div key={item.step} className="flex flex-col">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5" style={{ background: CREAM }}>
-                  <item.icon className="w-5 h-5" style={{ color: CHARCOAL }} />
-                </div>
-                <span className="text-xs font-bold tracking-widest mb-2" style={{ color: BORDER }}>{ item.step}</span>
-                <h3 className="font-bold mb-2 text-lg" style={{ fontFamily: "var(--font-display)", color: CREAM }}>{item.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: MUTED }}>{item.body}</p>
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center gap-5 flex-wrap justify-center">
+          {links.map((label) => (
+            <Link
+              key={label}
+              href={`/${label.toLowerCase().replace("-", "-")}`}
+              className="text-sm transition-colors hover:opacity-70"
+              style={{ color: "#6B6458" }}
+            >
+              {label}
+            </Link>
+          ))}
         </div>
-      </section>
 
-      {/* Features */}
-      <section className="py-20 px-6" style={{ background: CHARCOAL_MID }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Everything you need, nothing you don&apos;t</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { icon: TrendingUp, text: "Income & profit dashboard", sub: "See where you stand at a glance" },
-              { icon: Clock, text: "Time tracking", sub: "Log hours by client and project" },
-              { icon: FileText, text: "Invoice generation", sub: "Professional PDF invoices" },
-              { icon: PoundSterling, text: "Tax reserve planning", sub: "Automatic estimates, UK-focused" },
-              { icon: Shield, text: "Pension set-aside", sub: "Pay your future self first" },
-              { icon: CheckCircle, text: "Expense tracking", sub: "Categories, deductibility, totals" },
-            ].map((item) => (
-              <div key={item.text} className="rounded-2xl p-5 card-shadow card-shadow-hover flex items-start gap-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: BORDER }}>
-                  <item.icon className="w-5 h-5" style={{ color: CREAM }} />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm" style={{ color: CREAM }}>{item.text}</p>
-                  <p className="text-xs mt-0.5" style={{ color: MUTED }}>{item.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        <p className="text-sm text-center sm:text-right" style={{ color: "#6B6458" }}>
+          &copy; 2026 Beancountr · Built for UK freelancers
+        </p>
+      </div>
+    </footer>
+  );
+}
 
-      {/* CTA */}
-      <section className="py-24 px-6" style={{ background: CARD, borderTop: `1px solid ${BORDER}` }}>
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl mb-4" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Ready to see your money clearly?</h2>
-          <p className="mb-8 text-lg" style={{ color: MUTED }}>Start free. No credit card. No accounting degree required.</p>
-          <Link href="/signup" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-xl text-base transition-all hover:opacity-90 hover:shadow-lg" style={{ background: CREAM, color: CHARCOAL }}>
-            Get started free <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
-      {/* Footer */}
-      <footer className="py-8 px-6" style={{ background: CHARCOAL, borderTop: `1px solid ${BORDER}` }}>
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Link href="/" className="flex items-center">
-            <img src="/WordmarkAlt.png" alt="Beancountr" style={{ height: "60px", objectFit: "contain" }} />
-          </Link>
-          <p className="text-sm" style={{ color: MUTED }}>Built for UK freelancers. Planning estimates only, not tax advice.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/pricing" className="text-sm transition-colors" style={{ color: MUTED }}>Pricing</Link>
-            <Link href="/privacy" className="text-sm transition-colors" style={{ color: MUTED }}>Privacy</Link>
-            <Link href="/login" className="text-sm transition-colors" style={{ color: MUTED }}>Log in</Link>
-          </div>
-        </div>
-      </footer>
+export default function HomePage() {
+  return (
+    <div className="min-h-screen" style={{ background: C.cream }}>
+      <Nav />
+      <Hero />
+      <SocialProof />
+      <ProblemSolution />
+      <HowItWorks />
+      <Features />
+      <Pricing />
+      <CtaBanner />
+      <Footer />
     </div>
   );
 }
