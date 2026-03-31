@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 const FROM = process.env.RESEND_FROM_EMAIL ?? "invoices@beancountr.co.uk";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.beancountr.co.uk";
 
@@ -160,7 +162,7 @@ function buildReminderHtml(p: ReminderEmailPayload): string {
 
 export async function sendReminderEmail(payload: ReminderEmailPayload) {
   const subject = `Payment reminder: invoice ${payload.invoiceNumber} from ${payload.businessName ?? payload.senderName} (${fmtGbp(payload.total)})`;
-  const { error } = await resend.emails.send({
+  const { error } = await getResend().emails.send({
     from: FROM,
     to: payload.to,
     subject,
@@ -172,7 +174,7 @@ export async function sendReminderEmail(payload: ReminderEmailPayload) {
 export async function sendInvoiceEmail(payload: InvoiceEmailPayload) {
   const subject = `Invoice ${payload.invoiceNumber} from ${payload.businessName ?? payload.senderName} (${fmtGbp(payload.total)} due ${fmtDate(payload.dueDate)})`;
 
-  const { error } = await resend.emails.send({
+  const { error } = await getResend().emails.send({
     from: FROM,
     to: payload.to,
     subject,
