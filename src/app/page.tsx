@@ -14,6 +14,9 @@ import {
   ArrowRight,
   Check,
   X,
+  ClipboardList,
+  Landmark,
+  Send,
 } from "lucide-react";
 
 // Design system colours
@@ -281,7 +284,7 @@ function Hero() {
           <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
             {[
               "Freelancers already tracking £48k+",
-              "Free plan · 1 client · 5 invoices/month",
+              "Free plan · 3 clients · 5 invoices/month",
             ].map((text) => (
               <span
                 key={text}
@@ -372,13 +375,13 @@ function ProblemSolution() {
     },
     {
       icon: Mail,
-      title: "Slow payments",
-      body: "Send a professional invoice by email in seconds. Clients get a clean payment page with your bank details, nothing to chase.",
+      title: "Chasing work and payments",
+      body: "Send a professional quote, get client sign-off online, then convert it to an invoice in one click. Automated reminders handle the chasing.",
     },
     {
       icon: LayoutGrid,
       title: "No clear picture",
-      body: "One dashboard shows income, expenses, tax buffer, and exactly what is left to spend. Always up to date.",
+      body: "Import your bank CSV, auto-match payments to invoices, and see income, tax reserve, and safe-to-spend in one dashboard. Always up to date.",
     },
   ];
 
@@ -440,21 +443,27 @@ function HowItWorks() {
   const steps = [
     {
       step: "01",
-      icon: Clock,
-      title: "Log time & expenses",
-      body: "Add time entries as you work. Log expenses as they come in. Takes seconds, not minutes.",
+      icon: ClipboardList,
+      title: "Quote & win the work",
+      body: "Send a professional quote with an online acceptance link. When the client says yes, convert it to an invoice in one click.",
     },
     {
       step: "02",
-      icon: FileText,
-      title: "Send professional invoices",
-      body: "Turn logged time into invoices instantly. Export as PDF and send to clients in one click.",
+      icon: Clock,
+      title: "Log time & expenses",
+      body: "Add time entries as you work. Log expenses as they come in. Both feed straight into your invoices and tax estimate.",
     },
     {
       step: "03",
+      icon: Send,
+      title: "Invoice & get paid",
+      body: "Send invoices by email. Import your bank CSV and Beancountr auto-spots which payments match which invoices.",
+    },
+    {
+      step: "04",
       icon: PoundSterling,
       title: "See what's yours to spend",
-      body: "The dashboard shows your income, tax reserve, pension pot and safe-to-spend. Always up to date.",
+      body: "The dashboard shows your income, tax reserve, pension pot, and safe-to-spend. Always current, no manual sums.",
     },
   ];
 
@@ -470,7 +479,7 @@ function HowItWorks() {
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {steps.map((item) => (
             <div key={item.step} className="flex flex-col">
               <div
@@ -502,8 +511,10 @@ function HowItWorks() {
 
 function Features() {
   const features = [
-    { icon: FileText, title: "Send invoices in seconds and get paid faster", sub: "Professional invoices emailed directly to clients, with a public link they can open any time" },
-    { icon: TrendingUp, title: "See income, expenses, and tax in one clear view", sub: "No spreadsheets. One dashboard shows your full financial picture, updated as you go" },
+    { icon: ClipboardList, title: "Quotes with online acceptance", sub: "Send branded quotes clients can accept with one click. Convert to invoice instantly when they say yes" },
+    { icon: FileText, title: "Send invoices in seconds", sub: "Professional invoices emailed directly to clients, with a public link and your bank details" },
+    { icon: Landmark, title: "Bank feed & smart matching", sub: "Import a CSV from any UK bank. Beancountr auto-spots which payments match your open invoices" },
+    { icon: TrendingUp, title: "Income, expenses, and tax in one view", sub: "No spreadsheets. One dashboard shows your full financial picture, updated as you go" },
     { icon: Clock, title: "Time tracking built in", sub: "Log hours by client and project, then convert them to invoice line items instantly" },
     { icon: PoundSterling, title: "Tax buffer, calculated automatically", sub: "Set your reserve rate once and always know what belongs to HMRC" },
     { icon: Shield, title: "Pension set-aside", sub: "A separate pot for your future self, shown alongside your tax buffer" },
@@ -522,7 +533,7 @@ function Features() {
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {features.map((item) => (
             <div
               key={item.title}
@@ -572,9 +583,9 @@ function DifferentiatorStrip() {
         </p>
         <div className="grid sm:grid-cols-3 gap-4 text-left">
           {[
-            { label: "Simpler than bloated tools", body: "No chart of accounts, no payroll, no features you will never touch." },
-            { label: "UK-focused by default", body: "HMRC tax bands, GBP, Making Tax Digital awareness. Built around how freelancers in the UK actually work." },
-            { label: "Focused on safe-to-spend", body: "The number that matters is what you can actually use. Everything else is working backwards to get there." },
+            { label: "Simpler than bloated tools", body: "No chart of accounts, no payroll, no jargon. Quote, invoice, track time, done." },
+            { label: "UK-focused by default", body: "HMRC tax bands, GBP, VAT-aware invoices, and Making Tax Digital awareness. Built around how UK freelancers actually work." },
+            { label: "Focused on safe-to-spend", body: "The number that matters is what you can actually use. Quotes, invoices, and bank matching all feed into one clear view." },
           ].map((item) => (
             <div
               key={item.label}
@@ -593,17 +604,22 @@ function DifferentiatorStrip() {
 
 function Pricing() {
   const freeItems = [
-    { ok: true, text: "3 clients max" },
+    { ok: true, text: "Up to 3 clients" },
     { ok: true, text: "5 invoices/month" },
-    { ok: true, text: "Dashboard with tax + pension estimates" },
+    { ok: true, text: "Quotes (manual send)" },
+    { ok: true, text: "Dashboard: tax + pension estimates" },
     { ok: true, text: "Time & expense tracking" },
-    { ok: false, text: "Beancountr branding on invoices" },
+    { ok: false, text: "Email sending (invoices & quotes)" },
+    { ok: false, text: "Bank feed & matching" },
+    { ok: false, text: "Beancountr branding on public pages" },
   ];
   const proItems = [
     { text: "Unlimited clients & invoices" },
-    { text: "No branding on invoices" },
-    { text: "PDF invoices with custom styling" },
-    { text: "Payment reminders" },
+    { text: "Send invoices & quotes by email" },
+    { text: "\"Viewed\" tracking on invoices & quotes" },
+    { text: "Custom logo, no Beancountr branding" },
+    { text: "Bank feed & auto payment matching" },
+    { text: "Automated overdue reminders" },
     { text: "CSV exports" },
   ];
 
@@ -723,7 +739,7 @@ function CtaBanner() {
           Start tracking free <ArrowRight className="w-4 h-4" />
         </Link>
         <p className="text-sm mt-5" style={{ color: "#6B6458" }}>
-          No credit card required · Free forever for 1 client
+          No credit card required · Free forever · up to 3 clients
         </p>
       </div>
     </section>
