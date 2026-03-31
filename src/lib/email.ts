@@ -160,6 +160,74 @@ function buildReminderHtml(p: ReminderEmailPayload): string {
 </html>`;
 }
 
+export type QuoteEmailPayload = {
+  to: string;
+  senderName: string;
+  businessName: string | null;
+  quoteNumber: string;
+  publicId: string;
+  total: number;
+  expiryDate: Date;
+  isPro: boolean;
+};
+
+export async function sendQuoteEmail(payload: QuoteEmailPayload) {
+  const publicUrl = `${APP_URL}/q/${payload.publicId}`;
+  const displayName = payload.businessName ?? payload.senderName;
+  const footerLine = payload.isPro ? "" : `<p style="margin:0;font-size:11px;color:#9ca3af;">Sent via <a href="${APP_URL}" style="color:#9ca3af;">Beancountr</a></p>`;
+  const subject = `Quote ${payload.quoteNumber} from ${displayName} (${fmtGbp(payload.total)}, valid until ${fmtDate(payload.expiryDate)})`;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
+        <tr>
+          <td style="background:#1F1F1F;padding:28px 32px;">
+            <p style="margin:0;font-size:18px;font-weight:700;color:#F5F1E8;">${displayName}</p>
+            <p style="margin:4px 0 0;font-size:13px;color:rgba(245,241,232,0.6);">Quote ${payload.quoteNumber}</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 32px 24px;border-bottom:1px solid #f3f4f6;">
+            <p style="margin:0 0 6px;font-size:13px;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">Quote total</p>
+            <p style="margin:0;font-size:36px;font-weight:700;color:#111827;">${fmtGbp(payload.total)}</p>
+            <p style="margin:8px 0 0;font-size:13px;color:#6b7280;">Valid until ${fmtDate(payload.expiryDate)}</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6;">
+              Please find your quote attached. You can view the full breakdown using the button below.
+            </p>
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="border-radius:8px;background:#4F7D6A;">
+                  <a href="${publicUrl}" style="display:inline-block;padding:13px 28px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;">
+                    View quote
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:20px 32px;background:#f9fafb;border-top:1px solid #f3f4f6;text-align:center;">
+            ${footerLine}
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  const { error } = await getResend().emails.send({ from: FROM, to: payload.to, subject, html });
+  if (error) throw new Error(`Resend error: ${error.message}`);
+}
+
 export async function sendReminderEmail(payload: ReminderEmailPayload) {
   const subject = `Payment reminder: invoice ${payload.invoiceNumber} from ${payload.businessName ?? payload.senderName} (${fmtGbp(payload.total)})`;
   const { error } = await getResend().emails.send({
