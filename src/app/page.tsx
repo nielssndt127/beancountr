@@ -312,10 +312,10 @@ function SocialProof() {
     { quote: "Best £12 I spend each month. No more tax surprises.", name: "Maya P.", role: "Copywriter" },
   ];
   const badges = [
-    { icon: "🔒", label: "GDPR compliant" },
-    { icon: "🇬🇧", label: "UK tax rates built in" },
+    { icon: "🇬🇧", label: "Built for UK freelancers" },
     { icon: "⚡", label: "5 min setup" },
     { icon: "💳", label: "Cancel anytime" },
+    { icon: "🔐", label: "Your data, always yours" },
   ];
 
   return (
@@ -514,7 +514,7 @@ function Features() {
     { icon: FileText, title: "Send invoices in seconds", sub: "Professional invoices emailed directly to clients, with a public link and your bank details" },
     { icon: TrendingUp, title: "Income, expenses, and tax in one view", sub: "No spreadsheets. One dashboard shows your full financial picture, updated as you go" },
     { icon: Clock, title: "Time tracking built in", sub: "Log hours by client and project, then convert them to invoice line items instantly" },
-    { icon: PoundSterling, title: "Tax buffer, calculated automatically", sub: "Set your reserve rate once and always know what belongs to HMRC" },
+    { icon: PoundSterling, title: "Tax buffer, calculated automatically", sub: "Set your reserve percentage once. Beancountr estimates what to set aside so you're never caught short at tax time" },
     { icon: Shield, title: "Pension set-aside", sub: "A separate pot for your future self, shown alongside your tax buffer" },
     { icon: CheckCircle, title: "Expense tracking", sub: "Log deductible expenses as you go. Your tax estimate adjusts automatically" },
   ];
@@ -582,7 +582,7 @@ function DifferentiatorStrip() {
         <div className="grid sm:grid-cols-3 gap-4 text-left">
           {[
             { label: "Simpler than bloated tools", body: "No chart of accounts, no payroll, no jargon. Quote, invoice, track time, done." },
-            { label: "UK-focused by default", body: "HMRC tax bands, GBP, VAT-aware invoices, and Making Tax Digital awareness. Built around how UK freelancers actually work." },
+            { label: "UK-focused by default", body: "GBP, UK invoice formats, and a dashboard built around how UK freelancers actually think about money." },
             { label: "Focused on safe-to-spend", body: "The number that matters is what you can actually use. Quotes, invoices, and bank matching all feed into one clear view." },
           ].map((item) => (
             <div

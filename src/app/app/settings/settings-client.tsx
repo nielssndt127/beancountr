@@ -6,6 +6,9 @@ import { updateSettings } from "@/server/actions/settings";
 import { deleteAccount } from "@/server/actions/account";
 import { BusinessType } from "@prisma/client";
 
+const MONTHLY_PRICE_ID = "price_1TFAJPCYYPLMwF3Gz0mHY8dM";
+const ANNUAL_PRICE_ID  = "price_1TFAKYCYYPLMwF3Gy2STKc5i";
+
 type User = {
   fullName: string | null;
   businessName: string | null;
@@ -36,10 +39,30 @@ const MUTED = "rgba(31,31,31,0.55)";
 const inputStyle = { background: "#fff", border: `1px solid ${BORDER}`, color: CHARCOAL, "--tw-ring-color": GREEN } as React.CSSProperties;
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
 
-export function SettingsClient({ user }: { user: User }) {
+export function SettingsClient({ user, plan, stripeSubscriptionId }: {
+  user: User;
+  plan: "FREE" | "PRO";
+  stripeSubscriptionId: string | null;
+}) {
   const router = useRouter();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [upgrading, setUpgrading] = useState<string | null>(null);
+
+  async function handleUpgrade(priceId: string) {
+    setUpgrading(priceId);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priceId }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } finally {
+      setUpgrading(null);
+    }
+  }
 
   // Danger Zone state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -223,6 +246,72 @@ export function SettingsClient({ user }: { user: User }) {
           {saved && <p className="text-sm font-medium" style={{ color: GREEN }}>Saved!</p>}
         </div>
       </form>
+
+      {/* Plan & Billing */}
+      <div className="rounded-2xl p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+        <div>
+          <h2 className="font-semibold" style={{ color: CHARCOAL }}>Plan &amp; Billing</h2>
+          <p className="text-xs mt-1" style={{ color: MUTED }}>
+            You are currently on the <strong style={{ color: CHARCOAL }}>{plan === "PRO" ? "Pro" : "Free"}</strong> plan.
+          </p>
+        </div>
+
+        {plan === "PRO" ? (
+          <div className="rounded-xl px-4 py-3 flex items-center gap-3" style={{ background: "#E6F2ED", border: "1px solid #C5DDD6" }}>
+            <span className="text-lg">✓</span>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: GREEN }}>You&apos;re on Pro</p>
+              <p className="text-xs mt-0.5" style={{ color: GREEN }}>
+                {stripeSubscriptionId
+                  ? "Manage or cancel your subscription via Stripe customer portal."
+                  : "Pro access active."}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-sm" style={{ color: MUTED }}>
+              Upgrade to Pro to unlock unlimited clients, invoice &amp; quote email sending, viewed tracking, custom logo, automated reminders, and CSV exports.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {/* Monthly */}
+              <div className="rounded-xl p-4 space-y-3" style={{ border: `1.5px solid ${BORDER}`, background: "#fff" }}>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Monthly</p>
+                  <p className="text-2xl font-black mt-1" style={{ color: CHARCOAL }}>£12<span className="text-sm font-normal" style={{ color: MUTED }}>/mo</span></p>
+                </div>
+                <button
+                  onClick={() => handleUpgrade(MONTHLY_PRICE_ID)}
+                  disabled={upgrading !== null}
+                  className="w-full py-2 rounded-full text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-50"
+                  style={{ background: GREEN, color: "#fff" }}
+                >
+                  {upgrading === MONTHLY_PRICE_ID ? "Redirecting…" : "Start 14-day free trial"}
+                </button>
+              </div>
+              {/* Annual */}
+              <div className="rounded-xl p-4 space-y-3" style={{ border: `1.5px solid ${GREEN}`, background: "#F0F9F4" }}>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: GREEN }}>Annual</p>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: GREEN, color: "#fff" }}>Save 37%</span>
+                  </div>
+                  <p className="text-2xl font-black mt-1" style={{ color: CHARCOAL }}>£90<span className="text-sm font-normal" style={{ color: MUTED }}>/yr</span></p>
+                </div>
+                <button
+                  onClick={() => handleUpgrade(ANNUAL_PRICE_ID)}
+                  disabled={upgrading !== null}
+                  className="w-full py-2 rounded-full text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-50"
+                  style={{ background: GREEN, color: "#fff" }}
+                >
+                  {upgrading === ANNUAL_PRICE_ID ? "Redirecting…" : "Start 14-day free trial"}
+                </button>
+              </div>
+            </div>
+            <p className="text-xs" style={{ color: MUTED }}>14-day free trial. No charge until the trial ends. Cancel anytime.</p>
+          </div>
+        )}
+      </div>
 
       {/* Danger Zone */}
       <div className="rounded-2xl border-2 border-red-200 p-6 space-y-4">
