@@ -29,7 +29,7 @@ export default function PricingPage() {
       <section className="pt-32 pb-10 px-6 text-center">
         <div className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full mb-6" style={{ background: CARD, color: CHARCOAL, border: `1px solid ${BORDER}` }}>
           <Star className="w-3.5 h-3.5" style={{ color: GREEN }} />
-          14-day free trial on Pro — no card required
+          14-day free trial on Pro, no card required
         </div>
         <h1 className="text-4xl mb-3" style={{ fontFamily: "var(--font-display)", color: CHARCOAL }}>
           Simple, <span style={{ color: MUTED }}>honest pricing</span>
@@ -48,34 +48,27 @@ export default function PricingPage() {
             </div>
             <p className="text-sm mb-6" style={{ color: MUTED }}>Forever. No card needed.</p>
             <ul className="space-y-3 mb-8">
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: CHARCOAL }}>
-                <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: GREEN }} />
-                Unlimited time + expense tracking
-              </li>
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: CHARCOAL }}>
-                <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: GREEN }} />
-                Tax + pension dashboard
-              </li>
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: CHARCOAL }}>
-                <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: GREEN }} />
-                Up to 3 clients
-              </li>
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: MUTED }}>
-                <XCircle className="w-4 h-4 flex-shrink-0" style={{ color: BORDER }} />
-                Max 5 invoices/month
-              </li>
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: MUTED }}>
-                <XCircle className="w-4 h-4 flex-shrink-0" style={{ color: BORDER }} />
-                Beancountr branding on invoices
-              </li>
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: MUTED }}>
-                <XCircle className="w-4 h-4 flex-shrink-0" style={{ color: BORDER }} />
-                PDF export
-              </li>
-              <li className="flex items-center gap-2.5 text-sm" style={{ color: MUTED }}>
-                <XCircle className="w-4 h-4 flex-shrink-0" style={{ color: BORDER }} />
-                Payment reminders
-              </li>
+              {([
+                [true, "Manual invoicing"],
+                [true, "Manual expense tracking"],
+                [true, "Time tracking"],
+                [true, "Tax and pension estimates"],
+                [true, "Up to 3 clients"],
+                [false, "More than 5 invoices per month"],
+                [false, "Send invoices by email"],
+                [false, "\"Viewed\" delivery tracking"],
+                [false, "Your own logo on invoices"],
+                [false, "CSV exports"],
+                [false, "Automated payment reminders"],
+              ] as [boolean, string][]).map(([included, label]) => (
+                <li key={label} className="flex items-center gap-2.5 text-sm" style={{ color: included ? CHARCOAL : MUTED }}>
+                  {included
+                    ? <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: GREEN }} />
+                    : <XCircle className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(31,31,31,0.2)" }} />
+                  }
+                  {label}
+                </li>
+              ))}
             </ul>
             <Link href="/signup" className="block w-full py-3 text-center rounded-full text-sm font-semibold transition-all hover:opacity-80" style={{ color: CHARCOAL, border: `1px solid ${BORDER}` }}>
               Get started free
@@ -92,16 +85,17 @@ export default function PricingPage() {
               <span className="text-4xl font-bold" style={{ color: CREAM }}>£12</span>
               <span className="mb-1.5 text-sm" style={{ color: "rgba(245,241,232,0.5)" }}>/month</span>
             </div>
-            <p className="text-sm mb-6" style={{ color: "rgba(245,241,232,0.5)" }}>or £108/year — save 25%</p>
+            <p className="text-sm mb-6" style={{ color: "rgba(245,241,232,0.5)" }}>or £108/year (save 25%)</p>
             <ul className="space-y-3 mb-8">
               {[
+                "Everything in Free",
                 "Unlimited clients",
                 "Unlimited invoices",
-                "No Beancountr branding",
-                "Professional PDF invoices",
+                "Send invoices by email",
+                "\"Viewed\" delivery tracking",
+                "Your own logo, no Beancountr branding",
+                "CSV exports for your accountant",
                 "Automated payment reminders",
-                "CSV + accountant exports",
-                "Tax + pension estimates",
                 "Priority support",
               ].map((f) => (
                 <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: CREAM }}>
@@ -122,7 +116,7 @@ export default function PricingPage() {
           {[
             { q: "Can I upgrade anytime?", a: "Yes. Switch from Free to Pro instantly. Your data carries over." },
             { q: "What happens at the invoice limit?", a: "You'll be prompted to upgrade. No invoices are lost or hidden." },
-            { q: "Is it really free forever?", a: "Yes. Free is genuinely free — no time limit, no hidden fees." },
+            { q: "Is it really free forever?", a: "Yes. Free is genuinely free with no time limit and no hidden fees." },
           ].map(({ q, a }) => (
             <div key={q} className="rounded-2xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
               <p className="text-sm font-semibold mb-2" style={{ color: CHARCOAL }}>{q}</p>

@@ -34,7 +34,7 @@ export function CookieBanner() {
         <div className="flex-1">
           <p className="text-sm font-semibold mb-1" style={{ color: CREAM }}>🍪 We use cookies</p>
           <p className="text-xs leading-relaxed" style={{ color: MUTED }}>
-            Essential cookies keep the app running. We&apos;d also like to use analytics cookies to improve Beancountr — only with your consent.{" "}
+            Essential cookies keep the app running. We&apos;d also like to use analytics cookies to improve Beancountr, but only with your consent.{" "}
             <Link href="/privacy" className="underline transition-colors" style={{ color: CREAM }}>
               Privacy policy
             </Link>

@@ -75,6 +75,42 @@ export default async function DashboardPage() {
         <p className="text-sm mt-1" style={{ color: MUTED }}>{monthName} {now.getFullYear()} overview</p>
       </div>
 
+      {/* Safe to Spend formula banner */}
+      <div
+        className="rounded-2xl px-6 py-5"
+        style={{ background: ACCENT }}
+      >
+        <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "oklch(0.65 0.01 80)" }}>
+          This month
+        </p>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+          <div className="text-center">
+            <p className="text-xs mb-1" style={{ color: "oklch(0.65 0.01 80)" }}>Income</p>
+            <p className="text-xl font-bold font-data" style={{ color: BG }}>{formatCurrency(financials.income)}</p>
+          </div>
+          <span className="text-lg font-bold" style={{ color: "oklch(0.65 0.01 80)" }}>−</span>
+          <div className="text-center">
+            <p className="text-xs mb-1" style={{ color: "oklch(0.65 0.01 80)" }}>Tax buffer ({Math.round(user.taxReserveRate * 100)}%)</p>
+            <p className="text-xl font-bold font-data" style={{ color: BG }}>{formatCurrency(financials.taxReserve)}</p>
+          </div>
+          <span className="text-lg font-bold" style={{ color: "oklch(0.65 0.01 80)" }}>−</span>
+          <div className="text-center">
+            <p className="text-xs mb-1" style={{ color: "oklch(0.65 0.01 80)" }}>Pension ({Math.round(user.pensionRate * 100)}%)</p>
+            <p className="text-xl font-bold font-data" style={{ color: BG }}>{formatCurrency(financials.pensionReserve)}</p>
+          </div>
+          <span className="text-lg font-bold" style={{ color: "oklch(0.65 0.01 80)" }}>=</span>
+          <div className="text-center">
+            <p className="text-xs mb-1 font-semibold" style={{ color: "oklch(0.75 0.12 145)" }}>Safe to spend</p>
+            <p className="text-2xl font-bold font-data" style={{ color: "oklch(0.85 0.14 145)" }}>
+              {formatCurrency(financials.safeToSpend)}
+            </p>
+          </div>
+        </div>
+        <p className="text-xs mt-4" style={{ color: "oklch(0.55 0.01 80)" }}>
+          Estimates only. Beancountr is a bookkeeping tool, not a regulated tax advisory service.
+        </p>
+      </div>
+
       {unpaidInvoices > 0 && (
         <div className="flex items-center justify-between rounded-2xl px-5 py-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="flex items-center gap-3">
@@ -219,7 +255,7 @@ export default async function DashboardPage() {
       </div>
 
       <p className="text-xs text-center pb-2" style={{ color: MUTED }}>
-        Planning estimates only — not formal tax advice. Use your accountant&apos;s rates if you have them.
+        Planning estimates only. Use your accountant&apos;s rates if you have them.
       </p>
     </div>
   );

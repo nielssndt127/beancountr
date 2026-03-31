@@ -32,10 +32,10 @@ const STEPS = [
     icon: UserCircle,
     title: "Create your account",
     description:
-      "Sign up with your email address at beancountr.co.uk/signup. No credit card required — the free plan covers up to 3 clients with unlimited time and expense tracking. Your account is ready to use immediately after email verification.",
+      "Sign up with your email address at beancountr.co.uk/signup. No credit card required. The free plan covers up to 3 clients with unlimited time and expense tracking, and your account is ready straight after email verification.",
     tips: [
       "Use a dedicated email address for your business if you have one",
-      "The free plan is genuinely free forever — no trial period",
+      "The free plan is genuinely free forever, with no trial period",
       "You can upgrade to Pro at any time without losing data",
     ],
   },
@@ -48,7 +48,7 @@ const STEPS = [
     tips: [
       "Sole traders earning under £50,000: 25% tax reserve is usually sufficient",
       "Higher earners: increase the tax reserve to 30–35%",
-      "Your pension rate is separate — consider at least 5% as a minimum",
+      "Your pension rate is separate from the tax reserve. Consider at least 5% as a starting point",
     ],
   },
   {
@@ -59,7 +59,7 @@ const STEPS = [
       "Go to Clients and add each of your clients with their name, email, and address. Client details are used on invoices and to organise your time entries and reports. You can edit client information at any time.",
     tips: [
       "Add clients before logging time so entries are correctly attributed",
-      "Include the client's billing address — you'll need it on invoices",
+      "Include the client's billing address, as you'll need it on invoices",
       "Free accounts support up to 3 clients; upgrade for unlimited",
     ],
   },
@@ -71,7 +71,7 @@ const STEPS = [
       "Go to Time Tracking to add time entries. Select a client, enter the date, hours worked, your hourly rate, and a description. Beancountr calculates the value of each entry and tracks your unbilled hours per client so you always know what's due to be invoiced.",
     tips: [
       "Log time daily rather than reconstructing it at week-end",
-      "Add a specific description — it appears on your invoice line items",
+      "Add a specific description, as it appears on your invoice line items",
       "You can log time in decimal hours (e.g., 1.5 hours for 90 minutes)",
     ],
   },
@@ -82,7 +82,7 @@ const STEPS = [
     description:
       "Add business expenses as they occur under Expenses. Enter the date, category, description, and amount, and mark whether the expense is tax-deductible. These expenses reduce your taxable profit and feed into your tax estimate on the dashboard.",
     tips: [
-      "Photograph receipts immediately — you'll thank yourself at year end",
+      "Photograph receipts straight away. You'll thank yourself at year end",
       "Mark expenses as deductible only if they're wholly for business use",
       "Common categories: software, equipment, travel, professional fees",
     ],
@@ -94,7 +94,7 @@ const STEPS = [
     description:
       "Go to Invoices and create a new invoice. Select a client, add a due date, and either add line items manually or import logged time entries. Beancountr generates a professional PDF invoice with your business details. Download it and send to your client, or copy the link to share directly.",
     tips: [
-      "Invoice on the day you complete work — don't wait until end of month",
+      "Invoice on the day you finish the work. Don't leave it until end of month",
       "Use Import Time Entries to convert logged hours into invoice lines instantly",
       "Include your bank details on every invoice so payment is frictionless",
     ],
@@ -116,7 +116,7 @@ const STEPS = [
     icon: PoundSterling,
     title: "Understand your tax estimate",
     description:
-      "The tax estimate on your dashboard shows the amount you should have set aside based on your income, expenses, and the tax reserve rate you configured. This is a planning estimate — not formal tax advice — but it gives you a reliable guide to how much belongs to HMRC and how much is genuinely yours to spend or save.",
+      "The tax estimate on your dashboard shows the amount you should have set aside based on your income, expenses, and the tax reserve rate you configured. It's a planning estimate rather than formal tax advice, but it gives you a reliable guide to how much belongs to HMRC and how much is genuinely yours to spend or save.",
     tips: [
       "The estimate accounts for your Personal Allowance automatically",
       "Always consult an accountant before submitting your Self Assessment",
@@ -177,7 +177,7 @@ export default function HowToPage() {
             How to use <span style={{ color: MUTED }}>Beancountr</span>
           </h1>
           <p className="text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: MUTED }}>
-            From signing up to understanding your tax estimate — here&apos;s everything you need to get
+            From signing up to understanding your tax estimate, here&apos;s everything you need to get
             Beancountr working for your freelance finances.
           </p>
           <div className="flex items-center justify-center gap-6 mt-8">
@@ -248,7 +248,7 @@ export default function HowToPage() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl mb-4" style={{ fontFamily: "var(--font-display)", color: CREAM }}>Ready to take control of your finances?</h2>
           <p className="mb-8 leading-relaxed" style={{ color: MUTED }}>
-            Join thousands of UK freelancers who use Beancountr to know exactly where they stand financially — every month.
+            Join thousands of UK freelancers who use Beancountr to know exactly where they stand financially, month after month.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link

@@ -11,11 +11,11 @@ const MUTED = "oklch(0.65 0.01 80)";
 const FAQS = [
   {
     q: "How do I connect my bank account?",
-    a: "Beancountr doesn't currently require bank connection — you log income by raising invoices and marking them paid, and log expenses manually or from receipts. This keeps your data under your control and avoids sharing banking credentials. Bank import is on the product roadmap.",
+    a: "Beancountr doesn't currently require bank connection. You log income by raising invoices and marking them paid, and log expenses manually or from receipts. This keeps your data under your control and avoids sharing banking credentials. Bank import is on the product roadmap.",
   },
   {
     q: "How is my tax estimate calculated?",
-    a: "Your tax estimate is based on your net profit (income minus allowable expenses), your Personal Allowance (£12,570 for 2026/27), and the Income Tax and Class 4 National Insurance rates for your income band. The estimate uses the tax reserve percentage you set in Settings. It's a planning estimate — not a formal tax calculation — so always confirm your actual bill with an accountant or HMRC.",
+    a: "Your tax estimate is based on your net profit (income minus allowable expenses), your Personal Allowance (£12,570 for 2026/27), and the Income Tax and Class 4 National Insurance rates for your income band. The estimate uses the tax reserve percentage you set in Settings. It's a planning estimate rather than a formal tax calculation, so always confirm your actual bill with an accountant or HMRC.",
   },
   {
     q: "Can I use Beancountr for a limited company?",
@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     q: "What is the pension set-aside and how is it calculated?",
-    a: "The pension set-aside is a portion of your income ring-fenced for retirement savings, shown separately from your tax reserve on the dashboard. You set your pension rate (as a percentage) in Settings — the default is 10%. The pension set-aside is informational: Beancountr doesn't transfer money to a pension for you. Use it as a guide for your monthly pension contributions.",
+    a: "The pension set-aside is a portion of your income ring-fenced for retirement savings, shown separately from your tax reserve on the dashboard. You set your pension rate (as a percentage) in Settings. The default is 10%. The pension set-aside is informational: Beancountr doesn't transfer money to a pension for you. Use it as a guide for your monthly pension contributions.",
   },
   {
     q: "Can I export my data?",
@@ -43,7 +43,7 @@ const FAQS = [
   },
   {
     q: "How do I delete a client?",
-    a: "Go to Clients, open the client record, and choose Delete. Note that deleting a client does not delete the invoices, time entries, or expenses associated with that client — they remain in your records. If you want to archive a client without deleting their history, simply stop adding new entries against them.",
+    a: "Go to Clients, open the client record, and choose Delete. Note that deleting a client does not delete the invoices, time entries, or expenses associated with that client. They remain in your records. If you want to archive a client without deleting their history, simply stop adding new entries against them.",
   },
   {
     q: "What happens to my data if I cancel my Pro subscription?",
@@ -51,7 +51,7 @@ const FAQS = [
   },
   {
     q: "Can I collaborate with my accountant?",
-    a: "The CSV export feature (Pro) is designed for sharing data with accountants. You can export income and expense summaries in a format most accounting software can import. We're building a dedicated accountant sharing mode — watch the roadmap for updates.",
+    a: "The CSV export feature (Pro) is designed for sharing data with accountants. You can export income and expense summaries in a format most accounting software can import. We're building a dedicated accountant sharing mode. Watch the roadmap for updates.",
   },
   {
     q: "Is my data secure?",
@@ -59,7 +59,7 @@ const FAQS = [
   },
   {
     q: "How do I change my email or password?",
-    a: "Log in, go to Settings, and look for the Account section. Email changes trigger a verification step. To change your password, use the 'Forgot password' link on the login page — this sends a reset email. For security reasons, password changes always require re-verification.",
+    a: "Log in, go to Settings, and look for the Account section. Email changes trigger a verification step. To change your password, use the 'Forgot password' link on the login page, which sends a reset email. For security reasons, password changes always require re-verification.",
   },
   {
     q: "What payment methods do you accept for Pro?",
@@ -67,7 +67,7 @@ const FAQS = [
   },
   {
     q: "How do I cancel my Pro subscription?",
-    a: "Go to Settings and find the Billing section. You can cancel your Pro subscription at any time — you'll retain Pro access until the end of your current billing period, then revert to the Free plan. No partial refunds are available for unused months.",
+    a: "Go to Settings and find the Billing section. You can cancel your Pro subscription at any time and you'll retain Pro access until the end of your current billing period, then revert to the Free plan. No partial refunds are available for unused months.",
   },
 ];
 

@@ -4,6 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/get-user";
 import { BusinessType } from "@prisma/client";
 
+export async function updateLogoUrl(logoUrl: string | null) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+  await prisma.user.update({ where: { id: user.id }, data: { logoUrl } });
+  revalidatePath("/app/settings");
+}
+
 export async function updateSettings(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");

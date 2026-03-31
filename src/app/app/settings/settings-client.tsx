@@ -151,7 +151,7 @@ export function SettingsClient({ user }: { user: User }) {
         <div className="rounded-2xl p-6 space-y-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div>
             <h2 className="font-semibold" style={{ color: CHARCOAL }}>Tax & pension reserves</h2>
-            <p className="text-xs mt-1" style={{ color: MUTED }}>Planning estimates only — not formal tax advice.</p>
+            <p className="text-xs mt-1" style={{ color: MUTED }}>Planning estimates only. Not formal tax advice.</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

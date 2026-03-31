@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { createInvoice, updateInvoiceStatus, deleteInvoice } from "@/server/actions/invoices";
-import { FileText, Plus, Trash2, ChevronDown, X } from "lucide-react";
+import { createInvoice, sendInvoice, updateInvoiceStatus, deleteInvoice } from "@/server/actions/invoices";
+import { FileText, Plus, Trash2, ChevronDown, X, Send, Link2, Eye, Lock } from "lucide-react";
 import { InvoiceStatus } from "@prisma/client";
 
-type Client = { id: string; name: string };
+type Client = { id: string; name: string; email: string | null };
 type LineItem = { id: string; description: string; quantity: number; unitPrice: number; amount: number };
 type Invoice = {
   id: string;
+  publicId: string;
   invoiceNumber: string;
   issueDate: Date;
   dueDate: Date;
@@ -17,6 +18,8 @@ type Invoice = {
   vatAmount: number;
   total: number;
   notes: string | null;
+  recipientEmail: string | null;
+  viewedAt: Date | null;
   client: Client;
   lineItems: LineItem[];
 };
@@ -45,7 +48,7 @@ const statusConfig: Record<InvoiceStatus, { label: string; bg: string; color: st
   OVERDUE: { label: "Overdue", bg: "#FEE2E2", color: "#DC2626" },
 };
 
-const inputStyle = { background: "#fff", border: `1px solid ${BORDER}`, color: CHARCOAL, "--tw-ring-color": GREEN } as React.CSSProperties;
+const inputStyle = { background: "#fff", border: `1px solid ${BORDER}`, color: CHARCOAL } as React.CSSProperties;
 const inputClass = "w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent";
 
 type FormLineItem = { description: string; quantity: string; unitPrice: string };
@@ -55,14 +58,21 @@ export function InvoicesClient({
   clients,
   nextInvoiceNumber,
   paymentTerms,
+  isPro,
+  appUrl,
 }: {
   invoices: Invoice[];
   clients: Client[];
   nextInvoiceNumber: string;
   paymentTerms: number;
+  isPro: boolean;
+  appUrl: string;
 }) {
   const [showForm, setShowForm] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
   const [lineItems, setLineItems] = useState<FormLineItem[]>([
     { description: "", quantity: "1", unitPrice: "" },
   ]);
@@ -79,11 +89,9 @@ export function InvoicesClient({
   function addLineItem() {
     setLineItems([...lineItems, { description: "", quantity: "1", unitPrice: "" }]);
   }
-
   function removeLineItem(i: number) {
     setLineItems(lineItems.filter((_, idx) => idx !== i));
   }
-
   function updateLineItem(i: number, field: keyof FormLineItem, value: string) {
     setLineItems(lineItems.map((li, idx) => (idx === i ? { ...li, [field]: value } : li)));
   }
@@ -111,6 +119,27 @@ export function InvoicesClient({
     setDeleting(null);
   }
 
+  async function handleSend(invoice: Invoice) {
+    const email = window.prompt(
+      `Send invoice ${invoice.invoiceNumber} to:`,
+      invoice.recipientEmail ?? invoice.client.email ?? ""
+    );
+    if (!email) return;
+
+    setSendingId(invoice.id);
+    setSendError(null);
+    const result = await sendInvoice(invoice.id, email);
+    setSendingId(null);
+    if (result.error) setSendError(result.error);
+  }
+
+  async function handleCopyLink(publicId: string) {
+    const url = `${appUrl}/i/${publicId}`;
+    await navigator.clipboard.writeText(url);
+    setCopied(publicId);
+    setTimeout(() => setCopied(null), 2000);
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -127,6 +156,13 @@ export function InvoicesClient({
         </button>
       </div>
 
+      {sendError && (
+        <div className="rounded-xl px-4 py-3 flex items-center justify-between" style={{ background: "#FEE2E2", border: "1px solid #FCA5A5" }}>
+          <p className="text-sm" style={{ color: "#DC2626" }}>Could not send: {sendError}</p>
+          <button onClick={() => setSendError(null)}><X className="w-4 h-4" style={{ color: "#DC2626" }} /></button>
+        </div>
+      )}
+
       {invoices.length === 0 ? (
         <div className="rounded-2xl p-12 text-center" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: LIGHT_GREEN }}>
@@ -137,53 +173,100 @@ export function InvoicesClient({
         </div>
       ) : (
         <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div>
-            {invoices.map((invoice) => {
-              const cfg = statusConfig[invoice.status];
-              return (
-                <div key={invoice.id} className="flex items-center justify-between px-6 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <p className="font-medium" style={{ color: CHARCOAL }}>{invoice.invoiceNumber}</p>
-                      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium" style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
-                    </div>
-                    <p className="text-xs mt-0.5" style={{ color: MUTED }}>
-                      {invoice.client.name} · Issued {fmtDate(invoice.issueDate)} · Due {fmtDate(invoice.dueDate)}
-                    </p>
+          {invoices.map((invoice) => {
+            const cfg = statusConfig[invoice.status];
+            const isViewed = !!invoice.viewedAt;
+            const publicUrl = `${appUrl}/i/${invoice.publicId}`;
+            return (
+              <div key={invoice.id} className="flex items-center justify-between px-5 py-4 transition-colors" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                <div className="min-w-0 flex-1 mr-4">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-medium" style={{ color: CHARCOAL }}>{invoice.invoiceNumber}</p>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full font-medium" style={{ background: cfg.bg, color: cfg.color }}>
+                      {cfg.label}
+                    </span>
+                    {/* Viewed badge — Pro only */}
+                    {isPro && isViewed && invoice.status === "SENT" && (
+                      <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: LIGHT_GREEN, color: GREEN }}>
+                        <Eye className="w-3 h-3" /> Viewed
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <p className="text-sm font-semibold font-data" style={{ color: CHARCOAL }}>{fmt(invoice.total)}</p>
-                    {/* Status dropdown */}
-                    <div className="relative group">
-                      <button className="flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg transition-colors" style={{ color: MUTED }}>
-                        Status <ChevronDown className="w-3 h-3" />
-                      </button>
-                      <div className="absolute right-0 top-full mt-1 rounded-xl py-1 w-36 hidden group-hover:block z-10" style={{ background: CREAM, border: `1px solid ${BORDER}` }}>
-                        {(["DRAFT", "SENT", "PAID", "OVERDUE"] as InvoiceStatus[]).map((s) => (
-                          <button
-                            key={s}
-                            onClick={() => handleStatusChange(invoice.id, s)}
-                            className="w-full text-left px-3 py-2 text-xs font-medium transition-colors"
-                            style={{ color: invoice.status === s ? CHARCOAL : MUTED }}
-                          >
-                            {statusConfig[s].label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(invoice.id)}
-                      disabled={deleting === invoice.id}
-                      className="p-2 rounded-lg transition-colors disabled:opacity-50"
-                      style={{ color: MUTED }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <p className="text-xs mt-0.5 truncate" style={{ color: MUTED }}>
+                    {invoice.client.name} · Issued {fmtDate(invoice.issueDate)} · Due {fmtDate(invoice.dueDate)}
+                  </p>
+                  {/* Public link */}
+                  <button
+                    onClick={() => handleCopyLink(invoice.publicId)}
+                    className="flex items-center gap-1 text-xs mt-1 transition-opacity hover:opacity-70"
+                    style={{ color: GREEN }}
+                    title={publicUrl}
+                  >
+                    <Link2 className="w-3 h-3" />
+                    {copied === invoice.publicId ? "Copied!" : "Copy public link"}
+                  </button>
                 </div>
-              );
-            })}
+
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <p className="text-sm font-semibold font-data" style={{ color: CHARCOAL }}>{fmt(invoice.total)}</p>
+
+                  {/* Send button */}
+                  <button
+                    onClick={() => handleSend(invoice)}
+                    disabled={sendingId === invoice.id}
+                    title="Send invoice by email"
+                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg font-medium transition-all hover:opacity-80 disabled:opacity-50"
+                    style={{ background: LIGHT_GREEN, color: GREEN }}
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    {sendingId === invoice.id ? "Sending…" : "Send"}
+                  </button>
+
+                  {/* Status dropdown */}
+                  <div className="relative group">
+                    <button className="flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg transition-colors" style={{ color: MUTED }}>
+                      Status <ChevronDown className="w-3 h-3" />
+                    </button>
+                    <div className="absolute right-0 top-full mt-1 rounded-xl py-1 w-36 hidden group-hover:block z-10" style={{ background: CREAM, border: `1px solid ${BORDER}` }}>
+                      {(["DRAFT", "SENT", "PAID", "OVERDUE"] as InvoiceStatus[]).map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => handleStatusChange(invoice.id, s)}
+                          className="w-full text-left px-3 py-2 text-xs font-medium transition-colors"
+                          style={{ color: invoice.status === s ? CHARCOAL : MUTED }}
+                        >
+                          {statusConfig[s].label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleDelete(invoice.id)}
+                    disabled={deleting === invoice.id}
+                    className="p-2 rounded-lg transition-colors disabled:opacity-50"
+                    style={{ color: MUTED }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Pro upsell for viewed tracking */}
+      {!isPro && (
+        <div className="rounded-xl px-5 py-4 flex items-center gap-3" style={{ background: LIGHT_AMBER, border: `1px solid #EDCDA6` }}>
+          <Lock className="w-4 h-4 flex-shrink-0" style={{ color: AMBER }} />
+          <div className="flex-1">
+            <p className="text-sm font-medium" style={{ color: CHARCOAL }}>Know when clients open your invoices</p>
+            <p className="text-xs mt-0.5" style={{ color: MUTED }}>Upgrade to Pro to see a &ldquo;Viewed&rdquo; badge the moment a client opens your invoice link.</p>
           </div>
+          <a href="/pricing" className="text-xs font-semibold px-4 py-2 rounded-full flex-shrink-0 transition-opacity hover:opacity-80" style={{ background: AMBER, color: "#fff" }}>
+            Upgrade
+          </a>
         </div>
       )}
 
@@ -220,6 +303,18 @@ export function InvoicesClient({
                   <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Due date *</label>
                   <input name="dueDate" type="date" defaultValue={dueDefault} required className={inputClass} style={inputStyle} />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: CHARCOAL }}>Recipient email</label>
+                <input
+                  name="recipientEmail"
+                  type="email"
+                  placeholder="client@example.com"
+                  className={inputClass}
+                  style={inputStyle}
+                />
+                <p className="text-xs mt-1" style={{ color: MUTED }}>Optional — you can also send later.</p>
               </div>
 
               {/* Line items */}

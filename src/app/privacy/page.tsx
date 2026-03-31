@@ -35,9 +35,9 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-bold mb-3" style={{ color: CREAM }}>2. What data we collect</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong style={{ color: CREAM }}>Account data:</strong> email address, name (when you sign up)</li>
-              <li><strong style={{ color: CREAM }}>Business data:</strong> client names, invoice details, time entries, expenses — data you enter into the app</li>
+              <li><strong style={{ color: CREAM }}>Business data:</strong> client names, invoice details, time entries, expenses (data you enter into the app)</li>
               <li><strong style={{ color: CREAM }}>Settings data:</strong> business name, tax rates, pension rates, invoice defaults</li>
-              <li><strong style={{ color: CREAM }}>Payment data:</strong> handled entirely by Stripe — we never see or store card details</li>
+              <li><strong style={{ color: CREAM }}>Payment data:</strong> handled entirely by Stripe. We never see or store card details</li>
               <li><strong style={{ color: CREAM }}>Usage data:</strong> pages visited, features used, error logs (to improve the service)</li>
               <li><strong style={{ color: CREAM }}>Cookie data:</strong> session cookies for authentication; analytics cookies only with your consent</li>
             </ul>
@@ -68,10 +68,10 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-bold mb-3" style={{ color: CREAM }}>5. Data sharing</h2>
             <p>We do not sell your data. We share data only with trusted processors:</p>
             <ul className="list-disc pl-5 space-y-2 mt-2">
-              <li><strong style={{ color: CREAM }}>Supabase</strong> — database and authentication (EU data centres)</li>
-              <li><strong style={{ color: CREAM }}>Stripe</strong> — payment processing</li>
-              <li><strong style={{ color: CREAM }}>Vercel</strong> — hosting (EU region)</li>
-              <li><strong style={{ color: CREAM }}>Resend</strong> — transactional email</li>
+              <li><strong style={{ color: CREAM }}>Supabase</strong>: database and authentication (EU data centres)</li>
+              <li><strong style={{ color: CREAM }}>Stripe</strong>: payment processing</li>
+              <li><strong style={{ color: CREAM }}>Vercel</strong>: hosting (EU region)</li>
+              <li><strong style={{ color: CREAM }}>Resend</strong>: transactional email</li>
             </ul>
           </section>
 

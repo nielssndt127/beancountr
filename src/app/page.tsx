@@ -245,12 +245,10 @@ function Hero() {
             style={{
               fontFamily: "var(--font-display)",
               color: C.charcoal,
-              fontSize: "clamp(52px, 6vw, 84px)",
+              fontSize: "clamp(46px, 5.5vw, 76px)",
             }}
           >
-            Know what you earned.
-            <br />
-            Know what to save.
+            Simple Invoicing &amp; Tax Tracking for UK Freelancers
           </h1>
 
           {/* Subtext */}
@@ -258,7 +256,7 @@ function Hero() {
             className="text-lg max-w-xl mb-10 leading-relaxed mx-auto lg:mx-0"
             style={{ color: C.muted }}
           >
-            Track hours, send invoices, and see exactly what&apos;s safe to spend — without the spreadsheet chaos or tax panic.
+            Track your income, send invoices, and always know what to set aside for tax, without spreadsheets or accounting jargon.
           </p>
 
           {/* CTAs */}
@@ -268,7 +266,7 @@ function Hero() {
               className="flex items-center gap-2 font-bold px-7 py-3.5 rounded-full text-base transition-all hover:opacity-90 hover:shadow-lg"
               style={{ background: C.green, color: C.cream }}
             >
-              See what you can safely spend <ArrowRight className="w-4 h-4" />
+              Start free, create your first invoice <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/pricing"
@@ -370,17 +368,17 @@ function ProblemSolution() {
     {
       icon: Calculator,
       title: "Tax time panic",
-      body: "Not sure how much to put away for HMRC? Never be caught short again.",
+      body: "Beancountr sets aside your tax buffer automatically on every payment. No January surprises.",
     },
     {
       icon: Mail,
-      title: "Chasing payments",
-      body: "Losing track of who owes you what? See every unpaid invoice at a glance.",
+      title: "Slow payments",
+      body: "Send a professional invoice by email in seconds. Clients get a clean payment page with your bank details, nothing to chase.",
     },
     {
       icon: LayoutGrid,
-      title: "Spreadsheet chaos",
-      body: "Managing invoices and time logs across sheets? Bring it all into one place.",
+      title: "No clear picture",
+      body: "One dashboard shows income, expenses, tax buffer, and exactly what is left to spend. Always up to date.",
     },
   ];
 
@@ -392,10 +390,10 @@ function ProblemSolution() {
             className="text-3xl font-black mb-3"
             style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
           >
-            Sound familiar?
+            Finally know what&apos;s yours to spend
           </h2>
           <p className="text-base" style={{ color: C.muted }}>
-            You&apos;re not alone. These are the three things every UK freelancer struggles with.
+            Most freelancers worry about tax surprises. Beancountr shows you exactly what to set aside, so the rest is genuinely yours.
           </p>
         </div>
 
@@ -456,7 +454,7 @@ function HowItWorks() {
       step: "03",
       icon: PoundSterling,
       title: "See what's yours to spend",
-      body: "The dashboard shows income, tax reserve, pension pot and safe-to-spend — always up to date.",
+      body: "The dashboard shows your income, tax reserve, pension pot and safe-to-spend. Always up to date.",
     },
   ];
 
@@ -504,12 +502,12 @@ function HowItWorks() {
 
 function Features() {
   const features = [
-    { icon: TrendingUp, title: "Income & profit dashboard", sub: "See where you stand at a glance" },
-    { icon: Clock, title: "Time tracking", sub: "Log hours by client and project" },
-    { icon: FileText, title: "Invoice generation", sub: "Professional PDF invoices" },
-    { icon: PoundSterling, title: "Tax reserve planning", sub: "Automatic estimates, UK-focused" },
-    { icon: Shield, title: "Pension set-aside", sub: "Pay your future self first" },
-    { icon: CheckCircle, title: "Expense tracking", sub: "Categories, deductibility, totals" },
+    { icon: FileText, title: "Send invoices in seconds and get paid faster", sub: "Professional invoices emailed directly to clients, with a public link they can open any time" },
+    { icon: TrendingUp, title: "See income, expenses, and tax in one clear view", sub: "No spreadsheets. One dashboard shows your full financial picture, updated as you go" },
+    { icon: Clock, title: "Time tracking built in", sub: "Log hours by client and project, then convert them to invoice line items instantly" },
+    { icon: PoundSterling, title: "Tax buffer, calculated automatically", sub: "Set your reserve rate once and always know what belongs to HMRC" },
+    { icon: Shield, title: "Pension set-aside", sub: "A separate pot for your future self, shown alongside your tax buffer" },
+    { icon: CheckCircle, title: "Expense tracking", sub: "Log deductible expenses as you go. Your tax estimate adjusts automatically" },
   ];
 
   return (
@@ -545,6 +543,46 @@ function Features() {
                 <p className="font-semibold text-sm" style={{ color: C.charcoal }}>{item.title}</p>
                 <p className="text-xs mt-0.5" style={{ color: C.muted }}>{item.sub}</p>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DifferentiatorStrip() {
+  return (
+    <section className="py-16 px-6" style={{ background: "#1F1F1F" }}>
+      <div className="max-w-3xl mx-auto text-center">
+        <p
+          className="text-xs font-bold uppercase tracking-widest mb-4"
+          style={{ color: "rgba(245,241,232,0.4)" }}
+        >
+          Why Beancountr
+        </p>
+        <h2
+          className="text-3xl font-black mb-5"
+          style={{ fontFamily: "var(--font-display)", color: "#F5F1E8" }}
+        >
+          Built for freelancers, not accountants
+        </h2>
+        <p className="text-base leading-relaxed mb-8" style={{ color: "rgba(245,241,232,0.6)" }}>
+          Bigger tools are designed for teams and bookkeepers. Beancountr is designed for one person who wants to send invoices, track time, and know exactly what they can spend after setting aside for tax. Simpler to use. Focused on what actually matters to you.
+        </p>
+        <div className="grid sm:grid-cols-3 gap-4 text-left">
+          {[
+            { label: "Simpler than bloated tools", body: "No chart of accounts, no payroll, no features you will never touch." },
+            { label: "UK-focused by default", body: "HMRC tax bands, GBP, Making Tax Digital awareness. Built around how freelancers in the UK actually work." },
+            { label: "Focused on safe-to-spend", body: "The number that matters is what you can actually use. Everything else is working backwards to get there." },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-2xl p-5"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <p className="text-sm font-semibold mb-2" style={{ color: "#F5F1E8" }}>{item.label}</p>
+              <p className="text-xs leading-relaxed" style={{ color: "rgba(245,241,232,0.5)" }}>{item.body}</p>
             </div>
           ))}
         </div>
@@ -738,6 +776,7 @@ export default function HomePage() {
       <ProblemSolution />
       <HowItWorks />
       <Features />
+      <DifferentiatorStrip />
       <Pricing />
       <CtaBanner />
       <Footer />

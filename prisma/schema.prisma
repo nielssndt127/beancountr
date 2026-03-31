@@ -35,6 +35,7 @@ model User {
   address        String?
   phone          String?
   website        String?
+  logoUrl        String?
   taxReserveRate Float        @default(0.30)
   pensionRate    Float        @default(0.10)
   invoicePrefix  String       @default("INV")
@@ -52,10 +53,11 @@ model User {
   createdAt            DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  clients     Client[]
-  timeEntries TimeEntry[]
-  expenses    Expense[]
-  invoices    Invoice[]
+  clients          Client[]
+  timeEntries      TimeEntry[]
+  expenses         Expense[]
+  invoices         Invoice[]
+  bankTransactions BankTransaction[]
 }
 
 model Client {
@@ -118,24 +120,28 @@ model Expense {
 }
 
 model Invoice {
-  id            String        @id @default(cuid())
-  userId        String
-  clientId      String
-  invoiceNumber String
-  issueDate     DateTime
-  dueDate       DateTime
-  status        InvoiceStatus @default(DRAFT)
-  subtotal      Float         @default(0)
-  vatAmount     Float         @default(0)
-  total         Float         @default(0)
-  notes         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  publicId       String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String
+  clientId       String
+  invoiceNumber  String
+  issueDate      DateTime
+  dueDate        DateTime
+  status         InvoiceStatus @default(DRAFT)
+  subtotal       Float         @default(0)
+  vatAmount      Float         @default(0)
+  total          Float         @default(0)
+  notes          String?
+  recipientEmail String?
+  viewedAt       DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   client      Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
   lineItems   InvoiceLineItem[]
   timeEntries TimeEntry[]
+  matches     InvoiceMatch[]
 
   @@unique([userId, invoiceNumber])
 }
@@ -151,4 +157,31 @@ model InvoiceLineItem {
   updatedAt   DateTime @updatedAt
 
   invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+// Pro-tier: bank transaction import and smart matching
+model BankTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime
+  amount      Float
+  description String
+  reference   String?
+  createdAt   DateTime @default(now())
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches InvoiceMatch[]
+}
+
+model InvoiceMatch {
+  id                String    @id @default(cuid())
+  invoiceId         String
+  bankTransactionId String
+  confirmedAt       DateTime?
+  createdAt         DateTime  @default(now())
+
+  invoice         Invoice         @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  bankTransaction BankTransaction @relation(fields: [bankTransactionId], references: [id], onDelete: Cascade)
+
+  @@unique([invoiceId, bankTransactionId])
 }

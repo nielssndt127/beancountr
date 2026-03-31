@@ -23,9 +23,9 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Beancountr — Money clarity for UK freelancers",
+  title: "Beancountr: Money clarity for UK freelancers",
   description:
-    "Track hours, manage expenses, send invoices, and plan for tax — all in one simple dashboard.",
+    "Track hours, manage expenses, send invoices, and plan for tax. All in one simple dashboard.",
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",

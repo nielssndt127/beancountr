@@ -3,9 +3,17 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/get-user";
 
-export async function createClient(formData: FormData) {
+export async function createClient(formData: FormData): Promise<{ error?: string }> {
   const user = await getCurrentUser();
-  if (!user) throw new Error("Unauthorized");
+  if (!user) return { error: "Unauthorized" };
+
+  if (user.plan === "FREE") {
+    const count = await prisma.client.count({ where: { userId: user.id } });
+    if (count >= 3) {
+      return { error: "Free accounts are limited to 3 clients. Upgrade to Pro for unlimited clients." };
+    }
+  }
+
   await prisma.client.create({
     data: {
       userId: user.id,
@@ -17,6 +25,7 @@ export async function createClient(formData: FormData) {
     },
   });
   revalidatePath("/app/clients");
+  return {};
 }
 
 export async function updateClient(id: string, formData: FormData) {
@@ -43,6 +52,11 @@ export async function createClientByName(name: string): Promise<{ id: string; na
     where: { userId: user.id, name: { equals: name, mode: "insensitive" } },
   });
   if (existing) return { id: existing.id, name: existing.name };
+  // Paywall check
+  if (user.plan === "FREE") {
+    const count = await prisma.client.count({ where: { userId: user.id } });
+    if (count >= 3) throw new Error("Free accounts are limited to 3 clients. Upgrade to Pro for unlimited clients.");
+  }
   const client = await prisma.client.create({
     data: { userId: user.id, name },
   });

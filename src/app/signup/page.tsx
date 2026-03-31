@@ -70,7 +70,7 @@ export default function SignupPage() {
             ))}
           </div>
         </div>
-        <p className="text-xs" style={{ color: "rgba(245,241,232,0.4)" }}>Planning estimates only — not formal tax advice.</p>
+        <p className="text-xs" style={{ color: "rgba(245,241,232,0.4)" }}>Planning estimates only. Not formal tax advice.</p>
       </div>
 
       {/* Right panel — cream */}
