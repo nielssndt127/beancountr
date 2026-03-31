@@ -15,7 +15,6 @@ import {
   Check,
   X,
   ClipboardList,
-  Landmark,
   Send,
 } from "lucide-react";
 
@@ -381,7 +380,7 @@ function ProblemSolution() {
     {
       icon: LayoutGrid,
       title: "No clear picture",
-      body: "Import your bank CSV, auto-match payments to invoices, and see income, tax reserve, and safe-to-spend in one dashboard. Always up to date.",
+      body: "One dashboard shows income, expenses, tax buffer, and exactly what is left to spend. Always up to date, no manual sums.",
     },
   ];
 
@@ -457,7 +456,7 @@ function HowItWorks() {
       step: "03",
       icon: Send,
       title: "Invoice & get paid",
-      body: "Send invoices by email. Import your bank CSV and Beancountr auto-spots which payments match which invoices.",
+      body: "Send a professional invoice by email in one click. Clients get a clean payment page with your bank details. Mark paid when the money lands.",
     },
     {
       step: "04",
@@ -475,7 +474,7 @@ function HowItWorks() {
             className="text-3xl font-black"
             style={{ fontFamily: "var(--font-display)", color: C.charcoal }}
           >
-            Three steps to financial clarity
+            Four steps to financial clarity
           </h2>
         </div>
 
@@ -513,7 +512,6 @@ function Features() {
   const features = [
     { icon: ClipboardList, title: "Quotes with online acceptance", sub: "Send branded quotes clients can accept with one click. Convert to invoice instantly when they say yes" },
     { icon: FileText, title: "Send invoices in seconds", sub: "Professional invoices emailed directly to clients, with a public link and your bank details" },
-    { icon: Landmark, title: "Bank feed & smart matching", sub: "Import a CSV from any UK bank. Beancountr auto-spots which payments match your open invoices" },
     { icon: TrendingUp, title: "Income, expenses, and tax in one view", sub: "No spreadsheets. One dashboard shows your full financial picture, updated as you go" },
     { icon: Clock, title: "Time tracking built in", sub: "Log hours by client and project, then convert them to invoice line items instantly" },
     { icon: PoundSterling, title: "Tax buffer, calculated automatically", sub: "Set your reserve rate once and always know what belongs to HMRC" },
@@ -533,7 +531,7 @@ function Features() {
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((item) => (
             <div
               key={item.title}
