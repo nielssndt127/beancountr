@@ -11,7 +11,6 @@ import {
   FileText,
   Settings,
   LogOut,
-  Landmark,
   ClipboardList,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
@@ -30,7 +29,6 @@ const navItems = [
   { href: "/app/expenses", label: "Expenses", icon: Receipt },
   { href: "/app/quotes", label: "Quotes", icon: ClipboardList },
   { href: "/app/invoices", label: "Invoices", icon: FileText },
-  { href: "/app/bank", label: "Bank", icon: Landmark },
 ];
 
 export function AppSidebar() {

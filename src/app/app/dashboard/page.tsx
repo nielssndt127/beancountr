@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/get-user";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { calculateFinancials, formatCurrency, formatDate } from "@/lib/calculations";
-import { TrendingUp, TrendingDown, Wallet, Shield, AlertCircle, ArrowRight, CheckCircle } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, Shield, AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { InvoiceStatus } from "@prisma/client";
 
@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-  const [invoices, timeEntries, expenses, recentInvoices, recentTimeEntries, smartMatches] = await Promise.all([
+  const [invoices, timeEntries, expenses, recentInvoices, recentTimeEntries] = await Promise.all([
     prisma.invoice.findMany({
       where: { userId: user.id, issueDate: { gte: startOfMonth, lte: endOfMonth } },
       select: { total: true, status: true },
@@ -55,15 +55,6 @@ export default async function DashboardPage() {
       take: 5,
       include: { client: { select: { name: true } } },
     }),
-    // Smart match: unconfirmed bank transactions that match an open invoice amount
-    user.plan === "PRO"
-      ? prisma.bankTransaction.findMany({
-          where: { userId: user.id, matches: { none: { confirmedAt: { not: null } } } },
-          include: { matches: true },
-          orderBy: { date: "desc" },
-          take: 20,
-        })
-      : Promise.resolve([]),
   ]);
 
   // Income: paid invoice totals + uninvoiced time entry value
@@ -74,13 +65,6 @@ export default async function DashboardPage() {
   const unpaidInvoices = recentInvoices.filter((i) => i.status === InvoiceStatus.SENT || i.status === InvoiceStatus.OVERDUE).reduce((sum, i) => sum + i.total, 0);
 
   const financials = calculateFinancials(income, totalExpenses, user.taxReserveRate, user.pensionRate);
-
-  // Find open invoices that match an unconfirmed bank transaction by amount
-  const openInvoices = recentInvoices.filter((i) => i.status === InvoiceStatus.SENT || i.status === InvoiceStatus.OVERDUE);
-  const smartMatchSuggestions = (smartMatches as { id: string; amount: number; date: Date; description: string }[]).flatMap((tx) => {
-    const match = openInvoices.find((inv) => Math.abs(inv.total - tx.amount) < 0.01);
-    return match ? [{ tx, invoice: match }] : [];
-  }).slice(0, 3);
 
   const monthName = now.toLocaleString("en-GB", { month: "long" });
 
@@ -126,24 +110,6 @@ export default async function DashboardPage() {
           Estimates only. Beancountr is a bookkeeping tool, not a regulated tax advisory service.
         </p>
       </div>
-
-      {/* Smart Match suggestions (Pro only) */}
-      {smartMatchSuggestions.length > 0 && smartMatchSuggestions.map(({ tx, invoice }) => (
-        <div key={tx.id} className="flex items-center justify-between rounded-2xl px-5 py-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-          <div className="flex items-center gap-3">
-            <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: TEXT }} />
-            <div>
-              <p className="text-sm font-medium" style={{ color: TEXT }}>
-                Payment spotted: {formatCurrency(tx.amount)} matches invoice {invoice.invoiceNumber}
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: MUTED }}>Was this for {invoice.client.name}?</p>
-            </div>
-          </div>
-          <Link href="/app/bank" className="flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: MUTED }}>
-            Confirm <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-      ))}
 
       {unpaidInvoices > 0 && (
         <div className="flex items-center justify-between rounded-2xl px-5 py-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>

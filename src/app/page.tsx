@@ -608,7 +608,6 @@ function Pricing() {
     { ok: true, text: "Dashboard: tax + pension estimates" },
     { ok: true, text: "Time & expense tracking" },
     { ok: false, text: "Email sending (invoices & quotes)" },
-    { ok: false, text: "Bank feed & matching" },
     { ok: false, text: "Beancountr branding on public pages" },
   ];
   const proItems = [
@@ -616,7 +615,6 @@ function Pricing() {
     { text: "Send invoices & quotes by email" },
     { text: "\"Viewed\" tracking on invoices & quotes" },
     { text: "Custom logo, no Beancountr branding" },
-    { text: "Bank feed & auto payment matching" },
     { text: "Automated overdue reminders" },
     { text: "CSV exports" },
   ];

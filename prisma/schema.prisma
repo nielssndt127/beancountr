@@ -67,7 +67,6 @@ model User {
   expenses         Expense[]
   invoices         Invoice[]
   quotes           Quote[]
-  bankTransactions BankTransaction[]
 }
 
 model Client {
@@ -155,7 +154,6 @@ model Invoice {
   quote       Quote?            @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   lineItems   InvoiceLineItem[]
   timeEntries TimeEntry[]
-  matches     InvoiceMatch[]
 
   @@unique([userId, invoiceNumber])
 }
@@ -212,29 +210,3 @@ model QuoteLineItem {
   quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
 }
 
-// Pro-tier: bank transaction import and smart matching
-model BankTransaction {
-  id          String   @id @default(cuid())
-  userId      String
-  date        DateTime
-  amount      Float
-  description String
-  reference   String?
-  createdAt   DateTime @default(now())
-
-  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  matches InvoiceMatch[]
-}
-
-model InvoiceMatch {
-  id                String    @id @default(cuid())
-  invoiceId         String
-  bankTransactionId String
-  confirmedAt       DateTime?
-  createdAt         DateTime  @default(now())
-
-  invoice         Invoice         @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  bankTransaction BankTransaction @relation(fields: [bankTransactionId], references: [id], onDelete: Cascade)
-
-  @@unique([invoiceId, bankTransactionId])
-}
