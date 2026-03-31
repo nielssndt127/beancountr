@@ -583,7 +583,7 @@ function DifferentiatorStrip() {
           {[
             { label: "Simpler than bloated tools", body: "No chart of accounts, no payroll, no jargon. Quote, invoice, track time, done." },
             { label: "UK-focused by default", body: "GBP, UK invoice formats, and a dashboard built around how UK freelancers actually think about money." },
-            { label: "Focused on safe-to-spend", body: "The number that matters is what you can actually use. Quotes, invoices, and bank matching all feed into one clear view." },
+            { label: "Focused on safe-to-spend", body: "The number that matters is what you can actually use. Quotes, invoices, time and expenses all feed into one clear view." },
           ].map((item) => (
             <div
               key={item.label}

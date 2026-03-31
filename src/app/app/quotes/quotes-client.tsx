@@ -231,11 +231,11 @@ export function QuotesClient({
       {/* ── Inline new-quote form ── */}
       {showForm && (
         <form onSubmit={handleCreate}>
-          <div className="rounded-2xl overflow-hidden" style={{ background: "#F0F9F4", border: `1.5px solid ${GREEN}` }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
 
             {/* Form header */}
             <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: `1px solid ${BORDER}` }}>
-              <p className="text-sm font-semibold" style={{ color: GREEN }}>New quote</p>
+              <p className="text-sm font-semibold" style={{ color: CHARCOAL }}>New quote</p>
               <button type="button" onClick={closeForm} style={{ color: MUTED }}><X className="w-4 h-4" /></button>
             </div>
 

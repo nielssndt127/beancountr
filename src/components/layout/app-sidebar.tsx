@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   ClipboardList,
+  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
@@ -31,7 +32,7 @@ const navItems = [
   { href: "/app/invoices", label: "Invoices", icon: FileText },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -76,6 +77,16 @@ export function AppSidebar() {
 
         {/* Bottom */}
         <div className="px-3 py-4 space-y-0.5" style={{ borderTop: `1px solid ${BORDER}` }}>
+          {isAdmin && (
+            <Link
+              href="/app/admin"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+              style={isActive("/app/admin") ? { background: ACTIVE_BG, color: CREAM } : { color: MUTED }}
+            >
+              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+              Admin
+            </Link>
+          )}
           <Link
             href="/app/settings"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
