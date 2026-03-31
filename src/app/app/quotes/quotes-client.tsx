@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createQuote, sendQuote, updateQuoteStatus, deleteQuote, convertToInvoice } from "@/server/actions/quotes";
+import { createClientByName } from "@/server/actions/clients";
 import { ClipboardList, Plus, Trash2, X, Send, Link2, ArrowRight, AlertCircle, Check, ChevronDown } from "lucide-react";
 import { QuoteStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -55,7 +56,7 @@ type FormLineItem = { description: string; quantity: string; unitPrice: string }
 const emptyLI = (): FormLineItem => ({ description: "", quantity: "1", unitPrice: "" });
 
 type FormState = {
-  clientId: string;
+  clientName: string;
   quoteNumber: string;
   issueDate: string;
   expiryDate: string;
@@ -80,7 +81,7 @@ export function QuotesClient({
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<FormState>({
-    clientId: "", quoteNumber: nextQuoteNumber,
+    clientName: "", quoteNumber: nextQuoteNumber,
     issueDate: today, expiryDate: expiryDefault,
     recipientEmail: "", vatRate: "0", notes: "",
   });
@@ -104,7 +105,7 @@ export function QuotesClient({
   }
 
   function openForm() {
-    setForm({ clientId: "", quoteNumber: nextQuoteNumber, issueDate: today, expiryDate: expiryDefault, recipientEmail: "", vatRate: "0", notes: "" });
+    setForm({ clientName: "", quoteNumber: nextQuoteNumber, issueDate: today, expiryDate: expiryDefault, recipientEmail: "", vatRate: "0", notes: "" });
     setLineItems([emptyLI()]);
     setShowForm(true);
   }
@@ -113,10 +114,27 @@ export function QuotesClient({
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.clientId || saving) return;
+    if (!form.clientName.trim() || saving) return;
     setSaving(true);
+
+    // Resolve or create client
+    let clientId: string;
+    const existing = clients.find(c => c.name.toLowerCase() === form.clientName.trim().toLowerCase());
+    if (existing) {
+      clientId = existing.id;
+    } else {
+      try {
+        const newClient = await createClientByName(form.clientName.trim());
+        clientId = newClient.id;
+      } catch {
+        alert("Could not create client. You may have reached the free plan limit (3 clients).");
+        setSaving(false);
+        return;
+      }
+    }
+
     const fd = new FormData();
-    fd.set("clientId", form.clientId);
+    fd.set("clientId", clientId);
     fd.set("quoteNumber", form.quoteNumber);
     fd.set("issueDate", form.issueDate);
     fd.set("expiryDate", form.expiryDate);
@@ -226,13 +244,18 @@ export function QuotesClient({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Client *</label>
-                  <select
-                    value={form.clientId} onChange={e => setF("clientId", e.target.value)} required
-                    style={{ ...cell, cursor: "pointer" }}
-                  >
-                    <option value="">Select…</option>
-                    {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
+                  <input
+                    value={form.clientName}
+                    onChange={e => setF("clientName", e.target.value)}
+                    placeholder="Client name"
+                    required
+                    list="quote-client-list"
+                    style={cell}
+                    autoComplete="off"
+                  />
+                  <datalist id="quote-client-list">
+                    {clients.map(c => <option key={c.id} value={c.name} />)}
+                  </datalist>
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: MUTED }}>Quote #</label>
@@ -324,7 +347,7 @@ export function QuotesClient({
                     Cancel
                   </button>
                   <button
-                    type="submit" disabled={!form.clientId || saving}
+                    type="submit" disabled={!form.clientName.trim() || saving}
                     className="px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all"
                     style={{ background: GREEN, color: "#fff" }}
                   >
